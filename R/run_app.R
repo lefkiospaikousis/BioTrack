@@ -14,6 +14,9 @@ run_app <- function(
   uiPattern = "/",
   ...
 ) {
+  
+  source(system.file("global.R", package = "BioTrack"))
+  
   with_golem_options(
     app = shinyApp(
       ui = app_ui,

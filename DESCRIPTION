@@ -5,12 +5,38 @@ Authors@R: person('Lefkios', 'Paikousis', email = 'lefkiospaikousis@yahoo.com', 
 Description: An ap to monitor the collection of biomedical material in BOCOC.
 License: What license is it under?
 Imports: 
+    callr,
     config (>= 0.3.1),
+    DBI,
+    dbplyr,
+    dplyr,
+    DT,
+    glue,
     golem (>= 0.3.3),
-    shiny (>= 1.7.2)
+    gt,
+    here,
+    janitor,
+    keyring,
+    lubridate,
+    pkgload,
+    purrr,
+    reactable,
+    readxl,
+    rmarkdown,
+    RSQLite,
+    shiny (>= 1.7.2),
+    shinyFeedback,
+    shinyjs,
+    shinymanager,
+    shinyTime,
+    shinyvalidate,
+    shinyWidgets,
+    tidyr,
+    uuid,
+    waiter
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

@@ -10,7 +10,34 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     fluidPage(
-      h1("BioTrack")
+      h1("BioTrack"),
+      actionButton("to_specimen", "To specimen"),
+      tabsetPanel(id = "tabs", type = "hidden",
+                  
+                  tabPanel("Add sample info",
+                           fluidRow(
+                             column(3),
+                             col_6(
+                               mod_sample_information_ui("sample_information_1")
+                             ),
+                             column(3,
+                                    verbatimTextOutput("res")
+                             )
+                           )
+                  ),
+                  tabPanel("Specimen",
+                           fluidRow(
+                             column(4),
+                             col_4(
+                               mod_storage_information_ui("storage_information_1")
+                             ),
+                             column(4)
+                           )
+                           
+                           )
+      )
+      
+      
     )
   )
 }
@@ -28,13 +55,16 @@ golem_add_external_resources <- function() {
     "www",
     app_sys("app/www")
   )
-
+  
   tags$head(
     favicon(),
     bundle_resources(
       path = app_sys("app/www"),
       app_title = "BioTrack"
-    )
+    ),
+    shinyFeedback::useShinyFeedback(),
+    shinyjs::useShinyjs(),
+    waiter::use_waiter()
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
   )

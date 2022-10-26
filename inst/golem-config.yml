@@ -2,7 +2,17 @@ default:
   golem_name: BioTrack
   golem_version: 0.0.0.9000
   app_prod: no
+  path_db_specimen: !expr file.path('DB', 'dev', 'specimen')
+  path_db_creds: !expr here::here("DB", "dev", "credentials.sqlite")
 production:
   app_prod: yes
+  path_db_specimen: !expr file.path('DB', 'prod', 'specimen')
+  path_db_creds: !expr here::here("DB", "prod", "credentials.sqlite")
 dev:
   golem_wd: !expr here::here()
+  path_db_specimen: !expr file.path('DB', 'dev', 'specimen')
+  path_db_creds: !expr here::here("DB", "dev", "credentials.sqlite")
+bococ:
+  golem_wd: !expr here::here()
+  path_db_specimen: !expr file.path('DB', 'prod', 'specimen')
+  path_db_creds: !expr here::here("DB", "prod", "credentials.sqlite")

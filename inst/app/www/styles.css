@@ -1,0 +1,137 @@
+ 
+
+
+
+.txt-highlight{
+    display: inline;
+    padding: 0.25em 0;
+    background: limegreen;
+    color: #FFFFFE;
+    box-shadow: 0.5em 0 0 limegreen, -0.5em 0 0 limegreen;
+    border-radius: 5px;
+}
+
+.action-button .action-signout {
+  color: #bd3308;
+}
+
+.input-label {
+  
+  margin-bottom: 12px;
+} 
+
+.input-label2 {
+  
+  margin-bottom: 12px;
+  margin-left: 5px;
+} 
+
+/*.modal-dialog { 
+  width: fit-content !important; 
+  overflow-y: initial;
+  
+}*/
+
+/*input[type=radio] {
+  float: left;
+  display: block;
+  margin-top: 4px;
+}
+
+label {
+  margin-left: 15px;
+  display: block;
+}*/
+/*.modal-dialog { 
+  width: 600px; 
+  overflow-y: initial;
+  
+}*/
+
+/*.modal-body{
+  max-height: 85vh;
+  overflow-y: auto;
+}*/
+
+.bold-head{
+  
+  font-weight: bold;
+}
+
+/*.show-border {
+  border: 3px solid silver;
+}*/
+
+
+.show-border {
+  border: 3px solid silver;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+.btn-go{
+  
+  width: 60%;
+  background-color: #04AA6D;
+  color: #fff;
+  margin-left; 120px
+}
+
+.btn-save_temp{
+  
+  width: 80%;
+  display:block;
+  margin: 0 auto;
+
+}
+
+.btn-add{
+  background-color: #0494AA;
+  color: #fff;
+}
+
+.btn-add:hover {
+  background-color: #66A4AE;
+  color: #fff;
+}
+
+.btn-add:focus{background-color:#66A4AE;}
+
+.btn-submit{
+  
+  width: 60%;
+  background-color: #04AA6D;
+  color: #fff;
+  margin-left; 120px
+}
+
+.btn-submit:hover {
+  background-color: #3e8e41;
+  color: #fff;
+}
+
+.btn-submit:focus{background-color:#04AA6D;}
+
+.btn-cancel{
+  
+  background-color: #f4511e;
+  color: #fff;
+}
+
+.inline{
+  display: inline;
+}
+
+.right{
+  float: right;
+}
+
+.btn-cancel:hover {
+  background-color: #bd3308;
+  color: #fff;
+}
+
+/*see here https://stackoverflow.com/a/40098855/8689932*/
+.shiny-split-layout > div {
+  overflow: visible;
+}
