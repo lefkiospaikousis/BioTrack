@@ -247,7 +247,7 @@ mod_sample_information_server <- function(id){
     ns <- session$ns
     
     submitted <- reactiveVal(0)
-    close_form <- reactiveVal(0)
+    cancel <- reactiveVal(0)
     
     observe({
       
@@ -381,13 +381,13 @@ mod_sample_information_server <- function(id){
         iv$disable()
         removeNotification("submit_message")
         
-        shinyjs::reset("form")
-        submitted(submitted()+1)
+        #shinyjs::reset("form")
+        submitted(submitted() + 1)
         
       } else {
         
         iv$enable() # Start showing validation feedback
-        submitted(submitted()+1)
+        submitted(submitted() + 1)
         
         showNotification(
           "Please correct the errors in the form and try again",
@@ -397,12 +397,17 @@ mod_sample_information_server <- function(id){
       
     })
     
+    observeEvent(input$cancel, {
+      
+      cancel(cancel() + 1)
+    })
+    
     return(
       
       list(
         dta     = form_data,
         submit  = submitted
-        ,cancel = close_form
+        ,cancel = cancel
       )
     )
     

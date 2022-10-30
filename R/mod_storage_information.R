@@ -13,9 +13,6 @@ mod_storage_information_ui <- function(id){
   
   input_width <- "80%"
   
-  sample_types <- c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations")
-  
-  
   tagList(
     
     h3("Processing - Storage Information:", style = "text-align: center;"),
@@ -47,11 +44,14 @@ mod_storage_information_ui <- function(id){
     ),
     hr(),
     fluidRow(
-      col_4(h4("Specimens added: ", htmlOutput(ns("n_specimens"), inline = TRUE))),
+      #col_4(h4("Specimens added: ", htmlOutput(ns("n_specimens"), inline = TRUE))),
       col_4(actionButton(ns("add_specimen"), "Add a specimen", icon = icon("plus"), class = "btn-add"))
     ),
+    br(),
+    #h4("Specimens:"),
+    tableOutput(ns("tbl_specimens")),
     hr(),
-    actionButton(ns("done"), "Done adding samples", class = "btn-submit", width = "100%",
+    actionButton(ns("done"), "Done adding specimens", class = "btn-submit", width = "100%",
                  icon("glyphicon glyphicon-ok", lib = "glyphicon")),
     hr()
     
@@ -67,18 +67,51 @@ mod_storage_information_server <- function(id, sample_info){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
-    
+    submitted <- reactiveVal(0)
     # Validation ----
     
     iv <- shinyvalidate::InputValidator$new()
-    
     iv$add_rule("quality", sv_required())
     
     
+    specimen_types <- c("Peripheral blood" = "PB", 
+                        "Plasma" = "PL", 
+                        "Serum" = "SR", 
+                        "Urine" = "UR", 
+                        "Stools" = "ST", 
+                        "Bronchial aspirations" = "BA"
+    )
+    
+    type_names <- setNames(names(specimen_types), specimen_types)
+    
     
     rv <- reactiveValues(
-      specimens = tibble::tibble()
+      # specimens =         tibble::tibble(
+      #   lab_no            = character(0), # NA_character_,
+      #   specimen_type     = character(0), # NA_character_,
+      #   serial            = integer(0),   # NA_real_,
+      #   freezer           = character(0), # NA_character_,
+      #   place             = character(0), # NA_character_,
+      #   n_tubes           = integer(0),   #NA_real_
+      # ) 
+      specimens = NULL
     )
+    
+    output$tbl_specimens <- renderTable({
+      
+      if(is.null(rv$specimens)) validate("No specimens added yet")
+      
+      rv$specimens %>% 
+        select(-serial) %>% 
+        tibble::rowid_to_column("Serial") %>% 
+        select("Lab no" = lab_no,
+               "Specimen type" = specimen_type,
+               "Freezer" = freezer,
+               "Position" = place,
+               'Number of tubes'= n_tubes
+        )
+      
+    }, align = "c")
     
     output$patient_info <- renderText({
       
@@ -108,14 +141,12 @@ mod_storage_information_server <- function(id, sample_info){
     })
     
     
-    mod_add_specimen_server("add_specimen_1")
-    
     observeEvent(input$add_specimen, {
       
       showModal(modalDialog(
         title = h4("Add a specimen type"),
         size = "m",
-        mod_add_specimen_ui(ns("add_specimen_1")),
+        mod_add_specimen_ui(ns("add_specimen_1"), specimen_types),
         footer = NULL
       ))
     })
@@ -132,6 +163,8 @@ mod_storage_information_server <- function(id, sample_info){
     # To get the submit all is good
     observeEvent(specimen$submit(), {
       
+      req(sample_info())
+      
       show_waiter("Processing.. Please wait")
       removeModal()
       
@@ -144,26 +177,62 @@ mod_storage_information_server <- function(id, sample_info){
         place = glue::glue("{specimen$rack}.{specimen$drawer}.{specimen$box}")
         
         #build lab_no
-        yy <- lubridate::year(Sys.Date()) - 2000
-        type = "PL" # specimen_code(specimen_type)
-        serial =  1 # serial_specimen()
+        year_now <- lubridate::year(Sys.Date())
+        type = specimen$type
+        serial =  max_serial_year(dbase_specimen, year_now) + 1
         
-        lab_no <- glue::glue("{yy}{stringr::str_pad(serial, 5, 'left', '0')}{type}")
+        lab_no <- glue::glue("{year_now - 2000}{stringr::str_pad(serial, 5, 'left', '0')}{type}")
+        
         
         new_specimen <- tibble(
-          specimen_type     = specimen$type,
+          
+          specimen_type     = type_names[[specimen$type]],
           serial            = serial,
+          rack              = specimen$rack,
+          drawer            = specimen$drawer,
+          box               = specimen$box,
           place             = place,
           lab_no            = lab_no,
           freezer           = specimen$freezer,
           n_tubes           = specimen$n_tubes
         )
         
+        # ADD Info from the sample_info before saving to DB
+        new_specimen <- new_specimen %>% 
+          tibble::add_column(
+            
+            year              = year_now,
+            unique_id         = sample_info()$unique_id,
+            quality           = input$quality,
+            duration          = lapsed_time( sample_info()$date_receipt, Sys.time() ),
+            date_processing   = epochTime() # Time stamp of submission date
+          )
+        
+        
+        # Add it to the rv to show to the user
         rv$specimens <- bind_rows(rv$specimens, new_specimen)
         
+        
+        # SAVE TO DB
+        res_save <- DBI::dbAppendTable(dbase_specimen, "specimen_info", as.data.frame(new_specimen))
+        
+        cat("Saved ", res_save, " specimen\n")
+        
+        if(!golem::app_prod()) showNotification("Saved specimen to Database!")
+        
+        rv$db_trigger <- rv$db_trigger + 1
+        
+        session$userData$db_trigger(session$userData$db_trigger() + 1)
+        
+        
+      }, error = function(e){
+        cat("Error capturing the speciment entry\n")
+        print(e)
+        shinyFeedback::showToast("error", "Could not save Specimen to Database. Please contact support")
       })
       
       hide_waiter()
+      
     }, ignoreInit = TRUE)
     
     
@@ -171,12 +240,7 @@ mod_storage_information_server <- function(id, sample_info){
     # Done adding samples
     observeEvent(input$done, {
       
-      
-    })
-    
-    observeEvent(input$done, {
-      
-      if( nrow(rv$specimens) == 0) {
+      if( is.null(rv$specimens) ) {
         shinyFeedback::showToast("error", "You haven't added any specimens yet")
         return()
       }
@@ -186,18 +250,6 @@ mod_storage_information_server <- function(id, sample_info){
         iv$disable()
         
         removeNotification("submit_message")
-        
-        browser()
-        rv$specimens %>% 
-          tibble::add_column(
-            # for all specimens
-            unique_id         = sample_info()$unique_id,
-            quality           = input$quality,
-            duration          = lapsed_time(sample_info()$date_receipt, Sys.time() ),
-            date_processing   = epochTime(), # Time stamp of submission date
-            
-          ) %>% 
-          glimpse()
         
         submitted(submitted()+1)
         
@@ -211,11 +263,17 @@ mod_storage_information_server <- function(id, sample_info){
       }
       
       
-    })
+    }, ignoreInit = TRUE)
     
     
+    return(
+      list(
+        submit = submitted,
+        dta = reactive(rv$specimens)
+      )
+    )
     
-  })
+  }) # end server
 }
 
 ## To be copied in the UI

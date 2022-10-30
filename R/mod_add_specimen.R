@@ -7,12 +7,12 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_add_specimen_ui <- function(id){
+mod_add_specimen_ui <- function(id, specimen_types){
   ns <- NS(id)
   
   input_width <- "80%"
   
-  sample_types <- c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations")
+  #specimen_type <- c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations")
   
   
   tagList(
@@ -24,7 +24,7 @@ mod_add_specimen_ui <- function(id){
           tags$tr(width = "100%",
                   tags$td(width = "40%", div(class = "input-label",style = "", "Specimen Type:")),
                   tags$td(width = "60%", selectInput(ns("type"), NULL, 
-                                                     c("", sample_types), 
+                                                     c("", specimen_types), 
                                                      width = input_width))),
           
           

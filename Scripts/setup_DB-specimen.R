@@ -75,6 +75,7 @@ dta_sample_info = dplyr::tibble(
 dta_specimen_type = dplyr::tibble(
   
   #time_stamp        = 123L, # Time stamp of submission date
+  year              = 2022L,
   serial            = 100L,
   unique_id         = uuid::UUIDgenerate(),
   date_processing   = 123L,
@@ -83,8 +84,11 @@ dta_specimen_type = dplyr::tibble(
   specimen_type     = character(1),
   lab_no            = character(1),
   freezer           = character(1),
+  rack              = character(1),
+  drawer            = character(1),
+  box               = character(1),
   place             = character(1),
-  n_tubes           = character(1)
+  n_tubes           = 1L
   
 )
 

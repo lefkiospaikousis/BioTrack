@@ -18,6 +18,7 @@ Imports:
     janitor,
     keyring,
     lubridate,
+    magrittr,
     pkgload,
     purrr,
     reactable,

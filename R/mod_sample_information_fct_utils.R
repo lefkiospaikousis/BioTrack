@@ -97,3 +97,28 @@ process_submission <- function(submission){
   submission 
   
 }
+
+
+
+max_serial_year <- function(conn, year_now){
+  
+  curr_year <- conn %>% 
+    tbl("specimen_info") %>% 
+    filter(year == year_now) 
+  
+  n_rows <- count(curr_year) %>% collect() %>% .$n
+  
+  # When the year switches, we wont have any data to get the max serial
+  if(n_rows == 0){
+    
+    return(0)
+    
+  } else {
+    
+    curr_year %>% 
+      filter(serial == max(serial)) %>% 
+      pull(serial) %>% .[1]
+  }
+  
+  
+}

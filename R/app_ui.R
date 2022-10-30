@@ -11,8 +11,11 @@ app_ui <- function(request) {
     # Your application UI logic
     fluidPage(
       h1("BioTrack"),
-      actionButton("to_specimen", "To specimen"),
       tabsetPanel(id = "tabs", type = "hidden",
+                  
+                  tabPanel("Initial",
+                           actionButton("add_sample_info", "Add new Sample")
+                           ),
                   
                   tabPanel("Add sample info",
                            fluidRow(
@@ -20,9 +23,7 @@ app_ui <- function(request) {
                              col_6(
                                mod_sample_information_ui("sample_information_1")
                              ),
-                             column(3,
-                                    verbatimTextOutput("res")
-                             )
+                             column(3)
                            )
                   ),
                   tabPanel("Specimen",
