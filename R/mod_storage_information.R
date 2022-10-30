@@ -166,7 +166,6 @@ mod_storage_information_server <- function(id, sample_info){
       req(sample_info())
       
       show_waiter("Processing.. Please wait")
-      removeModal()
       
       tryCatch({
         
@@ -218,17 +217,21 @@ mod_storage_information_server <- function(id, sample_info){
         
         cat("Saved ", res_save, " specimen\n")
         
-        if(!golem::app_prod()) showNotification("Saved specimen to Database!")
+        showNotification("Saved specimen to Database!")
         
         rv$db_trigger <- rv$db_trigger + 1
         
         session$userData$db_trigger(session$userData$db_trigger() + 1)
         
+        removeModal()
         
       }, error = function(e){
         cat("Error capturing the speciment entry\n")
         print(e)
-        shinyFeedback::showToast("error", "Could not save Specimen to Database. Please contact support")
+        shinyFeedback::showToast("error", title = "Error while saving the Specimen Storage info!",
+                                 keepVisible = TRUE, .options = list(positionClass = "toast-top-center"),
+                                 "Could not save this specimen to Database! Check your network connectivity and try again.
+                                 If the problem persists, please contact support")
       })
       
       hide_waiter()
@@ -236,24 +239,15 @@ mod_storage_information_server <- function(id, sample_info){
     }, ignoreInit = TRUE)
     
     
-    
     # Done adding samples
     observeEvent(input$done, {
       
       if( is.null(rv$specimens) ) {
-        shinyFeedback::showToast("error", "You haven't added any specimens yet")
+        show_toast("error", "Error", "You haven't added any specimens yet")
         return()
       }
       
-      if (iv$is_valid()) {
-        
-        iv$disable()
-        
-        removeNotification("submit_message")
-        
-        submitted(submitted()+1)
-        
-      } else {
+      if (!iv$is_valid()) {
         
         iv$enable() # Start showing validation feedback
         
@@ -261,6 +255,59 @@ mod_storage_information_server <- function(id, sample_info){
           "Please correct the errors in the form and try again",
           id = "submit_message", type = "error")
       }
+      
+      
+      if (iv$is_valid()) {
+        
+        iv$disable()
+        
+        removeNotification("submit_message")
+        
+        show_waiter("Saving the infomation.. Please wait", sleep = 1)
+        
+        # Update the DB: sample_info with number of specimens
+        tryCatch({
+         
+          id <- sample_info()$unique_id
+          n_specimens <- nrow(rv$specimens)
+          
+          x <- glue::glue_sql("UPDATE sample_info SET specimens = {n_specimens} WHERE unique_id = {id}", .con = dbase_specimen)
+          
+          rs <- DBI::dbExecute(dbase_specimen, x)
+          
+          cat("Updated Number of specimens for ", rs, " sample_informaton for id = ", id, "\n")
+          
+          if(!golem::app_prod()) showNotification("Updated sample information with number of specimens")
+          
+          hide_waiter()
+          Sys.sleep(0.5)
+          show_toast("success", "Done saving!", "Specimens succesfully saved!")
+          
+          Sys.sleep(2)
+          
+          submitted(submitted()+1)
+          
+        }, error = function(e){
+          
+          print(e)
+          cat("Error when Updating the sample_info with number of samples on Database\n")
+          
+          # TODO Save submission locally in a dataframe?
+          # Inform me?
+          
+          hide_waiter()
+          
+          show_toast("error", "Error!", 
+                     "Could not save the number of specimens for the particular 'Sample Information form.'
+                     However, the specimen information you have just entered are succesfully stored.
+                     Take a note of the Lab no (s) and contact support!",
+                     keepVisible = TRUE
+                     )
+          
+        })
+        
+        
+      } 
       
       
     }, ignoreInit = TRUE)

@@ -43,27 +43,14 @@ app_server <- function(input, output, session) {
   
   # END. Go back to Step 1
   observeEvent(added_specimens(),{
-   
-    # Update the sample_info with number of specimens
-    dta <- res_storage_info$dta()
-    id <- dta$unique_id[1]
-    n_specimens <- nrow(dta)
     
-    x <- glue::glue_sql("UPDATE sample_info SET specimens = {n_specimens} WHERE unique_id = {id}", .con = dbase_specimen)
-    
-    rs <- DBI::dbExecute(dbase_specimen, x)
-    
-    cat("Updated Number of specimens for ", rs, " sample_informaton\n
-        for id = ", id, "\n")
-    
-    if(!golem::app_prod()) showNotification("Updated sample information with number of specimens")
+    show_waiter("Returning to begining...", sleep = 3)
     # I have split the process in 3 pages
     # when I move from page to page,the form detials of each page stays there
     # Need to reload to vbe cleared
     # TODO use shinjs::reset() ?
-    
-    show_waiter("Saving the infomation.. Please wait", sleep = 0.5)
     session$reload()
+    
     
   }, ignoreInit = TRUE)
   
@@ -77,7 +64,7 @@ app_server <- function(input, output, session) {
   observeEvent(res_sample_info$cancel(), {
     
     updateTabsetPanel(session, inputId = "tabs", selected = "Initial")
-
+    
   }, ignoreInit = TRUE)
   
   
@@ -99,7 +86,7 @@ app_server <- function(input, output, session) {
       
       sample_info <- process_submission(rv$sample_info)
       
-      sample_info$specimens <- FALSE
+      sample_info$specimens <- 0
       
       res_save <- DBI::dbAppendTable(dbase_specimen, "sample_info", as.data.frame(sample_info))
       
@@ -117,10 +104,16 @@ app_server <- function(input, output, session) {
     }, error = function(e){
       
       print(e)
-      message("Error when saving sample_info on Database")
+      cat("Error when saving sample_info on Database\n")
       
       # TODO Save submission locally in a dataframe?
       # Inform me?
+      
+      shinyFeedback::showToast("error", title = "Error while saving the Sample Information!",
+                               keepVisible = TRUE, .options = list(positionClass = "toast-top-center"),
+                               
+                               "Could not save this Sample Information to Database! Check your network connectivity and try again.
+                                 If the problem persists, please contact support")
       
       try({
         saveRDS(rv$sample_info, paste0("failed_submission", file_time(), ".rds"))
@@ -133,9 +126,9 @@ app_server <- function(input, output, session) {
   # Adding specimen and storage information ----
   
   res_storage_info <- mod_storage_information_server("storage_information_1", reactive(rv$processed_sample_info))
-
+  
   observeEvent(res_storage_info$submit(), {
-
+    
     added_specimens(TRUE)
     
   }, ignoreInit = TRUE)

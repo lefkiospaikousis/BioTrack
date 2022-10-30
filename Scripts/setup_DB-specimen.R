@@ -66,7 +66,7 @@ dta_sample_info = dplyr::tibble(
   #quality           = character(1),
   comments          = character(1),
   
-  specimens         = logical(1), # added specimens?
+  specimens         = 1L, # how many specimens added?
   
   path_icf          = character(1)
 )

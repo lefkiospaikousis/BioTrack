@@ -148,7 +148,7 @@ mod_sample_information_ui <- function(id){
             
             tags$tr(width = "100%",
                     tags$td(width = "50%",  shinyjs::hidden(div(class = "input-label",style = "", "Other:"))),
-                    tags$td(width = "50%",  shinyjs::hidden(textInput(ns("phase_other"), NULL, width = "100%",
+                    tags$td(width = "50%",  shinyjs::hidden(textInput(ns("phase_other"), NULL, width = input_width,
                                                                       placeholder = "Please describe")))),
             
             
@@ -197,7 +197,7 @@ mod_sample_information_ui <- function(id){
           )
       ),
       div(style = "font-size:13px",
-          textAreaInput("comments", h4("Comments"), rows = 5, width = "78%", resize = "both")
+          textAreaInput(ns("comments"), h4("Comments"), rows = 5, width = "78%", resize = "both")
           #hr(style = "width: 80%"),
           # tags$table(
           #   
@@ -368,6 +368,8 @@ mod_sample_information_server <- function(id){
         
       }) 
       
+      if(input$phase == "Other") list_dta$phase <- paste0("Other:", input$phase_other)
+      
       list_dta
       
     }) %>% 
@@ -387,7 +389,8 @@ mod_sample_information_server <- function(id){
       } else {
         
         iv$enable() # Start showing validation feedback
-        submitted(submitted() + 1)
+        
+        if(golem::app_dev()) submitted(submitted() + 1) # only in dev, I allow to proceed withou the validaiton
         
         showNotification(
           "Please correct the errors in the form and try again",

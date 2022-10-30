@@ -1,4 +1,4 @@
-#' waiters 
+#' Notifications 
 #'
 #' @description A fct function
 #'
@@ -33,4 +33,14 @@ show_waiter <- function(message, sleep = 0, id = NULL){
 
 hide_waiter <- function(){
   waiter::waiter_hide()
+}
+
+show_toast <- function(type, title, message, ...){
+  shinyFeedback::showToast(
+    type = type,
+    title = title,
+    message = message,
+    ...,
+    .options = list(positionClass = "toast-top-center")
+  )
 }
