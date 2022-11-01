@@ -46,8 +46,8 @@ app_server <- function(input, output, session) {
     
     show_waiter("Returning to begining...", sleep = 3)
     # I have split the process in 3 pages
-    # when I move from page to page,the form detials of each page stays there
-    # Need to reload to vbe cleared
+    # when I move from page to page,the form details of each page stays there
+    # Need to reload to be cleared
     # TODO use shinjs::reset() ?
     session$reload()
     
@@ -71,6 +71,7 @@ app_server <- function(input, output, session) {
   observeEvent(res_sample_info$submit(), {
     
     rv$sample_info <- res_sample_info$dta()
+    rv$sample_info$path_icf <- res_sample_info$icf_path()
     
   }, ignoreInit = TRUE)
   
@@ -86,20 +87,38 @@ app_server <- function(input, output, session) {
       
       sample_info <- process_submission(rv$sample_info)
       
-      sample_info$specimens <- 0
+      # save the icf file to the correct location
+      dir.create(path_dir <- file.path("ICF", sample_info$unique_id))
+      new_path <- file.path(path_dir, "ICF.pdf")
+      
+      
+      res <- file.copy(sample_info$path_icf, new_path)
+      sample_info$path_icf <- new_path
+      
+      if(isFALSE(res)){
+
+        show_toast("warning", "Oups..!", 
+                   "The sample information was succesfully stored. However, the 
+                   we could not save the 'icf' pdf file. Please contact support",
+                   keepVisible = TRUE
+                   )
+        
+        sample_info$path_icf <- NA_character_
+      }
+      
       
       res_save <- DBI::dbAppendTable(dbase_specimen, "sample_info", as.data.frame(sample_info))
       
       cat("Saved ", res_save, " form\n")
-      
-      rv$db_trigger <- rv$db_trigger + 1
-      session$userData$db_trigger(session$userData$db_trigger() + 1)
       
       if(!golem::app_prod()) showNotification("Saved to Database!")
       
       rv$processed_sample_info <- sample_info
       
       added_sample_info(TRUE)
+      
+      rv$db_trigger <- rv$db_trigger + 1
+      session$userData$db_trigger(session$userData$db_trigger() + 1)
       
     }, error = function(e){
       

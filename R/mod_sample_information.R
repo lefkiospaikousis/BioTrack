@@ -170,7 +170,7 @@ mod_sample_information_ui <- function(id){
     ),
     hr(),
     
-   
+    
     splitLayout(
       div(style = "font-size:13px",
           h4("BOCOC Lab use only"),
@@ -224,7 +224,7 @@ mod_sample_information_ui <- function(id){
           #   
           # )
       )
-          
+      
     ),
     fileInput(ns("icf"), "Upload the scanned PDF file of the ICF", accept = ".pdf"),
     
@@ -248,6 +248,9 @@ mod_sample_information_server <- function(id){
     
     submitted <- reactiveVal(0)
     cancel <- reactiveVal(0)
+    
+    uploaded_icf <- reactiveVal(FALSE)
+    rv <- reactiveValues(icf_path = NULL)
     
     observe({
       
@@ -383,8 +386,17 @@ mod_sample_information_server <- function(id){
         iv$disable()
         removeNotification("submit_message")
         
-        #shinyjs::reset("form")
-        submitted(submitted() + 1)
+        
+        
+        if(isFALSE(uploaded_icf())) {
+          show_toast("error", "One more thing", "You need to upload an ICF form")
+        } else {
+          
+          #shinyjs::reset("form")
+          submitted(submitted() + 1)
+          
+        }
+        
         
       } else {
         
@@ -405,12 +417,34 @@ mod_sample_information_server <- function(id){
       cancel(cancel() + 1)
     })
     
+    
+    observeEvent(input$icf, {
+      
+      if ( tools::file_ext(input$icf$datapath) != "pdf") {
+        shinyFeedback::hideFeedback("icf")
+        shinyFeedback::showFeedbackDanger("icf", "This is not a .pdf document")
+        
+      } else {
+        
+        shinyFeedback::hideFeedback("icf")
+        shinyFeedback::showFeedbackSuccess("icf", "Great!")
+        
+        # Store the temporary path where the file was saved
+        rv$icf_path <- input$icf$datapath
+        uploaded_icf(TRUE)
+      }
+      
+      
+    }, ignoreInit = TRUE)
+    
+    
     return(
       
       list(
-        dta     = form_data,
-        submit  = submitted
-        ,cancel = cancel
+        dta      = form_data,
+        icf_path = reactive(rv$icf_path),
+        submit   = submitted,
+        cancel  = cancel
       )
     )
     
