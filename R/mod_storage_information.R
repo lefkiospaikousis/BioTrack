@@ -44,11 +44,9 @@ mod_storage_information_ui <- function(id){
     ),
     hr(),
     fluidRow(
-      #col_4(h4("Specimens added: ", htmlOutput(ns("n_specimens"), inline = TRUE))),
       col_4(actionButton(ns("add_specimen"), "Add a specimen", icon = icon("plus"), class = "btn-add"))
     ),
     br(),
-    #h4("Specimens:"),
     tableOutput(ns("tbl_specimens")),
     hr(),
     actionButton(ns("done"), "Done adding specimens", class = "btn-submit", width = "100%",
@@ -68,6 +66,10 @@ mod_storage_information_server <- function(id, sample_info){
     ns <- session$ns
     
     submitted <- reactiveVal(0)
+    rv <- reactiveValues(
+      specimens = NULL
+    )
+    
     # Validation ----
     
     iv <- shinyvalidate::InputValidator$new()
@@ -83,19 +85,6 @@ mod_storage_information_server <- function(id, sample_info){
     )
     
     type_names <- setNames(names(specimen_types), specimen_types)
-    
-    
-    rv <- reactiveValues(
-      # specimens =         tibble::tibble(
-      #   lab_no            = character(0), # NA_character_,
-      #   specimen_type     = character(0), # NA_character_,
-      #   serial            = integer(0),   # NA_real_,
-      #   freezer           = character(0), # NA_character_,
-      #   place             = character(0), # NA_character_,
-      #   n_tubes           = integer(0),   #NA_real_
-      # ) 
-      specimens = NULL
-    )
     
     output$tbl_specimens <- renderTable({
       
@@ -144,7 +133,7 @@ mod_storage_information_server <- function(id, sample_info){
     observeEvent(input$add_specimen, {
       
       showModal(modalDialog(
-        title = h4("Add a specimen type"),
+        title = h3("Add a specimen"),
         size = "m",
         mod_add_specimen_ui(ns("add_specimen_1"), specimen_types),
         footer = NULL
