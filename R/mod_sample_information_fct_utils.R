@@ -51,7 +51,8 @@ to_date <- function(number){
 
 lapsed_time <- function (start_time, end_time = Sys.time()) 
 {
-  as.character(lubridate::seconds_to_period(difftime(end_time, start_time, units = "secs")))
+  x <- lubridate::seconds_to_period(difftime(end_time, start_time, units = "secs"))
+  as.character(round(x, 1))
 }
 
 process_submission <- function(submission){
@@ -68,11 +69,14 @@ process_submission <- function(submission){
   submission$date_receipt <- ymd(submission$date_receipt, tz = "EET") + hm(submission$time_receipt)
   submission$time_receipt <- NULL
   
+  # Initialise the number of specimens - 0 for now.Will be updated later in the mod_add_specimen
+  submission$specimens <- 0
+  
   # submission$time_processing <- strftime(submission$time_processing, "%R")
   # submission$date_processing <- ymd(submission$date_processing, tz = "EET") + hm(submission$time_processing)
   # submission["time_processing"] <- NULL
   
-  # If Date(0) object or zerolength dateTime object, then needs to be NA_integer_
+  # If Date(0) object or zero length dateTime object, then needs to be NA_integer_
   # otherwise cannot be save in the DB. lubridate::is.timepoint works for both Date and Posixct objects
   # So if any of the date or datetime inputs are not there (e.g. date_shipment is not mandatory) this 
   # will make sure all is good for saving in the DB
@@ -91,7 +95,7 @@ process_submission <- function(submission){
   # submission$date_processing <- as.integer(submission$date_processing)
   # submission$date_receipt <- as.integer(submission$date_receipt)
   
-  # if nulls turn them to NA_character. Used for the checkboxes
+  # if nulls turn them to NA_character. Used for the check boxes
   submission <- map(submission, ~ . %||% NA_character_)
   
   submission 
