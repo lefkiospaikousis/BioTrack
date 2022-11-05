@@ -95,6 +95,7 @@ mod_add_specimen_server <- function(id){
     iv$add_rule("type", sv_required())
     iv$add_rule("freezer", sv_required())
     iv$add_rule("drawer", sv_required())
+    #iv$add_rule("box", sv_required())
     iv$add_rule("n_tubes", sv_gt(0))
     
     # iv$add_rule("time_incident", function(time){
