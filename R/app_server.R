@@ -25,11 +25,11 @@ app_server <- function(input, output, session) {
   # Switching between tabs ----
   
   # Step 1 - Add Sample Information
-  observeEvent(input$add_sample_info, {
-    
-    updateTabsetPanel(session, inputId = "tabs", selected = "Add sample info")
-    
-  })
+  # observeEvent(input$add_sample_info, {
+  #   
+  #   updateTabsetPanel(session, inputId = "tabs", selected = "Add sample info")
+  #   
+  # })
   
   # Step 2 -Add specimens and storage information
   observeEvent(added_sample_info(), {
@@ -44,7 +44,7 @@ app_server <- function(input, output, session) {
   # END. Go back to Step 1
   observeEvent(added_specimens(),{
     
-    show_waiter("Returning to begining...", sleep = 3)
+    show_waiter("Initialising. Please wait...", sleep = 3)
     # I have split the process in 3 pages
     # when I move from page to page,the form details of each page stays there
     # Need to reload to be cleared
@@ -63,7 +63,7 @@ app_server <- function(input, output, session) {
   
   observeEvent(res_sample_info$cancel(), {
     
-    updateTabsetPanel(session, inputId = "tabs", selected = "Initial")
+    updateTabsetPanel(session, inputId = "tabs", selected = "Add sample info")
     
   }, ignoreInit = TRUE)
   

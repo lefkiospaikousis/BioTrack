@@ -21,7 +21,7 @@ mod_sample_information_ui <- function(id){
   
   tagList(
     
-    h3("Sample Information Form:", style = "text-align: center;"),
+   # h3("Sample Information Form:", style = "text-align: center;"),
     
     splitLayout(
       
@@ -159,11 +159,11 @@ mod_sample_information_ui <- function(id){
             
             tags$tr(width = "100%",
                     tags$td(width = "30%", div(class = "input-label", "Date of collection:")),
-                    tags$td(width = "70%", dateInput(ns("date_collection"), NULL, as.Date(NA), format = "dd/mm/yyyy", width = input_width))),
+                    tags$td(width = "70%", dateInput(ns("date_collection"), NULL, lubridate::NA_POSIXct_ , format = "dd/mm/yyyy", width = input_width))),
             
             tags$tr(width = "100%",
                     tags$td(width = "30%", div(class = "input-label", "Date of shipment:")),
-                    tags$td(width = "70%", dateInput(ns("date_shipment"), NULL, as.Date(NA), format = "dd/mm/yyyy", width = input_width))),
+                    tags$td(width = "70%", dateInput(ns("date_shipment"), NULL, lubridate::NA_Date_ , format = "dd/mm/yyyy", width = input_width))),
             
           )
       )
@@ -191,13 +191,13 @@ mod_sample_information_ui <- function(id){
                     tags$td(width = "60%", 
                             
                             splitLayout(cellWidths = c("40%", "50%"),
-                                        div(dateInput(ns("date_receipt"), NULL, as.Date(NA), format = "dd/mm/yyyy", width = input_width)),
-                                        div(style = "margin-top: 0px; margin-left:-15px" , shinyTime::timeInput(ns("time_receipt"), NULL, seconds = FALSE)),
+                                        div(dateInput(ns("date_receipt"), NULL, lubridate::NA_Date_ , format = "dd/mm/yyyy", width = "90%")),
+                                        div(style = "margin-top: 0px; margin-left:-5px" , shinyTime::timeInput(ns("time_receipt"), NULL, seconds = FALSE)),
                             )))
           )
       ),
       div(style = "font-size:13px",
-          textAreaInput(ns("comments"), h4("Comments"), rows = 5, width = "78%", resize = "both")
+          textAreaInput(ns("comments"), h4("Comments"), rows = 5, width = "80%", resize = "both")
           #hr(style = "width: 80%"),
           # tags$table(
           #   
