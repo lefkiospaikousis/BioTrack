@@ -26,6 +26,7 @@ Imports:
     rmarkdown,
     RSQLite,
     shiny (>= 1.7.2),
+    shinydashboard,
     shinyFeedback,
     shinyjs,
     shinymanager,

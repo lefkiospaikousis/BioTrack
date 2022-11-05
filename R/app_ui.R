@@ -3,43 +3,62 @@
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
 #' @import shiny
+#' @import shinydashboard
 #' @noRd
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic
-    fluidPage(
-      h1("BioTrack"),
-      tabsetPanel(id = "tabs", type = "hidden",
+    dashboardPage( 
+      dashboardHeader(title = "BioTrack"),
+      dashboardSidebar(
+        sidebarMenu(
+          menuItem("Add sample", tabName = "add_sample", icon = icon("plus")),
+          menuItem("Explore", tabName = "explore", icon = icon("table"))
+        )
+      ),
+      dashboardBody(
+        tabItems(
+          tabItem(tabName = "add_sample",
+                  tabsetPanel(id = "tabs", type = "hidden",
+                              
+                              # tabPanel("Initial",
+                              #          actionButton("add_sample_info", "Add new Sample")
+                              # ),
+                              
+                              tabPanel("Add sample info",
+                                       fluidRow(
+                                         column(3),
+                                         col_6(
+                                           box(width = NULL, title = h3("Sample Information Form"),
+                                           mod_sample_information_ui("sample_information_1")
+                                           )
+                                         ),
+                                         column(3)
+                                       )
+                              ),
+                              tabPanel("Specimen",
+                                       fluidRow(
+                                         column(4),
+                                         col_4(
+                                           box(width = NULL, title = h3("Processing / Storage Information:", style = "text-align: center;"),
+                                           mod_storage_information_ui("storage_information_1")
+                                           )
+                                         ),
+                                         column(4)
+                                       )
+                                       
+                              )
+                  )
                   
-                  tabPanel("Initial",
-                           actionButton("add_sample_info", "Add new Sample")
-                           ),
                   
-                  tabPanel("Add sample info",
-                           fluidRow(
-                             column(3),
-                             col_6(
-                               mod_sample_information_ui("sample_information_1")
-                             ),
-                             column(3)
-                           )
-                  ),
-                  tabPanel("Specimen",
-                           fluidRow(
-                             column(4),
-                             col_4(
-                               mod_storage_information_ui("storage_information_1")
-                             ),
-                             column(4)
-                           )
-                           
-                           )
+          ),
+          tabItem(tabName = "explore", "Explore" )
+        )
       )
-      
-      
     )
+    
   )
 }
 
