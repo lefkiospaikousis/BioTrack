@@ -15,8 +15,8 @@ mod_storage_information_ui <- function(id){
   
   tagList(
     
-    h3("Processing - Storage Information:", style = "text-align: center;"),
-    hr(),
+    #h3("Processing - Storage Information:", style = "text-align: center;"),
+    #hr(),
     p("Storage Information for: ", htmlOutput(ns("patient_info"), inline = TRUE)),
     p("Unique ID: ", htmlOutput(ns("unique_id"), inline = TRUE)),
     hr(),
@@ -162,6 +162,7 @@ mod_storage_information_server <- function(id, sample_info){
         
         # If freezer != '-80' then rack = ""
         if(specimen$freezer != "-80") specimen$rack <- ""
+        specimen <- map(specimen, ~ . %||% NA_character_) # If NULL then NA. Othewise glue fails
         place = glue::glue("{specimen$rack}.{specimen$drawer}.{specimen$box}")
         
         #build lab_no
@@ -268,11 +269,10 @@ mod_storage_information_server <- function(id, sample_info){
           
           if(!golem::app_prod()) showNotification("Updated sample information with number of specimens")
           
-          hide_waiter()
-          Sys.sleep(0.5)
-          show_toast("success", "Done saving!", "Specimens succesfully saved!")
-          
-          Sys.sleep(2)
+           hide_waiter()
+           Sys.sleep(0.5)
+           show_toast("success", "Done saving!", "Specimens successfully saved!")
+           Sys.sleep(2)
           
           submitted(submitted()+1)
           
