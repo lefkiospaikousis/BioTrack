@@ -9,13 +9,22 @@ app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
+    tags$head(
+      # To set he focus on the view tab for scanning the LAB NO
+      tags$script("
+      Shiny.addCustomMessageHandler('selectText', function(x) {
+        $('#lab_no').select();
+      });
+    ")
+    ),
     # Your application UI logic
     dashboardPage( 
       dashboardHeader(title = "BioTrack"),
       dashboardSidebar(
-        sidebarMenu(
-          menuItem("Add sample", tabName = "add_sample", icon = icon("plus")),
-          menuItem("Explore", tabName = "explore", icon = icon("table"))
+        sidebarMenu(id = "left_tabs",
+                    menuItem("Add sample", tabName = "add_sample", icon = icon("plus")),
+                    menuItem("View/Edit Specimem", tabName = "view", icon = icon("searchengin")),
+                    menuItem("Tables", tabName = "tables", icon = icon("table"))
         )
       ),
       dashboardBody(
@@ -32,7 +41,7 @@ app_ui <- function(request) {
                                          column(3),
                                          col_6(
                                            box(width = NULL, title = h3("Sample Information Form"),
-                                           mod_sample_information_ui("sample_information_1")
+                                               mod_sample_information_ui("sample_information_1")
                                            )
                                          ),
                                          column(3)
@@ -43,7 +52,7 @@ app_ui <- function(request) {
                                          column(4),
                                          col_4(
                                            box(width = NULL, title = h3("Processing / Storage Information:", style = "text-align: center;"),
-                                           mod_storage_information_ui("storage_information_1")
+                                               mod_storage_information_ui("storage_information_1")
                                            )
                                          ),
                                          column(4)
@@ -54,7 +63,10 @@ app_ui <- function(request) {
                   
                   
           ),
-          tabItem(tabName = "explore", "Explore" )
+          tabItem(tabName = "view", 
+                  mod_view_edit_specimen_ui("view_edit_specimen_1")
+          ),
+          tabItem(tabName = "tables", "Explore the tables" )
         )
       )
     )

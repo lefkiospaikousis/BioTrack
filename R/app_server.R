@@ -12,7 +12,8 @@ app_server <- function(input, output, session) {
     
     sample_info = NULL,
     processed_sample_info = NULL,
-    db_trigger = NULL,
+    db_trigger = NULL
+    
     
   )
   
@@ -21,7 +22,7 @@ app_server <- function(input, output, session) {
   
   session$userData$db_trigger <- reactiveVal(0)
   
-  
+  mod_view_edit_specimen_server("view_edit_specimen_1")  
   # Switching between tabs ----
   
   # Step 1 - Add Sample Information
@@ -96,12 +97,12 @@ app_server <- function(input, output, session) {
       sample_info$path_icf <- new_path
       
       if(isFALSE(res)){
-
+        
         show_toast("warning", "Oups..!", 
                    "The sample information was succesfully stored. However, the 
                    we could not save the 'icf' pdf file. Please contact support",
                    keepVisible = TRUE
-                   )
+        )
         
         sample_info$path_icf <- NA_character_
       }
