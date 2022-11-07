@@ -116,9 +116,11 @@ app_server <- function(input, output, session) {
       
       rv$processed_sample_info <- sample_info
       
+      waiter::waiter_update(html = html_waiter("Moving to Storage information"))
+      Sys.sleep(1)      
       added_sample_info(TRUE)
       
-      rv$db_trigger <- rv$db_trigger + 1
+      #rv$db_trigger <- rv$db_trigger + 1
       session$userData$db_trigger(session$userData$db_trigger() + 1)
       
     }, error = function(e){

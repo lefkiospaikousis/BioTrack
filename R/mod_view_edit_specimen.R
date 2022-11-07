@@ -51,9 +51,10 @@ mod_view_edit_specimen_server <- function(id){
       
       if(nrow(specimen) == 0){
         
-        validate(glue::glue("Lab no '{input$lab_no}' was not identified"))
+        #validate(glue::glue("Lab no '{input$lab_no}' was not identified"))
+        show_toast("warning", "", "No Such Lab No")
         shinyjs::reset("lab_no")
-        
+        return()
       }
       
       shinyjs::reset("lab_no")
@@ -106,7 +107,7 @@ mod_view_edit_specimen_server <- function(id){
       
       showModal(
         modalDialog(
-          title = "Alter Specimen Information",
+          title = "Editing Specimen Information",
           size = "s", footer = NULL,
           mod_modify_specimen_ui(ns("n_tubes"))
         )
