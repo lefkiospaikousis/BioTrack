@@ -10,6 +10,14 @@
 mod_view_edit_specimen_ui <- function(id){
   ns <- NS(id)
   tagList(
+    tags$head(
+      # To set he focus on the view tab for scanning the LAB NO
+      tags$script("
+      Shiny.addCustomMessageHandler('selectText', function(NULL) {
+        $('#view_edit_specimen_1-lab_no').select();
+      });
+    ")
+    ),
     fluidRow(
       col_4(
         textInput(ns("lab_no"), "Specimen Lab No"), 
@@ -21,7 +29,7 @@ mod_view_edit_specimen_ui <- function(id){
 #' view_edit_specimen Server Functions
 #'
 #' @noRd 
-mod_view_edit_specimen_server <- function(id){
+mod_view_edit_specimen_server <- function(id, focus){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
@@ -30,20 +38,18 @@ mod_view_edit_specimen_server <- function(id){
     )
     
     
-    observe({
+    observeEvent(focus(),{
       # To set he focus on the view tab for scanning the LAB NO
-      #if(input$left_tabs == "view"){
-      
       session$sendCustomMessage("selectText", list(NULL))
       #} 
-    })
+    }, ignoreInit = TRUE)
     
     
     observeEvent(input$lab_no, {
       
       req(input$lab_no, cancelOutput = TRUE)
       req(nchar(input$lab_no) == 9, cancelOutput = TRUE)
-      
+     
       specimen <- dbase_specimen %>% 
         tbl("specimen_info") %>% 
         filter(lab_no == !!input$lab_no) %>% 
@@ -76,7 +82,7 @@ mod_view_edit_specimen_server <- function(id){
       # any changes in the DB
       specimen <- dbase_specimen %>% 
         tbl("specimen_info") %>% 
-        filter(unique_id == !!rv$specimen_selected$unique_id) %>% 
+        filter(lab_no == !!rv$specimen_selected$lab_no) %>% 
         collect()
         
       #specimen <- rv$specimen_selected
@@ -125,17 +131,17 @@ mod_view_edit_specimen_server <- function(id){
     }, ignoreInit = TRUE)
     
     observeEvent(res$submit(), {
-      
+     
       new_value <- res$new_value()
       col <- res$id
       
-      id <- rv$specimen_selected$unique_id
+      lab_no <- rv$specimen_selected$lab_no
       
-      x <- glue::glue_sql("UPDATE specimen_info SET {col} = {new_value} WHERE unique_id = {id}", .con = dbase_specimen)
+      x <- glue::glue_sql("UPDATE specimen_info SET {col} = {new_value} WHERE lab_no = {lab_no}", .con = dbase_specimen)
       
       rs <- DBI::dbExecute(dbase_specimen, x)
       
-      if(rs == 1){
+      if(rs == 1){ 
         
         cat("Updated ", col, "for ", rs, " specimen_info for id = ", id, "\n")
           

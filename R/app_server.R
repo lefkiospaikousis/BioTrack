@@ -12,7 +12,9 @@ app_server <- function(input, output, session) {
     
     sample_info = NULL,
     processed_sample_info = NULL,
-    db_trigger = NULL
+    db_trigger = NULL,
+    
+    focus = 0 # I use it as a trigger to focus the input$lab_no in tab View/Edit Specimen
     
     
   )
@@ -22,7 +24,14 @@ app_server <- function(input, output, session) {
   
   session$userData$db_trigger <- reactiveVal(0)
   
-  mod_view_edit_specimen_server("view_edit_specimen_1")  
+  observeEvent(input$left_tabs, {
+    if(input$left_tabs == "view") {
+      rv$focus = rv$focus + 1
+    }
+  })
+  
+  mod_view_edit_specimen_server("view_edit_specimen_1", reactive(rv$focus)) 
+  mod_tables_server("tables_1")
   # Switching between tabs ----
   
   # Step 1 - Add Sample Information

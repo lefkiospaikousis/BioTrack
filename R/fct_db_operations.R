@@ -54,26 +54,6 @@ recipient_info <- function(conn, department, what = c("name", "email")){
 }
 
 
-get_max_serial <- function(conn, table){
-  
-  if(dbase_forms %>% tbl(table) %>% count() %>% pull(n) == 0){
-    return(0)
-  }
-  
-  serial <- conn %>% 
-    tbl(table) %>% 
-    filter(serial == max(serial, na.rm = TRUE)) %>% 
-    pull(serial) 
-  
-  if(length(serial) > 1) {
-    stop("More than 1 max serial in the table ", table)
-  }
-  
-  serial
-  
-}
-
-
 get_from_table <- function(conn, table, what, id){
   
   conn %>% 
