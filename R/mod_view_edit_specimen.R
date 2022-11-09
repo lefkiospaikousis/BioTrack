@@ -95,7 +95,7 @@ mod_view_edit_specimen_server <- function(id, focus){
             p("Lab no: ", strong(specimen$lab_no)),
             p("Quality of Sample: ", strong(specimen$quality)),
             p("Specimen Type: ", strong(specimen$specimen_type)),
-            p(span("Freezer: ", strong(specimen$freezer) , " - Position: ", strong(specimen$place))),
+            p(span("Freezer: ", strong(specimen$freezer) , " - Storage Place: ", strong(specimen$place))),
             p("Date processing: ", strong(to_date_time(specimen$date_processing) %>% format("%d/%m/%Y %H:%M"))),
             p("Duration from Receipt to Processing: ", strong(specimen$duration)),
             p("Number of tubes: ", strong(specimen$n_tubes), 

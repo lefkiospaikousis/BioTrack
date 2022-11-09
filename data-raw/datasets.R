@@ -54,7 +54,7 @@ col_labels <- c(
   rack              = 'Rack',
   drawer            = "Drawer",
   box               = "Box",
-  place             = 'Place',
+  place             = 'Storage place',
   n_tubes           = "Number of tubes"
   
 )

@@ -96,7 +96,7 @@ mod_storage_information_server <- function(id, sample_info){
         select("Lab no" = lab_no,
                "Specimen type" = specimen_type,
                "Freezer" = freezer,
-               "Position" = place,
+               "Storage place" = place,
                'Number of tubes'= n_tubes
         )
       

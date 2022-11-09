@@ -18,7 +18,7 @@ mod_add_specimen_ui <- function(id, specimen_types){
   tagList(
  
     div(style = "font-size:13px",
-        hr(style = "width: 80%"),
+        #hr(style = "width: 80%"),
         tags$table(
           
           tags$tr(width = "100%",
@@ -95,7 +95,7 @@ mod_add_specimen_server <- function(id){
     iv$add_rule("type", sv_required())
     iv$add_rule("freezer", sv_required())
     iv$add_rule("drawer", sv_required())
-    #iv$add_rule("box", sv_required())
+    iv$add_rule("box", sv_required())
     iv$add_rule("n_tubes", sv_gt(0))
     
     # iv$add_rule("time_incident", function(time){
