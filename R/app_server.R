@@ -54,7 +54,8 @@ app_server <- function(input, output, session) {
   # END. Go back to Step 1
   observeEvent(added_specimens(),{
     
-    show_waiter("Initialising. Please wait...", sleep = 3)
+    waiter::waiter_update(html = html_waiter("Initialising. Please wait..."))
+    Sys.sleep(1)
     # I have split the process in 3 pages
     # when I move from page to page,the form details of each page stays there
     # Need to reload to be cleared
@@ -193,6 +194,7 @@ app_server <- function(input, output, session) {
     merged %>% 
       mutate(
         date_receipt = to_date_time(date_receipt),
+        date_processing = to_date_time(date_processing),
         date_collection = to_date(date_collection),
         dob = to_date(dob),
         date_shipment = to_date(date_shipment)

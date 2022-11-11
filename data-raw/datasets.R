@@ -7,7 +7,7 @@ col_labels <- c(
   time_stamp        = "TimeStamp", # Time stamp of submission date
   unique_id         = "UNIQUE ID",
   firstname         = "Patient First Name",
-  surname           = 'Patinet Last Name',
+  surname           = 'Patient Last Name',
   gender            = "Gender",
   bococ             = "BOCOC ID",
   dob               = 'Date of birth',
@@ -45,8 +45,8 @@ col_labels <- c(
   
   year              = 'Year',
   serial            = "serial",
-  date_processing   = "Date of processing",
-  duration          = "TIme from Sample Collection to Processing",
+  date_processing   = "Date & Time of processing",
+  duration          = "TIme from sample Collection to Processing",
   quality           = 'Sample Quality',
   specimen_type     = "Specimen type",
   lab_no            = "Lab No",

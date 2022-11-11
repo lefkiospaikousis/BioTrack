@@ -20,34 +20,11 @@ mod_storage_information_ui <- function(id){
     p("Storage Information for: ", htmlOutput(ns("patient_info"), inline = TRUE)),
     p("Unique ID: ", htmlOutput(ns("unique_id"), inline = TRUE)),
     hr(),
-    div(style = "font-size:13px",
-        #hr(style = "width: 80%"),
-        tags$table(
-          
-          # tags$tr(width = "100%",
-          #         tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date & Time<br>of processing"))),
-          #         
-          #         tags$td(width = "60%",
-          #                 
-          #                 splitLayout(cellWidths = c("50%", "50%"),
-          #                             div(dateInput(ns("date_processing"), NULL, "", width = input_width)),
-          #                             div(style = "margin-top: 1px" , shinyTime::timeInput(ns("time_processing"), NULL, seconds = FALSE)),
-          #                 ))),
-          
-          tags$tr(width = "100%",
-                  tags$td(width = "40%", div(class = "input-label", "Sample Quality:")),
-                  tags$td(width = "10%", div(class = "input-label", "")),
-                  tags$td(width = "60%", selectInput(ns("quality"), NULL, c("", "Good", "Heamolysed", "Thawed"), width = "100%")))
-          
-          
-        )
-    ),
-    hr(),
+    tableOutput(ns("tbl_specimens")),
     fluidRow(
       col_4(actionButton(ns("add_specimen"), "Add a specimen", icon = icon("plus"), class = "btn-add"))
     ),
     br(),
-    tableOutput(ns("tbl_specimens")),
     hr(),
     actionButton(ns("done"), "Done adding specimens", class = "btn-submit", width = "100%",
                  icon("glyphicon glyphicon-ok", lib = "glyphicon")),
@@ -60,7 +37,7 @@ mod_storage_information_ui <- function(id){
 
 #' storage_information Server Functions
 #'
-#' @noRd 
+#' @noRd
 mod_storage_information_server <- function(id, sample_info){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
@@ -72,16 +49,17 @@ mod_storage_information_server <- function(id, sample_info){
     
     # Validation ----
     
-    iv <- shinyvalidate::InputValidator$new()
-    iv$add_rule("quality", sv_required())
+    #iv <- shinyvalidate::InputValidator$new()
+    # iv$add_rule("quality", sv_required())
     
     
     specimen_types <- c("Peripheral blood" = "PB", 
                         "Plasma" = "PL", 
-                        "Serum" = "SR", 
+                        "Serum" = "SE", 
                         "Urine" = "UR", 
                         "Stools" = "ST", 
-                        "Bronchial aspirations" = "BA"
+                        "Bronchial aspirations" = "BA",
+                        "Buffy coat" = "BC"
     )
     
     type_names <- setNames(names(specimen_types), specimen_types)
@@ -91,13 +69,17 @@ mod_storage_information_server <- function(id, sample_info){
       if(is.null(rv$specimens)) validate("No specimens added yet")
       
       rv$specimens %>% 
-        select(-serial) %>% 
-        tibble::rowid_to_column("Serial") %>% 
-        select("Lab no" = lab_no,
-               "Specimen type" = specimen_type,
-               "Freezer" = freezer,
-               "Storage place" = place,
-               'Number of tubes'= n_tubes
+        #select(-serial) %>% 
+        #tibble::rowid_to_column("Serial") %>% 
+        mutate(date_processing = date_processing %>% format("%d/%m/%Y")) %>% 
+        select("Lab no"                              = lab_no,
+               #"Specimen type"                       = specimen_type,
+               "Sample quality"                      = quality,
+               'Date & time of processing'           = date_processing, 
+               #'Time from collection to processing'  = duration,
+               "Freezer"                             = freezer,
+               "Storage place"                       = place,
+               'Number of tubes'                     = n_tubes
         )
       
     }, align = "c")
@@ -177,6 +159,9 @@ mod_storage_information_server <- function(id, sample_info){
           
           specimen_type     = type_names[[specimen$type]],
           serial            = serial,
+          quality           = specimen$quality,
+          date_processing   = specimen$date_processing, # Time stamp of submission date
+          duration          = lapsed_time( sample_info()$date_collection, specimen$date_processing ),
           rack              = specimen$rack,
           drawer            = specimen$drawer,
           box               = specimen$box,
@@ -189,12 +174,8 @@ mod_storage_information_server <- function(id, sample_info){
         # ADD Info from the sample_info before saving to DB
         new_specimen <- new_specimen %>% 
           tibble::add_column(
-            
             year              = year_now,
-            unique_id         = sample_info()$unique_id,
-            quality           = input$quality,
-            duration          = lapsed_time( sample_info()$date_receipt, Sys.time() ),
-            date_processing   = epochTime() # Time stamp of submission date
+            unique_id         = sample_info()$unique_id
           )
         
         
@@ -207,7 +188,8 @@ mod_storage_information_server <- function(id, sample_info){
         
         cat("Saved ", res_save, " specimen\n")
         
-        showNotification("Saved specimen to Database!")
+        #showNotification("Saved specimen to Database!")
+        show_toast("success", "", glue::glue("Specimen {new_specimen$lab_no} successfully saved!"))
         
         rv$db_trigger <- rv$db_trigger + 1
         
@@ -233,70 +215,47 @@ mod_storage_information_server <- function(id, sample_info){
     observeEvent(input$done, {
       
       if( is.null(rv$specimens) ) {
-        show_toast("error", "Error", "You haven't added any specimens yet")
+        show_toast("error", "", "You haven't added any specimens yet")
         return()
       }
       
-      if (!iv$is_valid()) {
-        
-        iv$enable() # Start showing validation feedback
-        
-        showNotification(
-          "Please correct the errors in the form and try again",
-          id = "submit_message", type = "error")
-      }
       
+      show_waiter("Saving the infomation.. Please wait", sleep = 1)
       
-      if (iv$is_valid()) {
+      # Update the DB: sample_info with number of specimens
+      tryCatch({
         
-        iv$disable()
+        id <- sample_info()$unique_id
+        n_specimens <- nrow(rv$specimens)
         
-        removeNotification("submit_message")
+        x <- glue::glue_sql("UPDATE sample_info SET specimens = {n_specimens} WHERE unique_id = {id}", .con = dbase_specimen)
         
-        show_waiter("Saving the infomation.. Please wait", sleep = 1)
+        rs <- DBI::dbExecute(dbase_specimen, x)
         
-        # Update the DB: sample_info with number of specimens
-        tryCatch({
-         
-          id <- sample_info()$unique_id
-          n_specimens <- nrow(rv$specimens)
-          
-          x <- glue::glue_sql("UPDATE sample_info SET specimens = {n_specimens} WHERE unique_id = {id}", .con = dbase_specimen)
-          
-          rs <- DBI::dbExecute(dbase_specimen, x)
-          
-          cat("Updated Number of specimens for ", rs, " sample_informaton for id = ", id, "\n")
-          
-          if(!golem::app_prod()) showNotification("Updated sample information with number of specimens")
-          
-           hide_waiter()
-           Sys.sleep(0.5)
-           show_toast("success", "Done saving!", "Specimens successfully saved!")
-           Sys.sleep(2)
-          
-          submitted(submitted()+1)
-          
-        }, error = function(e){
-          
-          print(e)
-          cat("Error when Updating the sample_info with number of samples on Database\n")
-          
-          # TODO Save submission locally in a dataframe?
-          # Inform me?
-          
-          hide_waiter()
-          
-          show_toast("error", "Error!", 
-                     "Could not save the number of specimens for the particular 'Sample Information form.'
+        cat("Updated Number of specimens for ", rs, " sample_informaton for id = ", id, "\n")
+        
+        if(!golem::app_prod()) showNotification("Updated sample information with number of specimens")
+        
+        submitted(submitted()+1)
+        
+      }, error = function(e){
+        
+        print(e)
+        cat("Error when Updating the sample_info with number of samples on Database\n")
+        
+        # TODO Save submission locally in a dataframe?
+        # Inform me?
+        
+        hide_waiter()
+        
+        show_toast("error", "Error!", 
+                   "Could not save the number of specimens for the particular 'Sample Information form.'
                      However, the specimen information you have just entered are succesfully stored.
                      Take a note of the Lab no (s) and contact support!",
-                     keepVisible = TRUE
-                     )
-          
-        })
+                   keepVisible = TRUE
+        )
         
-        
-      } 
+      })
       
       
     }, ignoreInit = TRUE)

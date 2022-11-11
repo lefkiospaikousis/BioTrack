@@ -26,7 +26,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
     
     freezer <- "-80"
     title <- glue::glue("{freezer}°C Freezer A Specimen Log")
-    log_version <- "Version 1.0 July 2021"
+    log_version <- "Version 3.0 April 2022"
     
     page_props <- officer::prop_section(page_size = officer::page_size(orient = "landscape"))
     
@@ -61,10 +61,10 @@ mod_freezer_log_server <- function(id, tbl_merged){
     })
     
     spec_log <- reactive({
-      
+      browser()
       table <- 
         tbl_merged() %>% 
-        select(lab_no, freezer, rack, box,
+        select(lab_no, freezer, box, rack, drawer,
                all_of(c("unique_id", "firstname", "surname", "date_collection"))) %>% 
         mutate(
           initials =  paste0(substr(firstname, 1, 1), substr(surname, 1, 1)),
@@ -72,19 +72,23 @@ mod_freezer_log_server <- function(id, tbl_merged){
         ) %>% 
         tidyr::unite(content, c(lab_no, initials, date_collection), remove = TRUE,sep = "-") %>% 
         filter(freezer == !!freezer) %>% 
-        select(rack, box, content) %>% 
+        select(rack, drawer, box, content) %>% 
         filter(!is.na(box)) %>% 
-        tidyr::complete(rack = LETTERS[1:4], box = as.character(c(1:3))) %>% 
-        rename (Rack = rack) %>% 
+        tidyr::complete(rack = LETTERS[1:4], box = as.character(c(1:3)), drawer = as.character(c(1:5))) 
+      
+      rack_tbl <- table %>% 
+        filter(rack == "A") %>% 
+        select(-rack) %>% 
+        rename (Box = box) %>% 
         tidyr::pivot_wider( 
-          names_from = box, 
+          names_from = drawer, 
           values_from = content, 
           values_fn = ~glue::glue_collapse(., sep = "\n")
         ) 
       
-      table %>% 
+      rack_tbl %>% 
         flextable::flextable() %>% 
-        flextable::add_header_row(values = c("", "Box"), colwidths = c(1, 3)) %>% 
+        flextable::add_header_row(values = c("", "Drawers"), colwidths = c(1, 5)) %>% 
         flextable::theme_box() %>%
         flextable::set_caption(paste0(title, "\n")) %>% 
         flextable::set_table_properties("fixed") %>% 

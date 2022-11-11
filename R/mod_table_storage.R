@@ -29,8 +29,9 @@ mod_table_storage_server <- function(id, merged){
       
       merged() %>% 
         select(
-          lab_no, bococ, date_receipt, date_collection, 
-          surname, firstname, civil_id, specimen_type, 
+          lab_no, bococ, date_receipt, date_collection, date_processing,
+          surname, firstname, civil_id, specimen_type,
+          quality, duration,  
           freezer, place, n_tubes
         )
       
@@ -57,11 +58,14 @@ mod_table_storage_server <- function(id, merged){
             lab_no = colDef(name = col_labels[["lab_no"]]),
             bococ = colDef(name = col_labels[["bococ"]]),
             date_receipt = colDef( name = col_labels[["date_receipt"]], format = colFormat(datetime = TRUE, locales = "en-GB") ),
-            date_collection = colDef( name = col_labels[["date_collection"]], format = colFormat(date = TRUE, locales = "el-GR") ),
+            date_collection = colDef( name = col_labels[["date_collection"]], format = colFormat(date = TRUE, locales = "en-GB") ),
+            date_processing = colDef( name = col_labels[["date_processing"]], format = colFormat(datetime = TRUE, locales = "en-GB") ),
             surname = colDef(name = col_labels[["surname"]]),
             firstname = colDef(name = col_labels[["firstname"]]),
             civil_id = colDef(name = col_labels[["civil_id"]]),
             specimen_type = colDef(name = col_labels[["specimen_type"]]),
+            quality = colDef(name = col_labels[["quality"]]),
+            duration = colDef(name = col_labels[["duration"]]),
             freezer = colDef(name = col_labels[["freezer"]]),
             place = colDef(name = col_labels[["place"]]),
             n_tubes = colDef(name = col_labels[["n_tubes"]])

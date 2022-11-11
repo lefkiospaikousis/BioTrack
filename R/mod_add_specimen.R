@@ -12,8 +12,6 @@ mod_add_specimen_ui <- function(id, specimen_types){
   
   input_width <- "80%"
   
-  #specimen_type <- c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations")
-  
   
   tagList(
  
@@ -26,16 +24,30 @@ mod_add_specimen_ui <- function(id, specimen_types){
                   tags$td(width = "60%", selectInput(ns("type"), NULL, 
                                                      c("", specimen_types), 
                                                      width = input_width))),
+          tags$tr(width = "100%",
+                  tags$td(width = "40%", div(class = "input-label", "Sample Quality:")),
+                  #tags$td(width = "10%", div(class = "input-label", "")),
+                  tags$td(width = "60%", selectInput(ns("quality"), NULL, c("", "Good", "Heamolysed", "Thawed"), width = input_width))),
           
+          tags$tr(width = "100%",
+                  tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date & Time<br>of processing"))),
+
+                  tags$td(width = "60%",
+
+                          splitLayout(cellWidths = c("50%", "50%"),
+                                      div(dateInput(ns("date_processing"), NULL, "", width = input_width)),
+                                      div(style = "margin-top: 1px" , shinyTime::timeInput(ns("time_processing"), NULL, seconds = FALSE)),
+                          ))),
+          
+          
+          
+          tags$tr(width = "100%",
+                  tags$td(width = "30%", h4("Storage place"))),
           
           tags$tr(width = "100%",
                   tags$td(width = "30%", div(class = "input-label",style = "", "Freezer:")),
                   tags$td(width = "70%", prettyRadioButtons(ns("freezer"), NULL, c("-80", "-20", "+4"), 
                                                             inline = TRUE,  fill = TRUE, selected = character(0), width = "100%"))),
-          
-          tags$tr(width = "100%",
-                  tags$td(width = "30%", h4("Storage place"))),
-          
           
           tags$tr(width = "100%",
                   tags$td(width = "30%", div(class = "input-label", "Rack:")),
@@ -81,6 +93,9 @@ mod_add_specimen_server <- function(id){
     
     all_fields <- c(
       "type",
+      "quality",
+      "date_processing",
+      "time_processing",
       "freezer",
       "rack",
       "drawer",
@@ -97,6 +112,9 @@ mod_add_specimen_server <- function(id){
     iv$add_rule("drawer", sv_required())
     iv$add_rule("box", sv_required())
     iv$add_rule("n_tubes", sv_gt(0))
+    iv$add_rule("quality", sv_required())
+    
+    # Date_time processing is not required
     
     # iv$add_rule("time_incident", function(time){
     #   if(identical(strftime(time, "%R"), "00:00")){
@@ -117,7 +135,7 @@ mod_add_specimen_server <- function(id){
     form_data <- reactive({
       
       # Temporary collection of the data 
-      
+     
       # To keep the output ids as column names - short&sweet and then
       # then possible rename using the same vector, when presenting
       all_fields <- unname(all_fields) %>% setNames(all_fields)
@@ -134,9 +152,28 @@ mod_add_specimen_server <- function(id){
         
       })
       
+      # # because the returned value is a date-time
+      list_dta$time_processing <- strftime(list_dta$time_processing, "%R")
+      list_dta$date_processing  <- ymd(list_dta$date_processing, tz = "EET") + hm(list_dta$time_processing)
+      list_dta$time_processing <- NULL
+      
+      # If Date(0) object or zero length dateTime object, then needs to be NA_Date_
+      # otherwise cannot be save in the DB. lubridate::is.timepoint works for both Date and Posixct objects
+      # So if time_processing is not there, this will make sure all is good for saving in the DB
+      list_dta <- list_dta %>% 
+        purrr::map_if(lubridate::is.timepoint, function(x){
+          
+          if(length(x) == 0) {
+            lubridate::NA_Date_
+          } else {
+            x
+          }
+        }) 
+      
       list_dta
       
-    })
+    }) %>% 
+      bindEvent(input$submit)
     
     
     observeEvent(input$cancel, {

@@ -62,7 +62,6 @@ mod_table_registry_server <- function(id, merged){
             civil_id = colDef(name = col_labels[["civil_id"]]),
             tube = colDef(name = col_labels[["tube"]]),
             specimen_type = colDef(name = col_labels[["specimen_type"]]),
-            
             doctor = colDef(name = col_labels[["doctor"]]),
             diagnosis = colDef(name = col_labels[["diagnosis"]]),
             study = colDef(name = col_labels[["study"]]),
