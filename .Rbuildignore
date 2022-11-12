@@ -10,3 +10,5 @@ submission.rds
 submission_empty_dates.rds
 ^Docs$
 ^ICF$
+^app\.R$
+^rsconnect$

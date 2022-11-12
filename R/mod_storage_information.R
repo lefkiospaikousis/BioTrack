@@ -47,11 +47,6 @@ mod_storage_information_server <- function(id, sample_info){
       specimens = NULL
     )
     
-    # Validation ----
-    
-    #iv <- shinyvalidate::InputValidator$new()
-    # iv$add_rule("quality", sv_required())
-    
     
     specimen_types <- c("Peripheral blood" = "PB", 
                         "Plasma" = "PL", 
@@ -69,8 +64,6 @@ mod_storage_information_server <- function(id, sample_info){
       if(is.null(rv$specimens)) validate("No specimens added yet")
       
       rv$specimens %>% 
-        #select(-serial) %>% 
-        #tibble::rowid_to_column("Serial") %>% 
         mutate(date_processing = date_processing %>% format("%d/%m/%Y")) %>% 
         select("Lab no"                              = lab_no,
                #"Specimen type"                       = specimen_type,
@@ -88,7 +81,7 @@ mod_storage_information_server <- function(id, sample_info){
       
       req(sample_info())
       
-      name <- glue::glue("{sample_info()$firstname} (BOCOC: {sample_info()$bococ} )")
+      name <- glue::glue("BOCOC: {sample_info()$bococ}")
       
       as.character(span(name, style = 'font-weight: bold'))
       
@@ -157,6 +150,7 @@ mod_storage_information_server <- function(id, sample_info){
         
         new_specimen <- tibble(
           
+          time_stamp2       = epochTime(),
           specimen_type     = type_names[[specimen$type]],
           serial            = serial,
           quality           = specimen$quality,

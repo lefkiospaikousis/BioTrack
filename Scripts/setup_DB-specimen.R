@@ -2,14 +2,6 @@
 
 devtools::load_all()
 
-# path <-  file.path(getwd(), "data-raw", "incident-report_CODINGS.xlsx")
-# 
-# departments <- readxl::read_xlsx(path, sheet = "tables", range = "B24:E39")
-# 
-# inform <- readxl::read_xlsx(path, sheet = "tables", range = "G4:O19")
-
-# DBase
-
 library(dplyr)
 library(dbplyr)
 library(DBI)
@@ -17,7 +9,7 @@ library(DBI)
 # Forms DB ----
 
 
-path_db <- "DB/dev/specimen"
+path_db <- "DB/prod/specimen"
 
 dbase_specimen <- DBI::dbConnect(RSQLite::SQLite(), path_db)
 
@@ -28,7 +20,6 @@ dbListTables(dbase_specimen)
 dta_sample_info = dplyr::tibble(
   
   time_stamp        = 123L, # Time stamp of submission date
-  #serial           = 100L,
   unique_id         = uuid::UUIDgenerate(),
   firstname         = character(1),
   surname           = character(1),
@@ -57,13 +48,10 @@ dta_sample_info = dplyr::tibble(
   at_bococ          = character(1),
   date_collection   = 123L,
   date_shipment     = 123L,
-  #date_processing   = 123L,
   date_receipt      = 123L,
-  #duration          = character(1),
   civil_id          = character(1),
   study_id          = character(1),
   study             = character(1),
-  #quality           = character(1),
   comments          = character(1),
   
   specimens         = 1L, # how many specimens added?
@@ -74,7 +62,7 @@ dta_sample_info = dplyr::tibble(
 
 dta_specimen_type = dplyr::tibble(
   
-  #time_stamp        = 123L, # Time stamp of submission date
+  time_stamp2       = 123L, # Time stamp of submission date
   year              = 2022L,
   serial            = 100L,
   unique_id         = uuid::UUIDgenerate(),
@@ -113,14 +101,14 @@ load_database()
 
 dbase_specimen %>% DBI::dbListTables()
 
-sql_1 <- paste0("ALTER TABLE generic ADD id CHAR")
+sql_1 <- paste0("ALTER TABLE specimen_info ADD time_stamp2 INT")
 
 rs <- DBI::dbExecute(dbase_specimen, sql_1)
 
 dbase_specimen %>% DBI::dbListTables()
 
 dbase_specimen %>%
-  tbl("bioexposure") %>%
+  tbl("specimen_info") %>%
   glimpse()
 
 close_database()

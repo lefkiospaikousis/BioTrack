@@ -4,7 +4,7 @@
 
 
 col_labels <- c(
-  time_stamp        = "TimeStamp", # Time stamp of submission date
+  time_stamp        = "TimeStamp of the sample info submission", # Time stamp of submission date
   unique_id         = "UNIQUE ID",
   firstname         = "Patient First Name",
   surname           = 'Patient Last Name',
@@ -43,6 +43,7 @@ col_labels <- c(
   
   path_icf          = "path_icf",
   
+  time_stamp2       = "TimeStamp of the sample type submission", # Time stamp of submission date
   year              = 'Year',
   serial            = "serial",
   date_processing   = "Date & Time of processing",
