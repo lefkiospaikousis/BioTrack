@@ -20,13 +20,12 @@ mod_add_specimen_ui <- function(id, specimen_types){
         tags$table(
           
           tags$tr(width = "100%",
-                  tags$td(width = "40%", div(class = "input-label",style = "", "Specimen Type:")),
-                  tags$td(width = "60%", selectInput(ns("type"), NULL, 
+                  tags$td(width = "30%", div(class = "input-label",style = "", "Specimen Type:")),
+                  tags$td(width = "70%", selectInput(ns("type"), NULL, 
                                                      c("", specimen_types), 
                                                      width = input_width))),
           tags$tr(width = "100%",
                   tags$td(width = "40%", div(class = "input-label", "Sample Quality:")),
-                  #tags$td(width = "10%", div(class = "input-label", "")),
                   tags$td(width = "60%", selectInput(ns("quality"), NULL, c("", "Good", "Heamolysed", "Thawed"), width = input_width))),
           
           tags$tr(width = "100%",
@@ -35,7 +34,7 @@ mod_add_specimen_ui <- function(id, specimen_types){
                   tags$td(width = "60%",
 
                           splitLayout(cellWidths = c("50%", "50%"),
-                                      div(dateInput(ns("date_processing"), NULL, "", width = input_width)),
+                                      div(dateInput(ns("date_processing"), NULL, "", format = "dd/mm/yyyy", width = input_width)),
                                       div(style = "margin-top: 1px" , shinyTime::timeInput(ns("time_processing"), NULL, seconds = FALSE)),
                           ))),
           
