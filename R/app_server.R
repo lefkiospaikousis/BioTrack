@@ -130,8 +130,10 @@ app_server <- function(input, output, session) {
       Sys.sleep(1)      
       added_sample_info(TRUE)
       
-      #rv$db_trigger <- rv$db_trigger + 1
       session$userData$db_trigger(session$userData$db_trigger() + 1)
+      
+      # Add to log
+      try({add_to_logFile("Added Sample Information Form", "Lefkios", info = sample_info)}, silent = TRUE)
       
     }, error = function(e){
       
@@ -191,6 +193,7 @@ app_server <- function(input, output, session) {
     merged <- left_join(tbl_registry(), tbl_specimen(), by = "unique_id") 
     
     merged %>% 
+      filter(unique_id != "testid") %>% 
       mutate(
         date_receipt = to_date_time(date_receipt),
         date_processing = to_date_time(date_processing),

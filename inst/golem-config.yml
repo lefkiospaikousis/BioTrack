@@ -14,6 +14,7 @@ dev:
   path_db_specimen: !expr file.path('DB', 'dev', 'specimen')
   path_db_creds: !expr here::here("DB", "dev", "credentials.sqlite")
 bococ:
+  app_prod: yes
   golem_wd: !expr here::here()
   path_db_specimen: !expr file.path('DB', 'prod', 'specimen')
   path_db_creds: !expr here::here("DB", "prod", "credentials.sqlite")

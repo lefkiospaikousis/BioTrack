@@ -189,6 +189,9 @@ mod_storage_information_server <- function(id, sample_info){
         
         session$userData$db_trigger(session$userData$db_trigger() + 1)
         
+        # Add to log
+        try({add_to_logFile("Added Specimen Type", "Lefkios", info = new_specimen)}, silent = TRUE)
+        
         removeModal()
         
       }, error = function(e){

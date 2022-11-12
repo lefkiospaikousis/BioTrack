@@ -9,7 +9,7 @@ library(DBI)
 # Forms DB ----
 
 
-path_db <- "DB/prod/specimen"
+path_db <- "DB/dev/specimen"
 
 dbase_specimen <- DBI::dbConnect(RSQLite::SQLite(), path_db)
 
@@ -20,7 +20,7 @@ dbListTables(dbase_specimen)
 dta_sample_info = dplyr::tibble(
   
   time_stamp        = 123L, # Time stamp of submission date
-  unique_id         = uuid::UUIDgenerate(),
+  unique_id         = 'testid',
   firstname         = character(1),
   surname           = character(1),
   gender            = character(1),
@@ -65,7 +65,7 @@ dta_specimen_type = dplyr::tibble(
   time_stamp2       = 123L, # Time stamp of submission date
   year              = 2022L,
   serial            = 100L,
-  unique_id         = uuid::UUIDgenerate(),
+  unique_id         = 'testid',
   date_processing   = 123L,
   duration          = character(1),
   quality           = character(1),
@@ -80,11 +80,29 @@ dta_specimen_type = dplyr::tibble(
   
 )
 
+
+log_file <- dplyr::tibble(
+  
+  time_stamp3       = as.character(lubridate::as_datetime(Sys.time(), "EET")), # Time stamp of submission date in character format
+  # # when recording the timestap
+  # time_stamp3 <- as.character(lubridate::as_datetime(Sys.time(), "EET"))
+  # # to bring back in Posixct
+  # lubridate::parse_date_time(time_stamp3, orders = "ymdHMS", tz = "EET")
+  
+  user              = "Lefkios",
+  action            = 'Added Sample Information Form',
+  bococ             = character(1),
+  lab_no            = character(1),
+  comments          = character(1)
+  
+)
+
+
 ## Save to DB ----
 
 dbWriteTable(dbase_specimen, "sample_info", dta_sample_info, overwrite = TRUE)
 dbWriteTable(dbase_specimen, "specimen_info", dta_specimen_type, overwrite = TRUE)
-
+dbWriteTable(dbase_specimen, "log_file", log_file, overwrite = TRUE)
 
 dbase_specimen %>% 
   tbl("specimen_info") %>% 

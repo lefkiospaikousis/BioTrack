@@ -15,64 +15,50 @@ get_fromDB <- function(conn, table, what){
   
 }
 
-#get_fromDB(conn, "departments", "dep_name")
 
-
-inform_who <- function(conn, incident_code){
+#' Add DB modifications to a log entry
+#'
+#' @param what Action taken
+#' @param who Who did it. The user
+#' @param info A list of the information to print on the log file
+#'
+#' @return Saves on the DB
+#' @export
+add_to_logFile <- function(what, who, info){
   
-  dta <- conn %>% 
-    tbl("inform") %>% 
-    collect()
+  time <- as.character(lubridate::as_datetime(Sys.time(), "EET"))
   
-  stopifnot(incident_code %in% dta$incident_code)
-  
-  dta %>% 
-    tidyr::pivot_longer(-incident_code) %>% 
-    filter(incident_code == !!incident_code) %>% 
-    filter(value == 1) %>% 
-    pull(name)
-  
-}
-
-recipient_info <- function(conn, department, what = c("name", "email")){
-  
-  dta <- conn %>% 
-    tbl("departments") %>% 
-    collect()
-  
-  stopifnot(department %in% dta$dep_name)
-  
-  dta <- filter(dta, dep_name == department)
-  
-  name = dta[["dep_head"]]
-  email <- setNames(dta[["dep_head_email"]], name)
-  list(
-    name = name,
-    email = email
+  entry <- switch (what,
+                   "Added Sample Information Form" = list(time_stamp3 = time, 
+                                                          user = who, 
+                                                          action = what, 
+                                                          bococ = info$bococ,
+                                                          comments = glue::glue("{what}: BOCOC-{info$bococ}")
+                                                          ),
+                   
+                   "Added Specimen Type" = list(time_stamp3 = time, 
+                                                user = who, 
+                                                action = what, 
+                                                bococ = info$bococ %||% NA_character_, 
+                                                lab_no = info$lab_no,
+                                                comments = glue::glue("{what}: {info$lab_no}")
+                                                ),
+                   
+                   "Modified specimen info" = list(time_stamp3 = time, 
+                                                   user = who, 
+                                                   action = what, 
+                                                   bococ = info$bococ %||% NA_character_, 
+                                                   lab_no = info$lab_no, 
+                                                   comments = glue::glue("Updated specimen `{info$lab_no}`: Changed {info$col} to {info$new_value} from {info$old_value}")),
+                   
+                   stop("Unknown action in add_to_logFile")
   )
   
-}
-
-
-get_from_table <- function(conn, table, what, id){
+  res_save <- DBI::dbAppendTable(dbase_specimen, "log_file", as.data.frame(list(entry)))
   
-  conn %>% 
-    tbl(table) %>% 
-    filter(unique_id == !!id) %>% 
-    pull(what)
+  cat("Registered ", res_save, " event: '", what, "' in the LOG\n")
   
 }
-
-
-
-get_full_table <- function(conn, table){
-  
-  conn %>% tbl(table) %>% 
-    collect() %>% 
-    process_incidents() %>% 
-    select(unique_id, any_of(column_labels))
-}
-
 
 
 load_database <- function(){

@@ -160,6 +160,16 @@ mod_view_edit_specimen_server <- function(id, focus){
       session$userData$db_trigger(session$userData$db_trigger() + 1)
       show_toast("success", "", "Successful change")
       
+      # Add to log
+      try({add_to_logFile("Modified specimen info", "Lefkios", 
+                          info = list(lab_no = rv$specimen_selected$lab_no,
+                                      bococ = rv$specimen_selected$bococ,
+                                      col = col,
+                                      old_value = rv$specimen_selected[[col]],
+                                      new_value = new_value
+                                      
+                                      ))}, silent = TRUE)
+      
       
     }, ignoreInit = TRUE)
     
