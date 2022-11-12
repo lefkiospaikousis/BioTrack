@@ -76,15 +76,8 @@ mod_freezer_log_server <- function(id, tbl_merged){
       
       rack_tbl <- tbl_merged() %>% 
         select(lab_no, freezer, box, rack, drawer, unique_id) %>% 
-        # all_of(c("unique_id", "firstname", "surname", "date_collection"))) %>% 
-        # mutate(
-        #   initials =  paste0(substr(firstname, 1, 1), substr(surname, 1, 1)),
-        #   date_collection = format(date_collection, "%d/%m/%Y")
-        # ) %>% 
-        #tidyr::unite(content, c(lab_no, initials, date_collection), remove = TRUE,sep = "-") %>% 
         filter(freezer == !!input$freezer, rack == !!input$rack) %>% 
         select(drawer, box, lab_no) %>% 
-        #filter(!is.na(box)) %>% 
         tidyr::complete(box = as.character(c(1:3)), drawer = as.character(c(1:5))) %>%  #rack = LETTERS[1:4], 
         rename (Box = box) %>% 
         tidyr::pivot_wider( 
