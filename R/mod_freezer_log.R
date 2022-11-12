@@ -73,7 +73,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
       
       title <- glue::glue("{input$freezer}°C Freezer - Rack {input$rack} - Specimen Log")
       
-      #browser()
+      
       rack_tbl <- tbl_merged() %>% 
         select(lab_no, freezer, box, rack, drawer, unique_id) %>% 
         # all_of(c("unique_id", "firstname", "surname", "date_collection"))) %>% 

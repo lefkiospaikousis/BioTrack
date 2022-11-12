@@ -7,10 +7,10 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_downloadTable_ui <- function(id){
+mod_downloadTable_ui <- function(id, label = "Download as .xlsx"){
   ns <- NS(id)
   tagList(
-    downloadLink(ns("downloadTable"), label = "Download as .xlsx", class = "downExcel"),
+    downloadLink(ns("downloadTable"), label = label, class = "downExcel"),
     tags$head(tags$style(".downExcel{background-color:transparent;} .downExcel{color: #337ab7;}  .downExcel{border:0px;}
    .downExcel{outline:0px;} .downExcel{font-size:10px;"))
   )

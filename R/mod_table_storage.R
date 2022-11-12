@@ -10,7 +10,8 @@
 mod_table_storage_ui <- function(id){
   ns <- NS(id)
   tagList(
-    mod_downloadTable_ui(ns("down_storage")),
+    mod_downloadTable_ui(ns("down_storage"), "Download Storage LOG as .xlsx"),
+    div(div(mod_download_icf_ui(ns("download_icf2")))),
     reactableOutput(ns("tbl_storage"))
   )
 }
@@ -24,6 +25,28 @@ mod_table_storage_server <- function(id, merged){
  
     
     mod_downloadTable_server("down_storage", "SPECIMEN STORAGE LOG", tbl_storage_down)
+    
+    mod_download_icf_server("download_icf2", lab_no_to_download)
+    
+    selected <- reactive({
+      
+      reactable::getReactableState("tbl_storage", "selected")
+      
+    })
+    
+    lab_no_to_download <- eventReactive(selected(), {
+      
+      req(selected())
+      
+      lab_nos <- tbl_storage()[selected(), ]$lab_no
+      
+      merged() %>% 
+        filter(lab_no %in% lab_nos) %>% 
+        distinct(lab_no, path_icf)
+      
+      
+    })
+    
     
     tbl_storage <- reactive({
       
@@ -52,7 +75,7 @@ mod_table_storage_server <- function(id, merged){
       
       tbl_storage() %>% 
         reactable(
-          searchable = TRUE, highlight = TRUE,
+          searchable = TRUE, highlight = TRUE, selection = "multiple", onClick = "select",
           pageSizeOptions = c(10, 25, 50, 100),
           columns = list(
             lab_no = colDef(name = col_labels[["lab_no"]]),

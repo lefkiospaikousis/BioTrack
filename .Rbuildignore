@@ -8,3 +8,5 @@ $run_dev.*
 ^failed_submission
 submission.rds
 submission_empty_dates.rds
+^Docs$
+^ICF$
