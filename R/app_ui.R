@@ -16,8 +16,8 @@ app_ui <- function(request) {
         sidebarMenu(id = "left_tabs",
                     menuItem("Add sample", tabName = "add_sample", icon = icon("plus"), selected =TRUE),
                     menuItem("View/Edit Specimem", tabName = "view", icon = icon("searchengin")),
-                    menuItem("Tables", tabName = "tables", icon = icon("table")),
-                    menuItem("Specimen Logs", tabName = "logs", icon = icon("file"))
+                    menuItem("Specimen Logs", tabName = "tables", icon = icon("table")),
+                    menuItem("Freezer Logs", tabName = "logs", icon = icon("file"))
         )
       ),
       dashboardBody(

@@ -4,6 +4,7 @@ default:
   app_prod: no
   path_db_specimen: !expr file.path('DB', 'dev', 'specimen')
   path_db_creds: !expr here::here("DB", "dev", "credentials.sqlite")
+  log_version: Log Version 3.0 April 2022
 production:
   app_prod: yes
   path_db_specimen: !expr file.path('DB', 'prod', 'specimen')

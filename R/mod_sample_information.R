@@ -198,41 +198,16 @@ mod_sample_information_ui <- function(id){
       ),
       div(style = "font-size:13px",
           textAreaInput(ns("comments"), h4("Comments"), rows = 5, width = "80%", resize = "both")
-          #hr(style = "width: 80%"),
-          # tags$table(
-          #   
-          #   tags$tr(width = "100%",
-          #           tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date & Time<br>of receipt"))),
-          #           tags$td(width = "60%", 
-          #                   
-          #                   splitLayout(cellWidths = c("50%", "50%"),
-          #                               div(dateInput(ns("date_receipt"), NULL, "", width = input_width)),
-          #                               div(style = "margin-top: 1px" , shinyTime::timeInput(ns("time_receipt"), NULL, seconds = FALSE)),
-          #                   ))),
-          #   
-          #   tags$tr(width = "100%",
-          #           tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date & Time<br>of processing"))),
-          # 
-          #           tags$td(width = "60%",
-          # 
-          #                   splitLayout(cellWidths = c("50%", "50%"),
-          #                               div(dateInput(ns("date_processing"), NULL, "", width = input_width)),
-          #                               div(style = "margin-top: 1px" , shinyTime::timeInput(ns("time_processing"), NULL, seconds = FALSE)),
-          #                   )))
-          #           
-          #           
-          #   
-          # )
       )
       
     ),
     fileInput(ns("icf"), "Upload the scanned PDF file of the ICF", accept = ".pdf"),
     
     hr(),
-    actionButton(ns("submit"), "Submit", class = "btn-submit",
+    actionButton(ns("submit"), "Submit", class = "btn-submit", width = "100%",
                  icon("glyphicon glyphicon-ok", lib = "glyphicon")),
-    actionButton(ns('cancel'), "Cancel", class = "btn-cancel right", 
-                 icon("glyphicon glyphicon-remove", lib = "glyphicon")),
+    # actionButton(ns('cancel'), "Cancel", class = "btn-cancel right", 
+    #              icon("glyphicon glyphicon-remove", lib = "glyphicon")),
     hr()
     
     
@@ -443,8 +418,8 @@ mod_sample_information_server <- function(id){
       list(
         dta      = form_data,
         icf_path = reactive(rv$icf_path),
-        submit   = submitted,
-        cancel  = cancel
+        submit   = submitted
+        #cancel  = cancel
       )
     )
     
