@@ -138,8 +138,7 @@ app_server <- function(input, output, session) {
       print(e)
       cat("Error when saving sample_info on Database\n")
       
-      # TODO Save submission locally in a dataframe?
-      # Inform me?
+      # TODO Save submission locally in a dataframe? Inform me?
       
       shinyFeedback::showToast("error", title = "Error while saving the Sample Information!",
                                keepVisible = TRUE, .options = list(positionClass = "toast-top-center"),
