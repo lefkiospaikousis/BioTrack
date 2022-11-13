@@ -17,7 +17,9 @@ app_ui <- function(request) {
                     menuItem("Add sample", tabName = "add_sample", icon = icon("plus"), selected =TRUE),
                     menuItem("View/Edit Specimem", tabName = "view", icon = icon("searchengin")),
                     menuItem("Specimen Logs", tabName = "tables", icon = icon("table")),
-                    menuItem("Freezer Logs", tabName = "logs", icon = icon("file"))
+                    menuItem("Freezer Logs", tabName = "freezer_log", icon = icon("file")),
+                    menuItem("Actions log", tabName = "log_file", icon = icon("file"))
+                    
         )
       ),
       dashboardBody(
@@ -62,8 +64,11 @@ app_ui <- function(request) {
           tabItem(tabName = "tables", 
                   mod_tables_ui("tables_1") 
           ),
-          tabItem(tabName = "logs", 
+          tabItem(tabName = "freezer_log", 
                   mod_freezer_log_ui("freezer_log_1")
+          ),
+          tabItem(tabName = "log_file", 
+                  mod_log_file_ui("log_file_1")
           )
         )
       )

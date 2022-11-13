@@ -32,6 +32,7 @@ app_server <- function(input, output, session) {
   
   mod_view_edit_specimen_server("view_edit_specimen_1", reactive(rv$focus)) 
   mod_tables_server("tables_1", tbl_merged)
+  mod_log_file_server("log_file_1")
   # Switching between tabs ----
   
   # Step 1 - Add Sample Information
