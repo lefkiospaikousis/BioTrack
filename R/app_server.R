@@ -7,6 +7,17 @@
 app_server <- function(input, output, session) {
   # Your application server logic
   
+  configuration <- Sys.getenv("GOLEM_CONFIG_ACTIVE")
+  
+  res_auth <- shinymanager::secure_server(
+    
+    check_credentials = shinymanager::check_credentials(
+      "DB/dev/credentials.sqlite",
+      #passphrase = key_get("bococ-biotrack", "lefkios")
+      passphrase = get_golem_config("users_passphrase", configuration)
+    )
+  )
+  
   # Set Up Reactive Values ----
   rv <- reactiveValues(
     
@@ -23,6 +34,15 @@ app_server <- function(input, output, session) {
   added_specimens <- reactiveVal(FALSE)
   
   session$userData$db_trigger <- reactiveVal(0)
+  
+  observe(
+    session$userData$user <- res_auth$user
+  )
+  output$userName <- renderText({
+    #user_info()$user
+    paste0("User: ", session$userData$user)
+    
+  })
   
   observeEvent(input$left_tabs, {
     if(input$left_tabs == "view") {
@@ -134,7 +154,7 @@ app_server <- function(input, output, session) {
       session$userData$db_trigger(session$userData$db_trigger() + 1)
       
       # Add to log
-      try({add_to_logFile("Added Sample Information Form", "Lefkios", info = sample_info)}, silent = TRUE)
+      try({add_to_logFile("Added Sample Information Form", session$userData$user, info = sample_info)}, silent = TRUE)
       
     }, error = function(e){
       

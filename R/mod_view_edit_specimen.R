@@ -48,6 +48,7 @@ mod_view_edit_specimen_server <- function(id, focus){
     })
     
     observe({
+      req(input$lab_no)
       if(nchar(input$lab_no) > 1 && nchar(input$lab_no) < 9 | nchar(input$lab_no) >9){
         iv$enable()
       } else {
@@ -179,7 +180,7 @@ mod_view_edit_specimen_server <- function(id, focus){
       
       bococ <- dbase_specimen %>% tbl("sample_info") %>% filter(unique_id == !!rv$specimen_selected$unique_id) %>% pull(bococ)
       # Add to log
-      try({add_to_logFile("Modified specimen info", "Lefkios", 
+      try({add_to_logFile("Modified specimen info", session$userData$user, 
                           info = list(lab_no = rv$specimen_selected$lab_no,
                                       bococ = bococ,
                                       col = col,

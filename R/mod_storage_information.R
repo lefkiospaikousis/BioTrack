@@ -193,7 +193,7 @@ mod_storage_information_server <- function(id, sample_info){
         
         bococ <- dbase_specimen %>% tbl("sample_info") %>% filter(unique_id == !!new_specimen$unique_id) %>% pull(bococ)
         info = append(new_specimen, list(bococ = bococ))
-        try({add_to_logFile("Added Specimen Type", "Lefkios", info = info)}, silent = TRUE)
+        try({add_to_logFile("Added Specimen Type", session$userData$user, info = info)}, silent = TRUE)
         
         removeModal()
         
