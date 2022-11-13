@@ -160,16 +160,16 @@ mod_view_edit_specimen_server <- function(id, focus){
       
       if(rs == 1){ 
         
-        cat("Updated ", col, "for ", rs, " specimen_info for id = ", id, "\n")
+        cat("Updated ", col, "for ", rs, " specimen with lab_no: ", lab_no, "\n")
           
       } else {
         
-        cat("Failed to update the ", col, " for specimen wih id ", id, "\n")
+        cat("Failed to update the ", col, " specimen with lab_no: ", lab_no, "\n")
         
       }
       
       if(!golem::app_prod()) showNotification(
-        glue::glue("Updated specimen ", rv$specimen_selected$lab_no, " - changed {col} to {new_value}")
+        glue::glue("Updated specimen ", lab_no, " - changed {col} to {new_value}")
         )
       
       removeModal()
@@ -177,10 +177,11 @@ mod_view_edit_specimen_server <- function(id, focus){
       session$userData$db_trigger(session$userData$db_trigger() + 1)
       show_toast("success", "", "Successful change")
       
+      bococ <- dbase_specimen %>% tbl("sample_info") %>% filter(unique_id == !!rv$specimen_selected$unique_id) %>% pull(bococ)
       # Add to log
       try({add_to_logFile("Modified specimen info", "Lefkios", 
                           info = list(lab_no = rv$specimen_selected$lab_no,
-                                      bococ = rv$specimen_selected$bococ,
+                                      bococ = bococ,
                                       col = col,
                                       old_value = rv$specimen_selected[[col]],
                                       new_value = new_value

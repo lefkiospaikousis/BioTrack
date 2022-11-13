@@ -185,12 +185,15 @@ mod_storage_information_server <- function(id, sample_info){
         #showNotification("Saved specimen to Database!")
         show_toast("success", "", glue::glue("Specimen {new_specimen$lab_no} successfully saved!"))
         
-        rv$db_trigger <- rv$db_trigger + 1
+        # rv$db_trigger <- rv$db_trigger + 1
         
         session$userData$db_trigger(session$userData$db_trigger() + 1)
         
         # Add to log
-        try({add_to_logFile("Added Specimen Type", "Lefkios", info = new_specimen)}, silent = TRUE)
+        
+        bococ <- dbase_specimen %>% tbl("sample_info") %>% filter(unique_id == !!new_specimen$unique_id) %>% pull(bococ)
+        info = append(new_specimen, list(bococ = bococ))
+        try({add_to_logFile("Added Specimen Type", "Lefkios", info = info)}, silent = TRUE)
         
         removeModal()
         
