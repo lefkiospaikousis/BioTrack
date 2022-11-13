@@ -37,6 +37,23 @@ mod_view_edit_specimen_server <- function(id, focus){
       specimen_selected = NULL
     )
     
+    iv <- shinyvalidate::InputValidator$new()
+    
+    iv$add_rule("lab_no", sv_required())
+    iv$add_rule("lab_no", function(value){
+      
+      if(!nchar(value) == 9){
+        "A 9-character code is needed"
+      }
+    })
+    
+    observe({
+      if(nchar(input$lab_no) > 1 && nchar(input$lab_no) < 9 | nchar(input$lab_no) >9){
+        iv$enable()
+      } else {
+        iv$disable()
+      }
+    })
     
     observeEvent(focus(),{
       # To set he focus on the view tab for scanning the LAB NO
