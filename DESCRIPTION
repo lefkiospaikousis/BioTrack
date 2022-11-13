@@ -14,7 +14,6 @@ Imports:
     flextable,
     glue,
     golem (>= 0.3.3),
-    gt,
     here,
     janitor,
     keyring,
