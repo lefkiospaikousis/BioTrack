@@ -23,6 +23,7 @@ Imports:
     pkgload,
     purrr,
     reactable,
+    readr,
     readxl,
     rmarkdown,
     RSQLite,

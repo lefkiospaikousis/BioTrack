@@ -19,7 +19,7 @@ mod_sample_information_ui <- function(id){
   
   sample_types <- c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations")
   
-  tagList(
+  tagList(div(id = ns("form"),
     
    # h3("Sample Information Form:", style = "text-align: center;"),
     
@@ -200,7 +200,8 @@ mod_sample_information_ui <- function(id){
           textAreaInput(ns("comments"), h4("Comments"), rows = 5, width = "80%", resize = "both")
       )
       
-    ),
+    )
+   ),
     fileInput(ns("icf"), "Upload the scanned PDF file of the ICF", accept = ".pdf"),
     
     hr(),
@@ -367,7 +368,7 @@ mod_sample_information_server <- function(id){
           show_toast("error", "One more thing", "You need to upload an ICF form")
         } else {
           
-          #shinyjs::reset("form")
+          shinyjs::reset("form")
           submitted(submitted() + 1)
           
         }

@@ -15,7 +15,8 @@ app_server <- function(input, output, session) {
       "DB/dev/credentials.sqlite",
       #passphrase = key_get("bococ-biotrack", "lefkios")
       passphrase = get_golem_config("users_passphrase", configuration)
-    )
+    ),
+    keep_token = TRUE
   )
   
   # Set Up Reactive Values ----
@@ -81,6 +82,7 @@ app_server <- function(input, output, session) {
     # when I move from page to page,the form details of each page stays there
     # Need to reload to be cleared
     # TODO use shinjs::reset() ?
+    shinyjs::js$reset1()
     session$reload()
     
     

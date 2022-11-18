@@ -30,12 +30,16 @@ mod_downloadTable_server <- function(id, table_name, the_table){
     output$downloadTable <- downloadHandler(
       
       filename = function() {
-        paste(table_name,".xlsx", sep="")
+        paste(table_name,".csv", sep="")
       },
       
       # See here that i wrapped the `the_plot` with `()`
       content = function(file) {
-        writexl::write_xlsx(path = file, x = the_table())
+        readr::write_excel_csv(
+          x = the_table(),
+          file = file
+        )
+        # writexl::write_xlsx(path = file, x = the_table())
       }
     )
   })

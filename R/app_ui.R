@@ -102,6 +102,7 @@ golem_add_external_resources <- function() {
     ),
     shinyFeedback::useShinyFeedback(),
     shinyjs::useShinyjs(),
+    shinyjs::extendShinyjs(text = jsResetCode, functions = "reset1"),
     waiter::use_waiter()
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
