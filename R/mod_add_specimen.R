@@ -66,8 +66,13 @@ mod_add_specimen_ui <- function(id, specimen_types){
                                                             inline = TRUE,  fill = TRUE, selected = character(0), width = input_width))),
           
           tags$tr(width = "100%",
+                  tags$td(width = "30%", div(class = "input-label", "Comments:")),
+                  tags$td(width = "70%", textInput(ns("comment_place"), NULL, width = input_width))),
+          
+          tags$tr(width = "100%",
                   tags$td(width = "30%", div(class = "input-label", "Number of tubes:")),
                   tags$td(width = "70%", numericInput(ns("n_tubes"), NULL, NA, min = 1, width = "40%"))),
+          
           
         )
     ),
@@ -99,7 +104,8 @@ mod_add_specimen_server <- function(id){
       "rack",
       "drawer",
       "box",
-      "n_tubes"
+      "n_tubes",
+      "comment_place"
     )
     
     # Validation ----

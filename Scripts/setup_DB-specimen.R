@@ -76,6 +76,7 @@ dta_specimen_type = dplyr::tibble(
   drawer            = character(1),
   box               = character(1),
   place             = character(1),
+  comment_place     = character(1),
   n_tubes           = 1L
   
 )
@@ -119,7 +120,7 @@ load_database()
 
 dbase_specimen %>% DBI::dbListTables()
 
-sql_1 <- paste0("ALTER TABLE specimen_info ADD time_stamp2 INT")
+sql_1 <- paste0("ALTER TABLE specimen_info ADD comment_place CHAR")
 
 rs <- DBI::dbExecute(dbase_specimen, sql_1)
 

@@ -42,14 +42,14 @@ mod_view_edit_specimen_server <- function(id, focus){
     iv$add_rule("lab_no", sv_required())
     iv$add_rule("lab_no", function(value){
       
-      if(!nchar(value) == 9){
-        "A 9-character code is needed"
+      if(!nchar(value) == 8){
+        "A 8-character code is needed"
       }
     })
     
     observe({
       req(input$lab_no)
-      if(nchar(input$lab_no) > 1 && nchar(input$lab_no) < 9 | nchar(input$lab_no) >9){
+      if(nchar(input$lab_no) > 1 && nchar(input$lab_no) < 8 | nchar(input$lab_no) > 8){
         iv$enable()
       } else {
         iv$disable()
@@ -66,7 +66,7 @@ mod_view_edit_specimen_server <- function(id, focus){
     observeEvent(input$lab_no, {
       
       req(input$lab_no, cancelOutput = TRUE)
-      req(nchar(input$lab_no) == 9, cancelOutput = TRUE)
+      req(nchar(input$lab_no) == 8, cancelOutput = TRUE)
      
       specimen <- dbase_specimen %>% 
         tbl("specimen_info") %>% 
@@ -114,6 +114,7 @@ mod_view_edit_specimen_server <- function(id, focus){
             p("Quality of Sample: ", strong(specimen$quality)),
             p("Specimen Type: ", strong(specimen$specimen_type)),
             p(span("Freezer: ", strong(specimen$freezer) , " - Storage Place: ", strong(specimen$place))),
+            p("Comments: ", strong(specimen$comment_place)),
             p("Date processing: ", strong(to_date_time(specimen$date_processing) %>% format("%d/%m/%Y %H:%M"))),
             p("Duration from Receipt to Processing: ", strong(specimen$duration)),
             p("Number of tubes: ", strong(specimen$n_tubes), 

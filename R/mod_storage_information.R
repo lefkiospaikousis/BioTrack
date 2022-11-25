@@ -145,9 +145,9 @@ mod_storage_information_server <- function(id, sample_info){
         type = specimen$type
         serial =  max_serial_year(dbase_specimen, year_now) + 1
         
-        lab_no <- glue::glue("{year_now - 2000}{stringr::str_pad(serial, 5, 'left', '0')}{type}")
+        lab_no <- glue::glue("{year_now - 2000}{stringr::str_pad(serial, 4, 'left', '0')}{type}")
         
-        
+        browser()
         new_specimen <- tibble(
           
           time_stamp2       = epochTime(),
@@ -162,7 +162,8 @@ mod_storage_information_server <- function(id, sample_info){
           place             = place,
           lab_no            = lab_no,
           freezer           = specimen$freezer,
-          n_tubes           = specimen$n_tubes
+          n_tubes           = specimen$n_tubes,
+          comment_place     = specimen$comment_place
         )
         
         # ADD Info from the sample_info before saving to DB
