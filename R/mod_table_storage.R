@@ -55,7 +55,7 @@ mod_table_storage_server <- function(id, merged){
           lab_no, bococ, date_receipt, date_collection, date_processing,
           surname, firstname, civil_id, specimen_type,
           quality, duration,  
-          freezer, place, n_tubes
+          freezer, place, comment_place, n_tubes
         )
       
     })
@@ -91,6 +91,7 @@ mod_table_storage_server <- function(id, merged){
             duration = colDef(name = col_labels[["duration"]]),
             freezer = colDef(name = col_labels[["freezer"]]),
             place = colDef(name = col_labels[["place"]]),
+            comment_place = colDef(name = col_labels[["comment_place"]]),
             n_tubes = colDef(name = col_labels[["n_tubes"]])
             
           )

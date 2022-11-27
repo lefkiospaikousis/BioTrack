@@ -41,7 +41,7 @@ col_labels <- c(
   
   specimens         = "Number of specimens", # how many specimens added?
   
-  path_icf          = "path_icf",
+  path_icf          = "ICF files",
   
   time_stamp2       = "TimeStamp of the sample type submission", # Time stamp of submission date
   year              = 'Year',
@@ -56,6 +56,7 @@ col_labels <- c(
   drawer            = "Drawer",
   box               = "Box",
   place             = 'Storage place',
+  comment_place     = "Comments",
   n_tubes           = "Number of tubes"
   
 )

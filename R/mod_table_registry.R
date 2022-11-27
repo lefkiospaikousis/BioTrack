@@ -55,7 +55,7 @@ mod_table_registry_server <- function(id, merged){
         select(
           lab_no, bococ, date_receipt, date_collection, 
           surname, firstname, civil_id, tube, specimen_type, 
-          doctor, diagnosis, study, study_id, comments
+          doctor, diagnosis, study, study_id, path_icf, comments
         ) 
       
     })
@@ -90,6 +90,7 @@ mod_table_registry_server <- function(id, merged){
             diagnosis = colDef(name = col_labels[["diagnosis"]]),
             study = colDef(name = col_labels[["study"]]),
             study_id = colDef(name = col_labels[["study_id"]]),
+            path_icf = colDef(name = col_labels[["path_icf"]]),
             comments = colDef(name = col_labels[["comments"]])
             
           )
