@@ -91,7 +91,6 @@ mod_view_edit_specimen_server <- function(id, focus){
     output$lab_noUI <- renderUI({
       
       
-      
       req(rv$specimen_selected , cancelOutput = TRUE)
       
       session$userData$db_trigger()
@@ -103,7 +102,7 @@ mod_view_edit_specimen_server <- function(id, focus){
         filter(lab_no == !!rv$specimen_selected$lab_no) %>% 
         collect()
         
-      #specimen <- rv$specimen_selected
+      
       if(nrow(specimen) == 0) validate("Oups! Something went wrong. Contact support!")
       
       

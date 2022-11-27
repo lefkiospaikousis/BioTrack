@@ -42,7 +42,7 @@ mod_table_storage_server <- function(id, merged){
       
       merged() %>% 
         filter(lab_no %in% lab_nos) %>% 
-        distinct(lab_no, path_icf)
+        distinct(lab_no, path_icf, unique_id)
       
       
     })
@@ -75,7 +75,7 @@ mod_table_storage_server <- function(id, merged){
       
       tbl_storage() %>% 
         reactable(
-          searchable = TRUE, highlight = TRUE, selection = "multiple", onClick = "select",
+          searchable = TRUE, highlight = TRUE, selection = "single", onClick = "select",
           pageSizeOptions = c(10, 25, 50, 100),
           columns = list(
             lab_no = colDef(name = col_labels[["lab_no"]]),

@@ -120,14 +120,14 @@ app_server <- function(input, output, session) {
     tryCatch({
       
       sample_info <- process_submission(rv$sample_info)
-      
+      #browser()
       # save the icf file to the correct location
       dir.create(path_dir <- file.path("ICF", sample_info$unique_id))
-      new_path <- file.path(path_dir, "ICF.pdf")
+      #new_path <- file.path(path_dir, "ICF.pdf")
+      new_path <- file.path(path_dir, sample_info$path_icf$name)
       
-      
-      res <- file.copy(sample_info$path_icf, new_path)
-      sample_info$path_icf <- new_path
+      res <- file.copy(sample_info$path_icf$datapath, new_path)
+      sample_info$path_icf <- basename(new_path) %>% paste(collapse = "\n")
       
       if(isFALSE(res)){
         
@@ -139,7 +139,6 @@ app_server <- function(input, output, session) {
         
         sample_info$path_icf <- NA_character_
       }
-      
       
       res_save <- DBI::dbAppendTable(dbase_specimen, "sample_info", as.data.frame(sample_info))
       

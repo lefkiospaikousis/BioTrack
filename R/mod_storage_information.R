@@ -14,11 +14,9 @@ mod_storage_information_ui <- function(id){
   input_width <- "80%"
   
   tagList(
-    
-    #h3("Processing - Storage Information:", style = "text-align: center;"),
     #hr(),
-    p("Storage Information for: ", htmlOutput(ns("patient_info"), inline = TRUE)),
-    p("Unique ID: ", htmlOutput(ns("unique_id"), inline = TRUE)),
+    p("Specimen storage Information for: ", htmlOutput(ns("patient_info"), inline = TRUE)),
+    #p("Unique ID: ", htmlOutput(ns("unique_id"), inline = TRUE)),
     hr(),
     tableOutput(ns("tbl_specimens")),
     fluidRow(
@@ -147,7 +145,7 @@ mod_storage_information_server <- function(id, sample_info){
         
         lab_no <- glue::glue("{year_now - 2000}{stringr::str_pad(serial, 4, 'left', '0')}{type}")
         
-        browser()
+        
         new_specimen <- tibble(
           
           time_stamp2       = epochTime(),

@@ -202,7 +202,7 @@ mod_sample_information_ui <- function(id){
       
     )
    ),
-    fileInput(ns("icf"), "Upload the scanned PDF file of the ICF", accept = ".pdf"),
+    fileInput(ns("icf"), "Upload the scanned PDF file of the ICF", multiple = TRUE, accept = ".pdf"),
     
     hr(),
     actionButton(ns("submit"), "Submit", class = "btn-submit", width = "100%",
@@ -293,7 +293,7 @@ mod_sample_information_server <- function(id){
     
     #2. Clinical Information
     iv$add_rule("diagnosis", sv_required())
-    iv$add_rule("status", sv_required())
+    #iv$add_rule("status", sv_required())
     iv$add_rule("doctor", sv_required())
     iv$add_rule("consent", sv_required())
     
@@ -396,17 +396,18 @@ mod_sample_information_server <- function(id){
     
     observeEvent(input$icf, {
       
-      if ( tools::file_ext(input$icf$datapath) != "pdf") {
+      
+      if ( !all(tools::file_ext(input$icf$name) == "pdf")) {
         shinyFeedback::hideFeedback("icf")
-        shinyFeedback::showFeedbackDanger("icf", "This is not a .pdf document")
+        shinyFeedback::showFeedbackDanger("icf", "One or more of the files are not .pdf documents")
         
       } else {
         
         shinyFeedback::hideFeedback("icf")
-        shinyFeedback::showFeedbackSuccess("icf", "Great!")
+        shinyFeedback::showFeedbackSuccess("icf", "Succesfull upload!")
         
         # Store the temporary path where the file was saved
-        rv$icf_path <- input$icf$datapath
+        rv$icf_path <- input$icf
         uploaded_icf(TRUE)
       }
       

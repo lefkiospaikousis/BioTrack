@@ -28,6 +28,8 @@ mod_download_icf_server <- function(id, files_download){
       
       
       filename = function() {
+        #browser()
+        
         
         x <- try(files_download(), silent = TRUE)
         
@@ -35,18 +37,21 @@ mod_download_icf_server <- function(id, files_download){
           show_toast("error", "", "Select a Lab no fist and then click to download the ICF")
         }
         
+        files <- strsplit(files_download()$path_icf, split = "\n") %>% unlist()
         
-        if(nrow(files_download()) > 1){
+        
+        if(length(files) > 1){
           
           return(
-            paste("ICF_MultipleFiles.zip", sep = "")
+            #paste("ICF_MultipleFiles.zip", sep = "")
+            paste0("ICF-", files_download()$lab_no, ".zip")
           )
         } 
         
-        if(nrow(files_download()) == 1){
+        if(length(files) == 1){
           
           return(
-            paste0("ICF-", files_download()$lab_no, ".pdf")
+            paste0("ICF-", files_download()$lab_no, "-", files ,".pdf")
           )
         } 
         
@@ -61,13 +66,17 @@ mod_download_icf_server <- function(id, files_download){
         )
         on.exit(removeNotification(id), add = TRUE)
         
+        files <- strsplit(files_download()$path_icf, split = "\n") %>% unlist()
         
-        if(nrow(files_download()) > 1){
+        if(length(files) > 1){
           
-          files <- files_download()$path_icf
+          #files <- files_download()$path_icf
           
           # keep only the ones that exist. In case one of the files  is not there, the zip fails
-          pdf_exist <- file.exists(files) %>% setNames(files) 
+          
+          file_paths <- file.path("ICF", files_download()$unique_id, files)
+          
+          pdf_exist <- file.exists(file_paths) %>% setNames(file_paths) 
           
           
           if(!all(pdf_exist)) show_toast("warning", "Something is wrong!", "Some of the ICF's you have requested, do not exist",
@@ -84,9 +93,9 @@ mod_download_icf_server <- function(id, files_download){
           
         } 
         
-        if(nrow(files_download()) == 1){
+        if(length(files) == 1){
           
-          path <- files_download()$path_icf
+          path <- file.path("ICF", files_download()$unique_id, files)
           
           # keep only the ones that exist. In case one of the files  is not there, the zip fails
           pdf_exist <- file.exists(path) %>% setNames(path) 
