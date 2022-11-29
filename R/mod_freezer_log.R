@@ -33,8 +33,6 @@ mod_freezer_log_server <- function(id, tbl_merged){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
-    #freezer <- "-80"
-    
     log_version <- get_golem_config("log_version") #  "Version 3.0 April 2022"
     
     page_props <- officer::prop_section(page_size = officer::page_size(orient = "landscape"))
@@ -78,7 +76,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
         select(lab_no, freezer, box, rack, drawer, unique_id) %>% 
         filter(freezer == !!input$freezer, rack == !!input$rack) %>% 
         select(drawer, box, lab_no) %>% 
-        tidyr::complete(box = as.character(c(1:3)), drawer = as.character(c(1:5))) %>%  #rack = LETTERS[1:4], 
+        tidyr::complete(box = as.character(c(1:3)), drawer = as.character(c(1:5))) %>%  
         rename (Box = box) %>% 
         tidyr::pivot_wider( 
           names_from = drawer, 
@@ -98,7 +96,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
         flextable::set_table_properties("fixed") %>% 
         flextable::width( j = c(2:6), width = 1.80) %>% 
         flextable::fontsize(size = 9) %>% 
-        flextable::add_footer_lines(glue::glue("BOCOC: {input$freezer} Freezer. Rack {input$rack}. Specimen {log_version}")) 
+        flextable::add_footer_lines(glue::glue("BOCOC: {input$freezer}°C Freezer. Rack {input$rack}. Specimen {log_version}")) 
       
     })
     
