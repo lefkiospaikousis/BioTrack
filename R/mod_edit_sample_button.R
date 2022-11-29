@@ -26,6 +26,7 @@ mod_edit_sample_button_server <- function(id, sample_info){
  
     ids_allowed_all <- c("n_tubes", "status")
     
+    
     # observe({
     #   req(sample_info())
     #   shinyjs::toggleElement(
