@@ -11,7 +11,7 @@ mod_log_file_ui <- function(id){
   ns <- NS(id)
   tagList(
     h4("Log file"),
-    box(width = 10,
+    box(width = 12,
       mod_downloadTable_ui(ns("down_log")),
       reactable::reactableOutput(ns("log_file"))
     )

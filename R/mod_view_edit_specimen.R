@@ -40,7 +40,8 @@ mod_view_edit_specimen_server <- function(id, focus){
     ns <- session$ns
     
     rv <- reactiveValues(
-      specimen_selected = NULL
+      specimen_selected = NULL,  # a dataframe of the specimen
+      sample_selected = NULL     # a dataframe of the samplee_info
     )
     
     iv <- shinyvalidate::InputValidator$new()
@@ -79,6 +80,11 @@ mod_view_edit_specimen_server <- function(id, focus){
         filter(lab_no == !!input$lab_no) %>% 
         collect()
       
+      sample_info <- dbase_specimen %>% 
+        tbl("sample_info") %>% 
+        filter(unique_id == !!specimen$unique_id) %>% 
+        collect()
+      
       if(nrow(specimen) == 0){
         
         #validate(glue::glue("Lab no '{input$lab_no}' was not identified"))
@@ -90,9 +96,11 @@ mod_view_edit_specimen_server <- function(id, focus){
       
       shinyjs::reset("lab_no")
       
-      show_toast("success", "", "Found Lab No")
+      show_toast("success", "", "Lab No found")
       
       rv$specimen_selected <- specimen
+      
+      rv$sample_selected <- sample_info
       
       
     })
@@ -142,7 +150,7 @@ mod_view_edit_specimen_server <- function(id, focus){
     
     mod_edit_specimen_button_server("quality", reactive(rv$specimen_selected))
     mod_edit_specimen_button_server("specimen_type", reactive(rv$specimen_selected))
-    mod_edit_specimen_button_server("comment_place", reactive(rv$comment_place))
+    mod_edit_specimen_button_server("comment_place", reactive(rv$specimen_selected))
     mod_edit_specimen_button_server("n_tubes", reactive(rv$specimen_selected))
     
     
@@ -158,7 +166,7 @@ mod_view_edit_specimen_server <- function(id, focus){
       # any changes in the DB
       sample_info <- dbase_specimen %>% 
         tbl("sample_info") %>% 
-        filter(unique_id == !!rv$specimen_selected$unique_id) %>% 
+        filter(unique_id == !!rv$sample_selected$unique_id) %>% 
         collect()
       
       if(nrow(sample_info) == 0) validate("Oups! Something went wrong. Contact support!")
@@ -170,12 +178,15 @@ mod_view_edit_specimen_server <- function(id, focus){
             hr(),
             p("Patient name: ", strong(sample_info$firstname), " ", strong(sample_info$surname)),
             p(col_labels[["bococ"]], ": ", strong(sample_info$bococ), " | ", col_labels[["civil_id"]], ": ", strong(sample_info$civil_id)),
-            p(col_labels[["dob"]],  ": ",strong(to_date(sample_info$dob)),
-              actionButton(ns("edit_status1"), "Edit", icon("pen-to-square"), class = "btn_edit")),
+            p(col_labels[["dob"]],  ": ",strong(to_date(sample_info$dob))),
             p(col_labels[["nationality"]], ": ", strong(sample_info$nationality)),
             p(col_labels[["diagnosis"]], ": ", strong(sample_info$diagnosis)),
-            p(col_labels[["status"]],  ": ",strong(sample_info$status)),
-            p(col_labels[["doctor"]], ": ",strong(sample_info$doctor)),
+            p(col_labels[["status"]],  ": ",strong(sample_info$status),
+              mod_edit_sample_button_ui(ns("status"))
+              ),
+            p(col_labels[["doctor"]], ": ",strong(sample_info$doctor),
+              mod_edit_sample_button_ui(ns("doctor"))
+              ),
             p(col_labels[["phase"]], ": ", strong(sample_info$phase)),
             p(col_labels[["date_collection"]], ": ", strong(to_date_time(sample_info$date_collection) %>% format("%d/%m/%Y %H:%M"))),
             p(col_labels[["at_bococ"]], ": ", strong(sample_info$at_bococ)),
@@ -191,7 +202,8 @@ mod_view_edit_specimen_server <- function(id, focus){
     })
     
     
-    mod_edit_specimen_button_server("nationality", reactive(rv$specimen_selected))
+    mod_edit_sample_button_server("nationality", reactive(rv$sample_selected))
+    mod_edit_sample_button_server("doctor", reactive(rv$sample_selected))
     
     
     
