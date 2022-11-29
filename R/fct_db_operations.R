@@ -5,10 +5,21 @@
 #' @return The return value, if any, from executing the function.
 #'
 #' @noRd
-get_fromDB <- function(conn, table, what){
+get_fromDB2 <- function(conn, table, what){
   
   conn %>% 
     tbl(table) %>% 
+    collect() %>% 
+    pull(what) %>% 
+    unique()
+  
+}
+
+get_fromDB <- function(conn, table, what, id){
+  
+  conn %>% 
+    tbl(table) %>% 
+    filter(unique_id == !!id) %>% 
     collect() %>% 
     pull(what) %>% 
     unique()
@@ -49,7 +60,18 @@ add_to_logFile <- function(what, who, info){
                                                    action = what, 
                                                    bococ = info$bococ %||% NA_character_, 
                                                    lab_no = info$lab_no, 
-                                                   comments = glue::glue("Updated specimen `{info$lab_no}`: Changed `{col_labels[[info$col]]}` to `{info$new_value}` from `{info$old_value}`")),
+                                                   comments = glue::glue("Updated specimen `{info$lab_no}`: 
+                                                                         Changed `{col_labels[[info$col]]}` to `{info$new_value}` 
+                                                                         from `{info$old_value}`")),
+                   
+                   "Modified Sample Information data" = list(time_stamp3 = time, 
+                                                   user = who, 
+                                                   action = what, 
+                                                   bococ = info$bococ %||% NA_character_, 
+                                                   lab_no = info$lab_no, 
+                                                   comments = glue::glue("Modified data for BOCOC: `{info$bococ}`: 
+                                                                         Changed `{col_labels[[info$col]]}` to `{info$new_value}` 
+                                                                         from `{info$old_value}`")),
                    
                    stop("Unknown action in add_to_logFile")
   )

@@ -31,7 +31,7 @@ mod_edit_specimen_button_server <- function(id, specimen){
         modalDialog(
           title = "Editing Specimen Information",
           size = "s", footer = NULL,
-          mod_modify_specimen_ui(ns(id))
+          mod_modal_modifyValue_ui(ns(id))
         )
       )
         
@@ -44,7 +44,7 @@ mod_edit_specimen_button_server <- function(id, specimen){
       
     })
     
-    res <- mod_modify_specimen_server(id, specimen)
+    res <- mod_modal_modifyValue_server(id, specimen)
     
     
     observeEvent(res$cancel(), {

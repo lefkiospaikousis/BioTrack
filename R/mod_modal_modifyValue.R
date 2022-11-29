@@ -7,7 +7,7 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_modify_specimen_ui <- function(id){
+mod_modal_modifyValue_ui <- function(id){
   ns <- NS(id)
   tagList(
     
@@ -22,7 +22,7 @@ mod_modify_specimen_ui <- function(id){
 #' modify_specimen Server Functions
 #'
 #' @noRd 
-mod_modify_specimen_server <- function(id, specimen){
+mod_modal_modifyValue_server <- function(id, dta){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
@@ -35,38 +35,61 @@ mod_modify_specimen_server <- function(id, specimen){
     iv$add_rule("new_value", sv_required())
     
     output$info_ui <- renderUI({
+      
       session$userData$db_trigger()
       
       what_lab <- col_labels[[id]]
       
-      # get specimen information from DB directly, in case this edit is 
+      # get dta information from DB directly, in case this edit is 
       # asked repeatedly within the session
-      specimen <- dbase_specimen %>% tbl("specimen_info") %>% filter(lab_no == !!specimen()$lab_no) %>% collect()
+      
+      # Need to find out if a change is asked in the specimen_info (that has lab_no)
+      # if not, then it must be on the sampe_info and look with the unique id
+      # Do not use the unique id for the specimen info, as there might be more than one lab_no's
+      # for one unique_id
+      
+      if( "lab_no" %in% names(dta())){
+        
+        dta <- dbase_specimen %>% tbl("specimen_info") %>% filter(lab_no == !!dta()$lab_no) %>% collect()
+        
+        lab_no <- dta$lab_no
+        bococ <- get_fromDB(dbase_specimen, "sample_info", "bococ", dta()$unique_id)
+        
+      } else {
+        
+        dta <- dbase_specimen %>% tbl("sample_info") %>% filter(unique_id == !!dta()$unique_id) %>% collect()
+        
+        bococ <- dta$bococ
+        
+        lab_no <- paste(get_fromDB(dbase_specimen, "specimen_info", "lab_no", dta()$unique_id), collapse = ", ")
+      }
+      
       
       x <- NULL
-
-
-      if(inherits(specimen[[id]], c("integer", "numeric"))){
+      
+      
+      if(inherits(dta[[id]], c("integer", "numeric"))){
         
-        x <- numericInput(ns("new_value"), "New value", min = 0, value = specimen[[id]], width = "100%")
+        x <- numericInput(ns("new_value"), "New value", min = 0, value = dta[[id]], width = "100%")
         iv$add_rule("new_value", sv_gte(0))
         
       } else {
         
-        x <- textInput(ns("new_value"), "New value", value = specimen[[id]], width = "100%")
+        x <- textInput(ns("new_value"), "Enter new value", value = dta[[id]], width = "100%")
         
       }
-
-
+      
+      
       tagList(
-        p("Lab no: ", strong(specimen()$lab_no)),
+        p("Lab no: ", strong(lab_no)),
+        p("BOCOC :", strong(bococ)),
         hr(),
         p("You are changing the ", code(what_lab)),
-        p("Current value of ", code(what_lab), ": ", strong(specimen[[id]])),
+        p("Current value of ", code(what_lab), ": ", strong(dta[[id]])),
         x
       )
-
-
+      
+      
     })
     
     observeEvent(input$cancel, {
@@ -114,7 +137,7 @@ mod_modify_specimen_server <- function(id, specimen){
 }
 
 ## To be copied in the UI
-# mod_modify_specimen_ui("modify_specimen_1")
+# mod_modal_modifyValue_ui("modify_specimen_1")
 
 ## To be copied in the server
-# mod_modify_specimen_server("modify_specimen_1")
+# mod_modal_modifyValue_server("modify_specimen_1")
