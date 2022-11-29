@@ -120,7 +120,7 @@ app_server <- function(input, output, session) {
     tryCatch({
       
       sample_info <- process_submission(rv$sample_info)
-      #browser()
+      
       # save the icf file to the correct location
       dir.create(path_dir <- file.path("ICF", sample_info$unique_id))
       #new_path <- file.path(path_dir, "ICF.pdf")
