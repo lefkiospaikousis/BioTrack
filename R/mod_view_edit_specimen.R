@@ -19,10 +19,16 @@ mod_view_edit_specimen_ui <- function(id){
     ")
     ),
     fluidRow(
+      col_4(textInput(ns("lab_no"), "Specimen Lab No"))
+    ),
+    fluidRow(
       col_4(
-        textInput(ns("lab_no"), "Specimen Lab No"), 
         uiOutput(ns("lab_noUI"))
-      ))
+      ),
+      col_4(
+        uiOutput(ns("sample_infoUI"))
+      )
+    )
   )
 }
 
@@ -67,7 +73,7 @@ mod_view_edit_specimen_server <- function(id, focus){
       
       req(input$lab_no, cancelOutput = TRUE)
       req(nchar(input$lab_no) == 8, cancelOutput = TRUE)
-     
+      
       specimen <- dbase_specimen %>% 
         tbl("specimen_info") %>% 
         filter(lab_no == !!input$lab_no) %>% 
@@ -79,14 +85,19 @@ mod_view_edit_specimen_server <- function(id, focus){
         show_toast("warning", "", "No Such Lab No")
         shinyjs::reset("lab_no")
         return()
+        
       }
       
       shinyjs::reset("lab_no")
+      
+      show_toast("success", "", "Found Lab No")
       
       rv$specimen_selected <- specimen
       
       
     })
+    
+    # Specimen Information UI ----
     
     output$lab_noUI <- renderUI({
       
@@ -101,7 +112,7 @@ mod_view_edit_specimen_server <- function(id, focus){
         tbl("specimen_info") %>% 
         filter(lab_no == !!rv$specimen_selected$lab_no) %>% 
         collect()
-        
+      
       
       if(nrow(specimen) == 0) validate("Oups! Something went wrong. Contact support!")
       
@@ -109,88 +120,80 @@ mod_view_edit_specimen_server <- function(id, focus){
       box(width = NULL,
           tagList(
             h3("Specimen Information"),
+            hr(),
             p("Lab no: ", strong(specimen$lab_no)),
-            p("Quality of Sample: ", strong(specimen$quality)),
-            p("Specimen Type: ", strong(specimen$specimen_type)),
-            p(span("Freezer: ", strong(specimen$freezer) , " - Storage Place: ", strong(specimen$place))),
-            p("Comments: ", strong(specimen$comment_place)),
+            p("Quality of Sample: ", 
+              strong(specimen$quality), mod_edit_specimen_button_ui(ns("quality")) ),
+            p("Specimen Type: ", 
+              strong(specimen$specimen_type), mod_edit_specimen_button_ui(ns("specimen_type")) ),
+            p(span("Freezer: ", 
+                   strong(specimen$freezer) , " - Storage Place: ", strong(specimen$place))),
+            p("Comments: ", 
+              strong(specimen$comment_place), mod_edit_specimen_button_ui(ns("comment_place")) ),
             p("Date processing: ", strong(to_date_time(specimen$date_processing) %>% format("%d/%m/%Y %H:%M"))),
             p("Duration from Receipt to Processing: ", strong(specimen$duration)),
-            p("Number of tubes: ", strong(specimen$n_tubes), 
-              actionButton(ns("edit_tubes"), "Edit", icon("pen-to-square"), 
-                           style = "background-color: transparent; border:none;color:green;margin-bottom:3px")
+            p("Number of tubes: ", 
+              strong(specimen$n_tubes), mod_edit_specimen_button_ui(ns("n_tubes") )
             )
           )  
       )
       
     })
     
+    mod_edit_specimen_button_server("quality", reactive(rv$specimen_selected))
+    mod_edit_specimen_button_server("specimen_type", reactive(rv$specimen_selected))
+    mod_edit_specimen_button_server("comment_place", reactive(rv$comment_place))
+    mod_edit_specimen_button_server("n_tubes", reactive(rv$specimen_selected))
     
     
-    observeEvent(input$edit_tubes, {
+    # Sample Information UI ----
+    output$sample_infoUI <- renderUI({
       
-      showModal(
-        modalDialog(
-          title = "Editing Specimen Information",
-          size = "s", footer = NULL,
-          mod_modify_specimen_ui(ns("n_tubes"))
-        )
-      )
+      
+      req(rv$specimen_selected , cancelOutput = TRUE)
+      
+      session$userData$db_trigger()
+      
+      # get it from the database, so that this UI will reflect
+      # any changes in the DB
+      sample_info <- dbase_specimen %>% 
+        tbl("sample_info") %>% 
+        filter(unique_id == !!rv$specimen_selected$unique_id) %>% 
+        collect()
+      
+      if(nrow(sample_info) == 0) validate("Oups! Something went wrong. Contact support!")
+      
+      
+      box(width = NULL,
+          tagList(
+            h3("Sample Information"),
+            hr(),
+            p("Patient name: ", strong(sample_info$firstname), " ", strong(sample_info$surname)),
+            p(col_labels[["bococ"]], ": ", strong(sample_info$bococ), " | ", col_labels[["civil_id"]], ": ", strong(sample_info$civil_id)),
+            p(col_labels[["dob"]],  ": ",strong(to_date(sample_info$dob)),
+              actionButton(ns("edit_status1"), "Edit", icon("pen-to-square"), class = "btn_edit")),
+            p(col_labels[["nationality"]], ": ", strong(sample_info$nationality)),
+            p(col_labels[["diagnosis"]], ": ", strong(sample_info$diagnosis)),
+            p(col_labels[["status"]],  ": ",strong(sample_info$status)),
+            p(col_labels[["doctor"]], ": ",strong(sample_info$doctor)),
+            p(col_labels[["phase"]], ": ", strong(sample_info$phase)),
+            p(col_labels[["date_collection"]], ": ", strong(to_date_time(sample_info$date_collection) %>% format("%d/%m/%Y %H:%M"))),
+            p(col_labels[["at_bococ"]], ": ", strong(sample_info$at_bococ)),
+            p(col_labels[["date_shipment"]], ": ", strong(to_date(sample_info$date_shipment) %>% format("%d/%m/%Y"))),
+            p(col_labels[["date_receipt"]], ": ", strong(to_date_time(sample_info$date_receipt) %>% format("%d/%m/%Y %H:%M"))),
+            p(col_labels[["study_id"]], ": ", strong(sample_info$study_id)),
+            p(col_labels[["comments"]], ": ", strong(sample_info$comments)),
+            p(col_labels[["specimens"]], ": ", strong(sample_info$specimens))
+          )
+      )  
+      
       
     })
     
-    res <- mod_modify_specimen_server("n_tubes", reactive(rv$specimen_selected))
+    
+    mod_edit_specimen_button_server("nationality", reactive(rv$specimen_selected))
     
     
-    observeEvent(res$cancel(), {
-      
-      removeModal()
-      
-    }, ignoreInit = TRUE)
-    
-    observeEvent(res$submit(), {
-     
-      new_value <- res$new_value()
-      col <- res$id
-      
-      lab_no <- rv$specimen_selected$lab_no
-      
-      x <- glue::glue_sql("UPDATE specimen_info SET {col} = {new_value} WHERE lab_no = {lab_no}", .con = dbase_specimen)
-      
-      rs <- DBI::dbExecute(dbase_specimen, x)
-      
-      if(rs == 1){ 
-        
-        cat("Updated ", col, "for ", rs, " specimen with lab_no: ", lab_no, "\n")
-          
-      } else {
-        
-        cat("Failed to update the ", col, " specimen with lab_no: ", lab_no, "\n")
-        
-      }
-      
-      if(!golem::app_prod()) showNotification(
-        glue::glue("Updated specimen ", lab_no, " - changed {col} to {new_value}")
-        )
-      
-      removeModal()
-      
-      session$userData$db_trigger(session$userData$db_trigger() + 1)
-      show_toast("success", "", "Successful change")
-      
-      bococ <- dbase_specimen %>% tbl("sample_info") %>% filter(unique_id == !!rv$specimen_selected$unique_id) %>% pull(bococ)
-      # Add to log
-      try({add_to_logFile("Modified specimen info", session$userData$user, 
-                          info = list(lab_no = rv$specimen_selected$lab_no,
-                                      bococ = bococ,
-                                      col = col,
-                                      old_value = rv$specimen_selected[[col]],
-                                      new_value = new_value
-                                      
-                                      ))}, silent = TRUE)
-      
-      
-    }, ignoreInit = TRUE)
     
   })
 }

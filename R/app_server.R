@@ -36,9 +36,10 @@ app_server <- function(input, output, session) {
   
   session$userData$db_trigger <- reactiveVal(0)
   
-  observe(
+  observe({
     session$userData$user <- res_auth$user
-  )
+    session$userData$user_info <- reactiveValuesToList(res_auth)
+  })
   output$userName <- renderText({
     #user_info()$user
     paste0("User: ", session$userData$user)
@@ -93,13 +94,6 @@ app_server <- function(input, output, session) {
   
   
   res_sample_info <- mod_sample_information_server("sample_information_1")
-  # Returns: dta(), submit(), cancel()
-  
-  # observeEvent(res_sample_info$cancel(), {
-  #   
-  #   updateTabsetPanel(session, inputId = "tabs", selected = "Add sample info")
-  #   
-  # }, ignoreInit = TRUE)
   
   
   observeEvent(res_sample_info$submit(), {

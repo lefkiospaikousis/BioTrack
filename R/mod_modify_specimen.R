@@ -35,28 +35,34 @@ mod_modify_specimen_server <- function(id, specimen){
     iv$add_rule("new_value", sv_required())
     
     output$info_ui <- renderUI({
-
-      if(id == "n_tubes") what_lab = "Number of tubes" else what_lab <- id
-
+      session$userData$db_trigger()
+      
+      what_lab <- col_labels[[id]]
+      
+      # get specimen information from DB directly, in case this edit is 
+      # asked repeatedly within the session
+      specimen <- dbase_specimen %>% tbl("specimen_info") %>% filter(lab_no == !!specimen()$lab_no) %>% collect()
+      
       x <- NULL
 
 
-      if(inherits(specimen()[[id]], c("integer", "numeric"))){
+      if(inherits(specimen[[id]], c("integer", "numeric"))){
         
-        x <- numericInput(ns("new_value"), "New value", min = 0, value = specimen()[[id]], width = "100%")
+        x <- numericInput(ns("new_value"), "New value", min = 0, value = specimen[[id]], width = "100%")
         iv$add_rule("new_value", sv_gte(0))
         
       } else {
         
-        x <- textInput(ns("new_value"), "New value", value = specimen()[[id]], width = "100%")
+        x <- textInput(ns("new_value"), "New value", value = specimen[[id]], width = "100%")
         
       }
 
 
       tagList(
         p("Lab no: ", strong(specimen()$lab_no)),
+        hr(),
         p("You are changing the ", code(what_lab)),
-        p("Current value of ", code(what_lab), ": ", strong(specimen()[[id]])),
+        p("Current value of ", code(what_lab), ": ", strong(specimen[[id]])),
         x
       )
 

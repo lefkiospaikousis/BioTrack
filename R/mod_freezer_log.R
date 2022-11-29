@@ -45,6 +45,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
       
       rv$rack_text <- switch (input$freezer,
                               "-80" = paste0("RACK ", input$rack),
+                              # other freezers do not have racks
                               ""
       )
       
