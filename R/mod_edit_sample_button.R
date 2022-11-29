@@ -10,10 +10,7 @@
 mod_edit_sample_button_ui <- function(id){
   ns <- NS(id)
   tagList(
-  #shinyjs::hidden(
-    #div(id = ns("my_btn"),
     actionButton(ns("edit"), "Edit", icon("pen-to-square"), class = "btn_edit")
-  #) )
   )
 }
     
@@ -24,17 +21,10 @@ mod_edit_sample_button_server <- function(id, sample_info){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
  
-    ids_allowed_all <- c("n_tubes", "status")
-    
-    
-    # observe({
-    #   req(sample_info())
-    #   shinyjs::toggleElement(
-    #     "my_btn", anim = TRUE, condition = isTRUE(as.logical(session$userData$user_info$admin)) | id %in% ids_allowed_all
-    #   )
-    # })
-    
+      
     observeEvent(input$edit, {
+      
+      ids_allowed_all <- c("n_tubes", "status")
       
       if(isTRUE(as.logical(session$userData$user_info$admin)) | id %in% ids_allowed_all) {
         
