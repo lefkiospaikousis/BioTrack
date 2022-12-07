@@ -47,7 +47,7 @@ col_labels <- c(
   year              = 'Year',
   serial            = "serial",
   date_processing   = "Date & Time of processing",
-  duration          = "TIme from sample Collection to Processing",
+  duration          = "Duration from sample Collection to Processing",
   quality           = 'Sample Quality',
   specimen_type     = "Specimen type",
   lab_no            = "Lab No",
@@ -64,11 +64,24 @@ col_labels <- c(
 sum(duplicated(names(col_labels)))
 
 
-
+allowed_values <- c(
+  gender = c("Male", "Female", "Other"),
+  #bococ = "function",
+  dob = "date",
+  status = c("Metastatic", "Non metastatic"),
+  consent = c("Yes", "No"),
+  tube = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate"),
+  phase = c("Baseline", "Day of treatment", "Week 3", "Week 6", "Week 9", "Week 12", "End of treatment", "Other"),
+  sample_types <- c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations"),
+  at_bococ = c("Yes", "No"),
+  date_collection = "datetime",
+  date_shipment = "date",
+  date_receipt = "datetime"
+)
 
 usethis::use_data(
   
   internal = TRUE,
   col_labels, 
-  
+  allowed_values,
   overwrite = TRUE)

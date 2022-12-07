@@ -119,13 +119,12 @@ mod_add_specimen_server <- function(id){
     iv$add_rule("n_tubes", sv_gt(0))
     iv$add_rule("quality", sv_required())
     
-    # Date_time processing is not required
-    
-    # iv$add_rule("time_incident", function(time){
-    #   if(identical(strftime(time, "%R"), "00:00")){
-    #     "Required: (ωω:λλ)"
-    #   }
-    # })
+    iv$add_rule("date_processing", sv_required())
+    iv$add_rule("date_processing", function(date){
+      if(date > Sys.Date() ){
+        "Processing date cannot be later than today"
+      }
+    })
     
     iv_freezer <- shinyvalidate::InputValidator$new()
     iv_freezer$condition(~ input$freezer == "-80")

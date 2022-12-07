@@ -139,8 +139,8 @@ mod_view_edit_specimen_server <- function(id, focus){
             p("Comments: ", 
               strong(specimen$comment_place), mod_edit_specimen_button_ui(ns("comment_place")) ),
             p("Date processing: ", strong(to_date_time(specimen$date_processing) %>% format("%d/%m/%Y %H:%M"))),
-            p("Duration from Receipt to Processing: ", strong(specimen$duration)),
-            p("Number of tubes: ", 
+            p(col_labels[["duration"]], strong(specimen$duration)),
+            p(col_labels[["n_tubes"]], 
               strong(specimen$n_tubes), mod_edit_specimen_button_ui(ns("n_tubes") )
             )
           )  
@@ -177,23 +177,36 @@ mod_view_edit_specimen_server <- function(id, focus){
             h3("Sample Information"),
             hr(),
             p("Patient name: ", strong(sample_info$firstname), " ", strong(sample_info$surname)),
-            p(col_labels[["bococ"]], ": ", strong(sample_info$bococ), " | ", col_labels[["civil_id"]], ": ", strong(sample_info$civil_id)),
+            p(col_labels[["bococ"]], ": ", strong(sample_info$bococ), 
+              mod_edit_sample_button_ui(ns("bococ")),
+              " | ", col_labels[["civil_id"]], ": ", strong(sample_info$civil_id),
+              mod_edit_sample_button_ui(ns("civil_id"))
+            ),
             p(col_labels[["dob"]],  ": ",strong(to_date(sample_info$dob))),
-            p(col_labels[["nationality"]], ": ", strong(sample_info$nationality)),
+            p(col_labels[["nationality"]], ": ", strong(sample_info$nationality),
+              mod_edit_sample_button_ui(ns("nationality"))
+            ),
             p(col_labels[["diagnosis"]], ": ", strong(sample_info$diagnosis),
               mod_edit_sample_button_ui(ns("diagnosis"))),
             p(col_labels[["status"]],  ": ",strong(sample_info$status),
               mod_edit_sample_button_ui(ns("status"))
-              ),
+            ),
             p(col_labels[["doctor"]], ": ",strong(sample_info$doctor),
               mod_edit_sample_button_ui(ns("doctor"))
-              ),
-            p(col_labels[["phase"]], ": ", strong(sample_info$phase)),
+            ),
+            p(col_labels[["phase"]], ": ", strong(sample_info$phase),
+              mod_edit_sample_button_ui(ns("phase"))
+            ),
             p(col_labels[["date_collection"]], ": ", strong(to_date_time(sample_info$date_collection) %>% format("%d/%m/%Y %H:%M"))),
             p(col_labels[["at_bococ"]], ": ", strong(sample_info$at_bococ)),
             p(col_labels[["date_shipment"]], ": ", strong(to_date(sample_info$date_shipment) %>% format("%d/%m/%Y"))),
             p(col_labels[["date_receipt"]], ": ", strong(to_date_time(sample_info$date_receipt) %>% format("%d/%m/%Y %H:%M"))),
-            p(col_labels[["study_id"]], ": ", strong(sample_info$study_id)),
+            p(col_labels[["study_id"]], ": ", strong(sample_info$study_id),
+              mod_edit_sample_button_ui(ns("study_id"))
+            ),
+            p(col_labels[["study"]], ": ", strong(sample_info$study),
+              mod_edit_sample_button_ui(ns("study"))
+            ),
             p(col_labels[["comments"]], ": ", strong(sample_info$comments)),
             p(col_labels[["specimens"]], ": ", strong(sample_info$specimens))
           )
@@ -206,7 +219,12 @@ mod_view_edit_specimen_server <- function(id, focus){
     mod_edit_sample_button_server("status", reactive(rv$sample_selected))
     mod_edit_sample_button_server("doctor", reactive(rv$sample_selected))
     mod_edit_sample_button_server("diagnosis", reactive(rv$sample_selected))
-    
+    mod_edit_sample_button_server("doctor", reactive(rv$sample_selected))
+    mod_edit_sample_button_server("phase", reactive(rv$sample_selected))
+    mod_edit_sample_button_server("study_id", reactive(rv$sample_selected))
+    mod_edit_sample_button_server("study", reactive(rv$sample_selected))
+    mod_edit_sample_button_server("bococ", reactive(rv$sample_selected))
+    mod_edit_sample_button_server("civil_id", reactive(rv$sample_selected))
     
     
   })

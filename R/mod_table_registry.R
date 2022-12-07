@@ -54,7 +54,7 @@ mod_table_registry_server <- function(id, merged){
       merged() %>% 
         select(
           lab_no, bococ, date_receipt, date_collection, at_bococ, 
-          surname, firstname, civil_id, tube, specimen_type, 
+          surname, firstname, gender, dob,  civil_id, tube, specimen_type, 
           doctor, diagnosis, study, study_id, path_icf, comments
         ) 
       
@@ -73,6 +73,7 @@ mod_table_registry_server <- function(id, merged){
     output$tbl_registry <- renderReactable({
       
       tbl_registry() %>% 
+        tidyr::unite("Patient name", surname, firstname, sep = " ", na.rm = TRUE) %>% 
         reactable(
           searchable = TRUE, highlight = TRUE, selection = "single", onClick = "select",
           pageSizeOptions = c(10, 25, 50, 100),
@@ -82,9 +83,11 @@ mod_table_registry_server <- function(id, merged){
             date_receipt = colDef( name = col_labels[["date_receipt"]], format = colFormat(datetime = TRUE, locales = "en-GB") ),
             date_collection = colDef( name = col_labels[["date_collection"]], format = colFormat(date = TRUE, locales = "el-GR") ),
             at_bococ = colDef( name = col_labels[["at_bococ"]]),
-            surname = colDef(name = col_labels[["surname"]]),
-            firstname = colDef(name = col_labels[["firstname"]]),
+            #surname = colDef(name = col_labels[["surname"]]),
+            #firstname = colDef(name = col_labels[["firstname"]]),
+            gender = colDef(name = col_labels[["gender"]]),
             civil_id = colDef(name = col_labels[["civil_id"]]),
+            dob = colDef(show = FALSE, name = col_labels[["dob"]], format = colFormat(date = TRUE, locales = "el-GR")),
             tube = colDef(name = col_labels[["tube"]]),
             specimen_type = colDef(name = col_labels[["specimen_type"]]),
             doctor = colDef(name = col_labels[["doctor"]]),
