@@ -10,7 +10,7 @@
 mod_edit_specimen_button_ui <- function(id){
   ns <- NS(id)
   tagList(
-    actionButton(ns("edit"), "Edit", icon("pen-to-square"), class = "btn_edit")
+    actionButton(ns("edit"), "", icon("pen-to-square"), class = "btn_edit")
   )
 }
     
