@@ -20,198 +20,211 @@ mod_sample_information_ui <- function(id){
   sample_types <- c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations")
   
   tagList(div(id = ns("form"),
-    
-   # h3("Sample Information Form:", style = "text-align: center;"),
-    
-    splitLayout(
-      
-      div(style = "font-size:13px",
-          h4("1.Contact Information:"),
-          hr(style = "width: 80%"),
-          tags$table(
-            tags$tr(width = "100%",
-                    tags$td(width = "40%", div(class = "input-label",style = "", "Patient First Name:")),
-                    tags$td(width = "60%", textInput(ns("firstname"), NULL, width = input_width))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label",style = "", "Patient Surname:")),
-                    tags$td(width = "70%", textInput(ns("surname"), NULL, NA, width = input_width))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label",style = "", "Gender:")),
-                    tags$td(width = "70%", selectInput(ns("gender"), NULL, c("", "Male", "Female", "Other"), width = input_width))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label",style = "", "BOCOC ID:")),
-                    tags$td(width = "70%", numericInput(ns("bococ"), NULL, NA, min = 1, width = input_width))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label",style = "", "Civil ID:")),
-                    tags$td(width = "70%", textInput(ns("civil_id"), NULL, NA, width = input_width))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label", "Date of birth:")),
-                    tags$td(width = "70%", dateInput(ns("dob"), NULL, as.Date(NA), format = "dd/mm/yyyy", width = input_width))),
-            
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label",style = "", "Nationality:")),
-                    tags$td(width = "70%", textInput(ns("nationality"), NULL, NA, width = input_width))),
-            
-          )
-      ),
-      div(style = "font-size:13px",
-          h4("2.Clinical Information:"),
-          hr(style = "width: 80%"),
-          tags$table(
-            tags$tr(width = "100%",
-                    tags$td(width = "40%", div(class = "input-label",style = "", "Diagnosis:")),
-                    tags$td(width = "60%", textInput(ns("diagnosis"), NULL, NA, width = input_width))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label",style = "", "Status:")),
-                    tags$td(width = "70%", selectInput(ns("status"), NULL, c("", "Metastatic", "Non metastatic"), width = input_width))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label",style = "", "Referring doctor")),
-                    tags$td(width = "70%", textInput(ns("doctor"), NULL, NA, width = input_width))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label",style = "", "Consent Signed:")),
-                    tags$td(width = "70%", selectInput(ns("consent"), NULL, c("", "Yes", "No"), width = input_width))),
-            
-          )
-      )
-    ),
-    
-    br(),
-    br(),
-    
-    splitLayout(
-      div(style = "font-size:13px",
-          h4("3.Sample Type received:"),
-          hr(style = "width: 80%"),
-          tags$table(
-            tags$tr(width = "100%",
-                    tags$td(width = "5%", div(class = "input-label",style = "", "1.:")),
-                    tags$td(width = "50%", selectInput(ns("type1"), NULL, c("", sample_types), width = input_width)),
-                    tags$td(div(class = "input-label2", style = "", "ml:")),
-                    tags$td(numericInput(ns("type1_ml"), NULL, NA, width = "50%"))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "5%", div(class = "input-label",style = "", "2.:")),
-                    tags$td(width = "50%", selectInput(ns("type2"), NULL, c("", sample_types), width = input_width)),
-                    tags$td(div(class = "input-label2", style = "", "ml:")),
-                    tags$td( numericInput(ns("type2_ml"), NULL, NA, width = "50%"))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "5%", div(class = "input-label",style = "", "3.:")),
-                    tags$td(width = "50%", selectInput(ns("type3"), NULL, c("", sample_types), width = input_width)),
-                    tags$td(div(class = "input-label2", style = "", "ml:")),
-                    tags$td(numericInput(ns("type3_ml"), NULL, NA, width = "50%"))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "5%", div(class = "input-label",style = "", "4.:")),
-                    tags$td(width = "50%", selectInput(ns("type4"), NULL, c("", sample_types), width = input_width)),
-                    tags$td(div(class = "input-label2", style = "", "ml:")),
-                    tags$td(numericInput(ns("type4_ml"), NULL, NA, width = "50%"))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "5%", div(class = "input-label",style = "", "5.:")),
-                    tags$td(width = "50%", selectInput(ns("type5"), NULL, c("", sample_types), width = input_width)),
-                    tags$td(div(class = "input-label2", style = "", "ml:")),
-                    tags$td(numericInput(ns("type5_ml"), NULL, NA, width = "50%")))
-            
-            
-          )
-          
-      ),
-      
-      div(style = "font-size:13px",
-          h4("4.Collection information:"),
-          hr(style = "width: 80%"),
-          tags$table(
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "40%", div(class = "input-label",style = "", HTML("Type of blood <br>Collection tube"))),
-                    tags$td(width = "60%", selectInput(ns("tube"), NULL, c("", "EDTA", "Streck", "Sodium Heparin", "Sodium Citrate"), width = input_width))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "40%", div(class = "input-label",style = "", "Sample was collected at:")),
-                    tags$td(width = "60%", selectInput(ns("phase"), NULL, 
-                                                       c("", "Baseline", "Day of treatment", "Week 3", 
-                                                         "Week 6", "Week 9", "Week 12", "End of treatment", "Other"), 
-                                                       width = input_width))),
-            
-            
-            
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "50%",  shinyjs::hidden(div(class = "input-label",style = "", "Other:"))),
-                    tags$td(width = "50%",  shinyjs::hidden(textInput(ns("phase_other"), NULL, width = input_width,
-                                                                      placeholder = "Please describe")))),
-            
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label",style = "", "Collected at BOCOC?:")),
-                    tags$td(width = "70%", selectInput(ns("at_bococ"), NULL, c("", "Yes", "No"), width = input_width))),
-            
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label", "Date of collection:")),
-                    tags$td(width = "70%", dateInput(ns("date_collection"), NULL, lubridate::NA_POSIXct_ , format = "dd/mm/yyyy", width = input_width))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label", "Date of shipment:")),
-                    tags$td(width = "70%", dateInput(ns("date_shipment"), NULL, lubridate::NA_Date_ , format = "dd/mm/yyyy", width = input_width))),
-            
-          )
-      )
-    ),
-    hr(),
-    
-    
-    splitLayout(
-      div(style = "font-size:13px",
-          h4("BOCOC Lab use only"),
-          #hr(style = "width: 80%"),
-          tags$table(
-            
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "40%", div(class = "input-label",style = "", "Patient Study ID")),
-                    tags$td(width = "60%", textInput(ns("study_id"), NULL, NA, width = input_width))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "30%", div(class = "input-label",style = "", "Study involved")),
-                    tags$td(width = "70%", textInput(ns("study"), NULL, NA, width = input_width))),
-            
-            tags$tr(width = "100%",
-                    tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date & Time<br>of receipt"))),
-                    tags$td(width = "60%", 
-                            
-                            splitLayout(cellWidths = c("40%", "50%"),
-                                        div(dateInput(ns("date_receipt"), NULL, lubridate::NA_Date_ , format = "dd/mm/yyyy", width = "90%")),
-                                        div(style = "margin-top: 0px; margin-left:-5px" , shinyTime::timeInput(ns("time_receipt"), NULL, seconds = FALSE)),
-                            )))
-          )
-      ),
-      div(style = "font-size:13px",
-          textAreaInput(ns("comments"), h4("Comments"), rows = 5, width = "80%", resize = "both")
-      )
-      
-    )
-   ),
-    fileInput(ns("icf"), "Upload the scanned PDF file of the ICF", multiple = TRUE, accept = ".pdf"),
-    
-    hr(),
-    actionButton(ns("submit"), "Submit", class = "btn-submit", width = "100%",
-                 icon("glyphicon glyphicon-ok", lib = "glyphicon")),
-    # actionButton(ns('cancel'), "Cancel", class = "btn-cancel right", 
-    #              icon("glyphicon glyphicon-remove", lib = "glyphicon")),
-    hr()
-    
-    
+              
+              splitLayout(
+                
+                div(style = "font-size:13px",
+                    h4("1.Contact Information:"),
+                    hr(style = "width: 80%"),
+                    tags$table(
+                      tags$tr(width = "100%",
+                              tags$td(width = "40%", div(class = "input-label",style = "", "Patient First Name:")),
+                              tags$td(width = "60%", textInput(ns("firstname"), NULL, width = input_width))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label",style = "", "Patient Surname:")),
+                              tags$td(width = "70%", textInput(ns("surname"), NULL, NA, width = input_width))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label",style = "", "Gender:")),
+                              tags$td(width = "70%", selectInput(ns("gender"), NULL, c("", "Male", "Female", "Other"), width = input_width))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label",style = "", "BOCOC ID:")),
+                              tags$td(width = "70%", numericInput(ns("bococ"), NULL, NA, min = 1, width = input_width))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label",style = "", "Civil ID:")),
+                              tags$td(width = "70%", textInput(ns("civil_id"), NULL, NA, width = input_width))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label", "Date of birth:")),
+                              tags$td(width = "70%", dateInput(ns("dob"), NULL, as.Date(NA), format = "dd/mm/yyyy", width = input_width))),
+                      
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label",style = "", "Nationality:")),
+                              tags$td(width = "70%", textInput(ns("nationality"), NULL, NA, width = input_width))),
+                      
+                    )
+                ),
+                div(style = "font-size:13px",
+                    h4("2.Clinical Information:"),
+                    hr(style = "width: 80%"),
+                    tags$table(
+                      tags$tr(width = "100%",
+                              tags$td(width = "40%", div(class = "input-label",style = "", "Diagnosis:")),
+                              tags$td(width = "60%", textInput(ns("diagnosis"), NULL, NA, width = input_width))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label",style = "", "Status:")),
+                              tags$td(width = "70%", selectInput(ns("status"), NULL, c("", "Metastatic", "Non metastatic"), width = input_width))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label",style = "", "Referring doctor")),
+                              tags$td(width = "70%", textInput(ns("doctor"), NULL, NA, width = input_width))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label",style = "", "Consent Signed:")),
+                              tags$td(width = "70%", selectInput(ns("consent"), NULL, c("", "Yes", "No"), width = input_width))),
+                      
+                    )
+                )
+              ),
+              
+              br(),
+              br(),
+              
+              splitLayout(
+                div(style = "font-size:13px",
+                    h4("3.Sample Type received:"),
+                    hr(style = "width: 80%"),
+                    tags$table(
+                      tags$tr(width = "100%",
+                              tags$td(width = "5%", div(class = "input-label",style = "", "1.:")),
+                              tags$td(width = "50%", selectInput(ns("type1"), NULL, c("", sample_types), width = input_width)),
+                              tags$td(div(class = "input-label2", style = "", "ml:")),
+                              tags$td(numericInput(ns("type1_ml"), NULL, NA, width = "50%"))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "5%", div(class = "input-label",style = "", "2.:")),
+                              tags$td(width = "50%", selectInput(ns("type2"), NULL, c("", sample_types), width = input_width)),
+                              tags$td(div(class = "input-label2", style = "", "ml:")),
+                              tags$td( numericInput(ns("type2_ml"), NULL, NA, width = "50%"))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "5%", div(class = "input-label",style = "", "3.:")),
+                              tags$td(width = "50%", selectInput(ns("type3"), NULL, c("", sample_types), width = input_width)),
+                              tags$td(div(class = "input-label2", style = "", "ml:")),
+                              tags$td(numericInput(ns("type3_ml"), NULL, NA, width = "50%"))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "5%", div(class = "input-label",style = "", "4.:")),
+                              tags$td(width = "50%", selectInput(ns("type4"), NULL, c("", sample_types), width = input_width)),
+                              tags$td(div(class = "input-label2", style = "", "ml:")),
+                              tags$td(numericInput(ns("type4_ml"), NULL, NA, width = "50%"))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "5%", div(class = "input-label",style = "", "5.:")),
+                              tags$td(width = "50%", selectInput(ns("type5"), NULL, c("", sample_types), width = input_width)),
+                              tags$td(div(class = "input-label2", style = "", "ml:")),
+                              tags$td(numericInput(ns("type5_ml"), NULL, NA, width = "50%")))
+                      
+                      
+                    )
+                    
+                ),
+                
+                div(style = "font-size:13px",
+                    h4("4.Collection information:"),
+                    hr(style = "width: 80%"),
+                    tags$table(
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "40%", div(class = "input-label",style = "", HTML("Type of blood <br>Collection tube"))),
+                              tags$td(width = "60%", selectInput(ns("tube"), NULL, c("", "EDTA", "Streck", "Sodium Heparin", "Sodium Citrate"), width = input_width))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "40%", div(class = "input-label",style = "", "Sample was collected at:")),
+                              tags$td(width = "60%", selectInput(ns("phase"), NULL, 
+                                                                 c("", "Baseline", "Day of treatment", "Week 3", 
+                                                                   "Week 6", "Week 9", "Week 12", "End of treatment", "Other"), 
+                                                                 width = input_width))),
+                      
+                      
+                      
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "50%",  shinyjs::hidden(div(class = "input-label",style = "", "Other:"))),
+                              tags$td(width = "50%",  shinyjs::hidden(textInput(ns("phase_other"), NULL, width = input_width,
+                                                                                placeholder = "Please describe")))),
+                      
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label",style = "", "Collected at BOCOC?:")),
+                              tags$td(width = "70%", selectInput(ns("at_bococ"), NULL, c("", "Yes", "No"), width = input_width))),
+                      
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label", "Date of collection:")),
+                              tags$td(width = "70%", 
+                                      
+                                      
+                                      #dateInput(ns("date_collection"), NULL, lubridate::NA_POSIXct_ , format = "dd/mm/yyyy", width = input_width)
+                                      
+                                      splitLayout(cellWidths = c("40%", "50%"),
+                                                  div(dateInput(ns("date_collection"), NULL, lubridate::NA_Date_ , format = "dd/mm/yyyy", width = "90%")),
+                                                  div(style = "margin-top: 0px; margin-left:-5px" , shinyTime::timeInput(ns("time_collection"), NULL, seconds = FALSE))
+                                      )
+                                      
+                                      
+                                      
+                                      
+                                      
+                              )),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label", "Date of shipment:")),
+                              tags$td(width = "70%", dateInput(ns("date_shipment"), NULL, lubridate::NA_Date_ , format = "dd/mm/yyyy", width = input_width))),
+                      
+                    )
+                )
+              ),
+              hr(),
+              
+              
+              splitLayout(
+                div(style = "font-size:13px",
+                    h4("BOCOC Lab use only"),
+                    #hr(style = "width: 80%"),
+                    tags$table(
+                      
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "40%", div(class = "input-label",style = "", "Patient Study ID")),
+                              tags$td(width = "60%", textInput(ns("study_id"), NULL, NA, width = input_width))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "30%", div(class = "input-label",style = "", "Study involved")),
+                              tags$td(width = "70%", textInput(ns("study"), NULL, NA, width = input_width))),
+                      
+                      tags$tr(width = "100%",
+                              tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date & Time<br>of receipt"))),
+                              tags$td(width = "60%", 
+                                      
+                                      splitLayout(cellWidths = c("40%", "50%"),
+                                                  div(dateInput(ns("date_receipt"), NULL, lubridate::NA_Date_ , format = "dd/mm/yyyy", width = "90%")),
+                                                  div(style = "margin-top: 0px; margin-left:-5px" , shinyTime::timeInput(ns("time_receipt"), NULL, seconds = FALSE)),
+                                      )
+                              ))
+                    )
+                ),
+                div(style = "font-size:13px",
+                    textAreaInput(ns("comments"), h4("Comments"), rows = 5, width = "80%", resize = "both")
+                )
+                
+              )
+  ),
+  fileInput(ns("icf"), "Upload the scanned PDF file of the ICF", multiple = TRUE, accept = ".pdf"),
+  
+  hr(),
+  actionButton(ns("submit"), "Submit", class = "btn-submit", width = "100%",
+               icon("glyphicon glyphicon-ok", lib = "glyphicon")),
+  # actionButton(ns('cancel'), "Cancel", class = "btn-cancel right", 
+  #              icon("glyphicon glyphicon-remove", lib = "glyphicon")),
+  hr()
+  
+  
   )
 }
 
@@ -253,6 +266,7 @@ mod_sample_information_server <- function(id){
         "phase",
         "at_bococ",
         "date_collection",
+        "time_collection",
         "date_shipment",
         
         # "date_processing",

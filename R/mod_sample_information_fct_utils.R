@@ -69,6 +69,10 @@ process_submission <- function(submission){
   submission$date_receipt <- ymd(submission$date_receipt, tz = "EET") + hm(submission$time_receipt)
   submission$time_receipt <- NULL
   
+  submission$time_collection <- strftime(submission$time_collection, "%R")
+  submission$date_collection <- ymd(submission$date_collection, tz = "EET") + hm(submission$time_collection)
+  submission$time_collection <- NULL
+  
   # Initialise the number of specimens - 0 for now.Will be updated later in the mod_add_specimen
   submission$specimens <- 0
   
@@ -90,10 +94,6 @@ process_submission <- function(submission){
       }
     }) 
   
-  # submission$date_collection <- as.integer(submission$date_collection)
-  # submission$date_shipment <- as.integer(submission$date_shipment)
-  # submission$date_processing <- as.integer(submission$date_processing)
-  # submission$date_receipt <- as.integer(submission$date_receipt)
   
   # if nulls turn them to NA_character. Used for the check boxes
   submission <- map(submission, ~ . %||% NA_character_)
