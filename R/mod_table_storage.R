@@ -53,7 +53,7 @@ mod_table_storage_server <- function(id, merged){
       merged() %>% 
         select(
           lab_no, bococ, date_receipt, date_collection, date_processing,
-          surname, firstname, civil_id, specimen_type,
+          surname, firstname, civil_id, specimen_type, status,
           quality, duration,  
           freezer, place, comment_place, n_tubes
         )
@@ -87,6 +87,7 @@ mod_table_storage_server <- function(id, merged){
             firstname = colDef(name = col_labels[["firstname"]]),
             civil_id = colDef(name = col_labels[["civil_id"]]),
             specimen_type = colDef(name = col_labels[["specimen_type"]]),
+            status = colDef(name = col_labels[["status"]]),
             quality = colDef(name = col_labels[["quality"]]),
             duration = colDef(name = col_labels[["duration"]]),
             freezer = colDef(name = col_labels[["freezer"]]),
