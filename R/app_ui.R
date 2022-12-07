@@ -18,7 +18,7 @@ app_ui <- function(request) {
                     menuItem("View/Edit Specimem", tabName = "view", icon = icon("searchengin")),
                     menuItem("Specimen Logs", tabName = "tables", icon = icon("table")),
                     menuItem("Freezer Logs", tabName = "freezer_log", icon = icon("file")),
-                    menuItem("Actions log", tabName = "log_file", icon = icon("file")),
+                    menuItem("Traceability records", tabName = "log_file", icon = icon("box")),
                     tags$hr(style = "border-color: white;width: 80%"),
                     p(paste0("Version: ", golem::get_golem_version()), style = "margin-left:25px"),
                     div(textOutput("userName"), style = "margin-left:25px")
