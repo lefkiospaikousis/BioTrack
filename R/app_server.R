@@ -213,7 +213,7 @@ app_server <- function(input, output, session) {
       mutate(
         date_receipt = to_date_time(date_receipt),
         date_processing = to_date_time(date_processing),
-        date_collection = to_date(date_collection),
+        date_collection = to_date_time(date_collection),
         dob = to_date(dob),
         date_shipment = to_date(date_shipment)
       )

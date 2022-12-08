@@ -46,17 +46,6 @@ mod_storage_information_server <- function(id, sample_info){
     )
     
     
-    specimen_types <- c("Peripheral blood" = "PB", 
-                        "Plasma" = "PL", 
-                        "Serum" = "SE", 
-                        "Urine" = "UR", 
-                        "Stools" = "ST", 
-                        "Bronchial aspirations" = "BA",
-                        "Buffy coat" = "BC"
-    )
-    
-    type_names <- setNames(names(specimen_types), specimen_types)
-    
     output$tbl_specimens <- renderTable({
       
       if(is.null(rv$specimens)) validate("No specimens added yet")
@@ -134,7 +123,7 @@ mod_storage_information_server <- function(id, sample_info){
         specimen <- specimen$dta()
         
         # If freezer != '-80' then rack = ""
-        if(specimen$freezer != "-80") specimen$rack <- ""
+        if(specimen$freezer != "-80\u00B0C") specimen$rack <- ""
         specimen <- map(specimen, ~ . %||% NA_character_) # If NULL then NA. Othewise glue fails
         place = glue::glue("{specimen$rack}.{specimen$drawer}.{specimen$box}")
         

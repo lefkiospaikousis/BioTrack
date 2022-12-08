@@ -17,8 +17,6 @@ mod_sample_information_ui <- function(id){
   
   input_width <- "80%"
   
-  sample_types <- c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations")
-  
   tagList(div(id = ns("form"),
               
               splitLayout(
@@ -37,7 +35,7 @@ mod_sample_information_ui <- function(id){
                       
                       tags$tr(width = "100%",
                               tags$td(width = "30%", div(class = "input-label",style = "", "Gender:")),
-                              tags$td(width = "70%", selectInput(ns("gender"), NULL, c("", "Male", "Female", "Other"), width = input_width))),
+                              tags$td(width = "70%", selectInput(ns("gender"), NULL, c("", col_values[["gender"]]), width = input_width))),
                       
                       tags$tr(width = "100%",
                               tags$td(width = "30%", div(class = "input-label",style = "", "BOCOC ID:")),
@@ -68,7 +66,7 @@ mod_sample_information_ui <- function(id){
                       
                       tags$tr(width = "100%",
                               tags$td(width = "30%", div(class = "input-label",style = "", "Status:")),
-                              tags$td(width = "70%", selectInput(ns("status"), NULL, c("", "Metastatic", "Non metastatic"), width = input_width))),
+                              tags$td(width = "70%", selectInput(ns("status"), NULL, c("", col_values[["status"]]), width = input_width))),
                       
                       tags$tr(width = "100%",
                               tags$td(width = "30%", div(class = "input-label",style = "", "Referring doctor")),
@@ -76,7 +74,7 @@ mod_sample_information_ui <- function(id){
                       
                       tags$tr(width = "100%",
                               tags$td(width = "30%", div(class = "input-label",style = "", "Consent Signed:")),
-                              tags$td(width = "70%", selectInput(ns("consent"), NULL, c("", "Yes", "No"), width = input_width))),
+                              tags$td(width = "70%", selectInput(ns("consent"), NULL, c("", col_values[["consent"]]), width = input_width))),
                       
                     )
                 )
@@ -92,31 +90,31 @@ mod_sample_information_ui <- function(id){
                     tags$table(
                       tags$tr(width = "100%",
                               tags$td(width = "5%", div(class = "input-label",style = "", "1.:")),
-                              tags$td(width = "50%", selectInput(ns("type1"), NULL, c("", sample_types), width = input_width)),
+                              tags$td(width = "50%", selectInput(ns("type1"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
                               tags$td(div(class = "input-label2", style = "", "ml:")),
                               tags$td(numericInput(ns("type1_ml"), NULL, NA, width = "50%"))),
                       
                       tags$tr(width = "100%",
                               tags$td(width = "5%", div(class = "input-label",style = "", "2.:")),
-                              tags$td(width = "50%", selectInput(ns("type2"), NULL, c("", sample_types), width = input_width)),
+                              tags$td(width = "50%", selectInput(ns("type2"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
                               tags$td(div(class = "input-label2", style = "", "ml:")),
                               tags$td( numericInput(ns("type2_ml"), NULL, NA, width = "50%"))),
                       
                       tags$tr(width = "100%",
                               tags$td(width = "5%", div(class = "input-label",style = "", "3.:")),
-                              tags$td(width = "50%", selectInput(ns("type3"), NULL, c("", sample_types), width = input_width)),
+                              tags$td(width = "50%", selectInput(ns("type3"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
                               tags$td(div(class = "input-label2", style = "", "ml:")),
                               tags$td(numericInput(ns("type3_ml"), NULL, NA, width = "50%"))),
                       
                       tags$tr(width = "100%",
                               tags$td(width = "5%", div(class = "input-label",style = "", "4.:")),
-                              tags$td(width = "50%", selectInput(ns("type4"), NULL, c("", sample_types), width = input_width)),
+                              tags$td(width = "50%", selectInput(ns("type4"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
                               tags$td(div(class = "input-label2", style = "", "ml:")),
                               tags$td(numericInput(ns("type4_ml"), NULL, NA, width = "50%"))),
                       
                       tags$tr(width = "100%",
                               tags$td(width = "5%", div(class = "input-label",style = "", "5.:")),
-                              tags$td(width = "50%", selectInput(ns("type5"), NULL, c("", sample_types), width = input_width)),
+                              tags$td(width = "50%", selectInput(ns("type5"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
                               tags$td(div(class = "input-label2", style = "", "ml:")),
                               tags$td(numericInput(ns("type5_ml"), NULL, NA, width = "50%")))
                       
@@ -152,7 +150,7 @@ mod_sample_information_ui <- function(id){
                       
                       tags$tr(width = "100%",
                               tags$td(width = "30%", div(class = "input-label",style = "", "Collected at BOCOC?:")),
-                              tags$td(width = "70%", selectInput(ns("at_bococ"), NULL, c("", "Yes", "No"), width = input_width))),
+                              tags$td(width = "70%", selectInput(ns("at_bococ"), NULL, c("", col_values[["at_bococ"]]), width = input_width))),
                       
                       
                       tags$tr(width = "100%",
@@ -293,12 +291,7 @@ mod_sample_information_server <- function(id){
     iv$add_rule("civil_id", sv_required())
     
     iv$add_rule("dob", sv_required())
-    iv$add_rule("dob", function(date){
-      
-      if(identical(date, Sys.Date()) ){
-        "Born today? Are you sure?"
-      }
-    })
+    iv$add_rule("dob", ~valid_date(., "DOB"))
     
     iv$add_rule("nationality", sv_required())
     
@@ -317,16 +310,20 @@ mod_sample_information_server <- function(id){
     iv$add_rule("phase", sv_required())
     iv$add_rule("at_bococ", sv_required())
     iv$add_rule("date_collection", sv_required())
-    
+    iv$add_rule("date_collection",  ~valid_date(., "Collection date"))
     
     iv_date_shipment <- shinyvalidate::InputValidator$new()
     iv_date_shipment$condition(~ input$at_bococ == 'No')
+    
     iv_date_shipment$add_rule("date_shipment", sv_required())
+    iv_date_shipment$add_rule("date_shipment", ~valid_date(., "Shipment date"))
     
     iv$add_validator(iv_date_shipment)
     
     
     iv$add_rule("date_receipt", sv_required())
+    iv$add_rule("date_receipt",  ~valid_date(., "Receipt date"))
+    
     iv$add_rule("time_receipt", function(time){
       if(identical(strftime(time, "%R"), "00:00")){
         "Required"

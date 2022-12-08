@@ -69,8 +69,8 @@ add_to_logFile <- function(what, who, info){
                                                    action = what, 
                                                    bococ = info$bococ %||% NA_character_, 
                                                    lab_no = info$lab_no, 
-                                                   comments = glue::glue("Modified data for BOCOC: `{info$bococ}`: 
-                                                                         Changed `{col_labels[[info$col]]}` to `{info$new_value}` 
+                                                   comments = glue::glue(
+                                                   "Modified data for BOCOC: `{info$bococ}`: Changed `{col_labels[[info$col]]}` to `{info$new_value}` 
                                                                          from `{info$old_value}`")),
                    
                    stop("Unknown action in add_to_logFile")

@@ -14,6 +14,14 @@ valid_bococ <- function(value){
   if(nchar(value) > 6) "Not a valid BOCOC number (max 6 digits)"
 }
 
+
+valid_date <- function(date, name){
+  if(date > Sys.Date()) {
+    glue::glue("{name} cannot be later than today")
+  }
+}
+
+
 human_time <- function(time = Sys.time()) {
   format(time, "%d/%m/%Y-%H:%M:%OS")
 }

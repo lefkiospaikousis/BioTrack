@@ -63,25 +63,44 @@ col_labels <- c(
 
 sum(duplicated(names(col_labels)))
 
-
-allowed_values <- c(
-  gender = c("Male", "Female", "Other"),
-  #bococ = "function",
-  dob = "date",
-  status = c("Metastatic", "Non metastatic"),
-  consent = c("Yes", "No"),
-  tube = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate"),
-  phase = c("Baseline", "Day of treatment", "Week 3", "Week 6", "Week 9", "Week 12", "End of treatment", "Other"),
-  sample_types <- c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations"),
-  at_bococ = c("Yes", "No"),
-  date_collection = "datetime",
-  date_shipment = "date",
-  date_receipt = "datetime"
+specimen_types <- c("Peripheral blood" = "PB", 
+                    "Plasma" = "PL", 
+                    "Serum" = "SE", 
+                    "Urine" = "UR", 
+                    "Stools" = "ST", 
+                    "Bronchial aspirations" = "BA",
+                    "Buffy coat" = "BC"
 )
+
+type_names <- setNames(names(specimen_types), specimen_types)
+
+col_values <- list(
+  gender       = c("Male", "Female", "Other"),
+  status       = c("Metastatic", "Non metastatic"),
+  consent      = c("Yes", "No"),
+  tube         = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate"),
+  phase        = c("Baseline", "Day of treatment", "Week 3", "Week 6", "Week 9", "Week 12", "End of treatment", "Other"),
+  sample_types = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations"),
+  at_bococ     = c("Yes", "No"),
+  quality      = c("Good", "Heamolysed", "Thawed"),
+  specimen_type = names(specimen_types)
+)
+
+  #bococ = "function",
+
+date_cols <- c("dob", "date_shipment")
+
+date_time_cols <- c("date_receipt", "date_collection", "date_processing")
+
+
 
 usethis::use_data(
   
   internal = TRUE,
+  date_cols,
+  date_time_cols,
   col_labels, 
-  allowed_values,
+  col_values,
+  specimen_types,
+  type_names,
   overwrite = TRUE)

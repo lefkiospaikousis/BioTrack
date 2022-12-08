@@ -61,9 +61,23 @@ mod_edit_sample_button_server <- function(id, sample_info){
       
       unique_id <- sample_info()$unique_id
       
-      x <- glue::glue_sql("UPDATE sample_info SET {col} = {new_value} WHERE unique_id = {unique_id}", .con = dbase_specimen)
+      browser()
+      if(res$id %in% date_time_cols) {
+        new_value <-  as.numeric(lubridate::dmy_hm(new_value, tz = "EET"))
+      }
       
-      rs <- DBI::dbExecute(dbase_specimen, x)
+      
+      if(res$id %in% date_cols | lubridate::is.Date(new_value)){
+        new_value <-  as.numeric(new_value)
+      }
+      
+      if(res$id == "bococ"){
+        new_value <- stringr::str_pad(new_value, 6, 'left', '0')
+      }
+      
+      sql_cmd <- glue::glue_sql("UPDATE sample_info SET {col} = {new_value} WHERE unique_id = {unique_id}", .con = dbase_specimen)
+      
+      rs <- DBI::dbExecute(dbase_specimen, sql_cmd)
       
       if(rs == 1){ 
         
@@ -83,8 +97,6 @@ mod_edit_sample_button_server <- function(id, sample_info){
       
       session$userData$db_trigger(session$userData$db_trigger() + 1)
       show_toast("success", "", "Successful change")
-      
-      #bococ <- dbase_specimen %>% tbl("sample_info") %>% filter(unique_id == !!sample_info()$unique_id) %>% pull(bococ)
       
       # Add to log
       try({add_to_logFile("Modified Sample Information data", session$userData$user, 

@@ -60,9 +60,38 @@ mod_edit_specimen_button_server <- function(id, specimen){
       
       lab_no <- specimen()$lab_no
       
-      x <- glue::glue_sql("UPDATE specimen_info SET {col} = {new_value} WHERE lab_no = {lab_no}", .con = dbase_specimen)
+      browser()
+      if(res$id %in% date_time_cols) {
+        new_value <-  as.numeric(lubridate::dmy_hm(new_value, tz = "EET"))
+      }
       
-      rs <- DBI::dbExecute(dbase_specimen, x)
+      
+      if(res$id %in% date_cols | lubridate::is.Date(new_value)){
+        new_value <-  as.numeric(new_value)
+      }
+      
+      if(res$id == "bococ"){
+        new_value <- stringr::str_pad(new_value, 6, 'left', '0')
+      }
+      
+      sql_cmd <- glue::glue_sql("UPDATE specimen_info SET {col} = {new_value} WHERE lab_no = {lab_no}", .con = dbase_specimen)
+      
+      rs <- DBI::dbExecute(dbase_specimen, sql_cmd)
+      
+      
+
+      if(res$id == "specimen_type"){
+      # Update also the lab_no
+        
+        
+        new_lab_no <- gsub("[A-Z]{2}$", specimen_types[[new_value]], lab_no)
+        
+        sql_cmd1 <- glue::glue_sql("UPDATE specimen_info SET lab_no = {new_lab_no} WHERE lab_no = {lab_no}", .con = dbase_specimen)
+        
+        rs1 <- DBI::dbExecute(dbase_specimen, sql_cmd1)
+        
+      }
+      
       
       if(rs == 1){ 
         
