@@ -10,7 +10,7 @@
 mod_table_storage_ui <- function(id){
   ns <- NS(id)
   tagList(
-    mod_downloadTable_ui(ns("down_storage"), "Download Storage LOG as .xlsx"),
+    mod_downloadTable_ui(ns("down_storage"), "Download Full Storage LOG as an .xlsx file"),
     div(div(mod_download_icf_ui(ns("download_icf2")))),
     reactableOutput(ns("tbl_storage"))
   )
@@ -74,6 +74,7 @@ mod_table_storage_server <- function(id, merged){
       
       
       tbl_storage() %>% 
+        tidyr::unite("Patient name", surname, firstname, sep = " ", na.rm = TRUE) %>% 
         reactable(
           searchable = TRUE, highlight = TRUE, selection = "single", onClick = "select",
           pageSizeOptions = c(10, 25, 50, 100),
@@ -81,10 +82,10 @@ mod_table_storage_server <- function(id, merged){
             lab_no = colDef(name = col_labels[["lab_no"]]),
             bococ = colDef(name = col_labels[["bococ"]]),
             date_receipt = colDef( name = col_labels[["date_receipt"]], format = colFormat(datetime = TRUE, locales = "en-GB") ),
-            date_collection = colDef( name = col_labels[["date_collection"]], format = colFormat(date = TRUE, locales = "en-GB") ),
+            date_collection = colDef( name = col_labels[["date_collection"]], format = colFormat(datetime = TRUE, locales = "en-GB") ),
             date_processing = colDef( name = col_labels[["date_processing"]], format = colFormat(datetime = TRUE, locales = "en-GB") ),
-            surname = colDef(name = col_labels[["surname"]]),
-            firstname = colDef(name = col_labels[["firstname"]]),
+            #surname = colDef(name = col_labels[["surname"]]),
+            #firstname = colDef(name = col_labels[["firstname"]]),
             civil_id = colDef(name = col_labels[["civil_id"]]),
             specimen_type = colDef(name = col_labels[["specimen_type"]]),
             status = colDef(name = col_labels[["status"]]),

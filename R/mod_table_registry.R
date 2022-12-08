@@ -10,7 +10,7 @@
 mod_table_registry_ui <- function(id){
   ns <- NS(id)
   tagList(
-    mod_downloadTable_ui(ns("down_registry"), "Download Registry LOG as .xlsx"),
+    mod_downloadTable_ui(ns("down_registry"), "Download Full Registry LOG as an .xlsx file"),
     div(mod_download_icf_ui(ns("download_icf"))),
     reactableOutput(ns("tbl_registry"))
     
@@ -53,9 +53,9 @@ mod_table_registry_server <- function(id, merged){
       
       merged() %>% 
         select(
-          lab_no, bococ, date_receipt, date_collection, at_bococ, 
-          surname, firstname, gender, dob,  civil_id, tube, specimen_type, 
-          doctor, diagnosis, study, study_id, path_icf, comments
+          lab_no, bococ, civil_id, date_receipt, date_collection, at_bococ, phase, 
+          surname, firstname, gender, nationality, consent, dob,  tube, specimen_type,
+          doctor, diagnosis, status, study, study_id, path_icf, comments
         ) 
       
     })
@@ -80,18 +80,22 @@ mod_table_registry_server <- function(id, merged){
           columns = list(
             lab_no = colDef(name = col_labels[["lab_no"]]),
             bococ = colDef(name = col_labels[["bococ"]]),
+            civil_id = colDef(name = col_labels[["civil_id"]]),
             date_receipt = colDef( name = col_labels[["date_receipt"]], format = colFormat(datetime = TRUE, locales = "en-GB") ),
-            date_collection = colDef( name = col_labels[["date_collection"]], format = colFormat(date = TRUE, locales = "el-GR") ),
+            date_collection = colDef( name = col_labels[["date_collection"]], format = colFormat(datetime = TRUE, locales = "el-GR") ),
             at_bococ = colDef( name = col_labels[["at_bococ"]]),
+            phase = colDef( name = col_labels[["phase"]]),
             #surname = colDef(name = col_labels[["surname"]]),
             #firstname = colDef(name = col_labels[["firstname"]]),
             gender = colDef(name = col_labels[["gender"]]),
-            civil_id = colDef(name = col_labels[["civil_id"]]),
+            nationality = colDef(name = col_labels[["nationality"]]),
+            consent = colDef(name = col_labels[["consent"]]),
             dob = colDef(show = FALSE, name = col_labels[["dob"]], format = colFormat(date = TRUE, locales = "el-GR")),
             tube = colDef(name = col_labels[["tube"]]),
             specimen_type = colDef(name = col_labels[["specimen_type"]]),
             doctor = colDef(name = col_labels[["doctor"]]),
             diagnosis = colDef(name = col_labels[["diagnosis"]]),
+            status = colDef(name = col_labels[["status"]]),
             study = colDef(name = col_labels[["study"]]),
             study_id = colDef(name = col_labels[["study_id"]]),
             path_icf = colDef(name = col_labels[["path_icf"]]),
