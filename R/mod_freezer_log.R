@@ -12,7 +12,7 @@ mod_freezer_log_ui <- function(id){
   tagList(
     sidebarLayout(
       sidebarPanel(width = 2,
-                   selectInput(ns("freezer"), "Freezer", choices = c("-80", "-20")),
+                   selectInput(ns("freezer"), "Freezer", choices = c("-80\u00B0C", "-20\u00B0C")),
                    selectInput(ns("rack"),"Rack", choices = c("A", "B", "C", "D")),
                    downloadLink(ns("down_freezer_log"), "Download Log as .docx")
       ),
@@ -41,10 +41,10 @@ mod_freezer_log_server <- function(id, tbl_merged){
     
     observe({
       req(input$freezer)
-      shinyjs::toggleState("rack", condition = input$freezer != "-20")
+      shinyjs::toggleState("rack", condition = input$freezer != "-20\u00B0C")
       
       rv$rack_text <- switch (input$freezer,
-                              "-80" = paste0("RACK ", input$rack),
+                              "-80\u00B0C" = paste0("-RACK ", input$rack),
                               # other freezers do not have racks
                               ""
       )
@@ -54,7 +54,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
     output$down_freezer_log <- downloadHandler(
       
       filename = function(){
-        glue::glue("Freezer_{input$freezer}C-{rv$rack_text}-{format(Sys.time(), '%d/%m/%Y-%H:%M')}.docx")
+        glue::glue("Freezer_{input$freezer}{rv$rack_text}-{format(Sys.time(), '%d/%m/%Y-%H:%M')}.docx")
       },
       
       content = function(file) {
@@ -83,14 +83,14 @@ mod_freezer_log_server <- function(id, tbl_merged){
     
     spec_log <- reactive({
       
-      title <- glue::glue("{input$freezer}°C Freezer - {rv$rack_text} - Specimen Log")
+      title <- glue::glue("{input$freezer} Freezer - {rv$rack_text} - Specimen Log")
       
       
       rack_tbl <- tbl_merged() %>% 
         select(lab_no, freezer, box, rack, drawer, unique_id) %>% 
         filter(freezer == !!input$freezer) %>% 
         {
-          if(input$freezer == "-80"){
+          if(input$freezer == "-80\u00B0C"){
             filter(., rack == !!input$rack)
           } else {
             .
@@ -123,7 +123,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
         flextable::set_table_properties("fixed") %>% 
         flextable::width( j = c(2:6), width = 1.80) %>% 
         flextable::fontsize(size = 9) %>% 
-        flextable::add_footer_lines(glue::glue("BOCOC: {input$freezer}°C Freezer. {rv$rack_text}. Specimen {log_version}")) 
+        flextable::add_footer_lines(glue::glue("BOCOC: {input$freezer} Freezer. {rv$rack_text}. Specimen {log_version}")) 
       
     })
     

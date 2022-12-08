@@ -26,7 +26,7 @@ mod_add_specimen_ui <- function(id, specimen_types){
                                                      width = input_width))),
           tags$tr(width = "100%",
                   tags$td(width = "40%", div(class = "input-label", "Sample Quality:")),
-                  tags$td(width = "60%", selectInput(ns("quality"), NULL, c("", "Good", "Heamolysed", "Thawed"), width = input_width))),
+                  tags$td(width = "60%", selectInput(ns("quality"), NULL, c("", col_values[["quality"]]), width = input_width))),
           
           tags$tr(width = "100%",
                   tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date & Time<br>of processing"))),
@@ -45,7 +45,7 @@ mod_add_specimen_ui <- function(id, specimen_types){
           
           tags$tr(width = "100%",
                   tags$td(width = "30%", div(class = "input-label",style = "", "Freezer:")),
-                  tags$td(width = "70%", prettyRadioButtons(ns("freezer"), NULL, c("-80", "-20", "+4"), 
+                  tags$td(width = "70%", prettyRadioButtons(ns("freezer"), NULL, c("-80\u00B0C", "-20\u00B0C", "+4\u00B0C"), 
                                                             inline = TRUE,  fill = TRUE, selected = character(0), width = "100%"))),
           
           tags$tr(width = "100%",
@@ -126,8 +126,10 @@ mod_add_specimen_server <- function(id){
       }
     })
     
+    iv$add_rule("time_processing", sv_required())
+    
     iv_freezer <- shinyvalidate::InputValidator$new()
-    iv_freezer$condition(~ input$freezer == "-80")
+    iv_freezer$condition(~ input$freezer == "-80\u00B0C")
     
     iv_freezer$add_rule("rack", sv_required())
     
@@ -212,7 +214,7 @@ mod_add_specimen_server <- function(id){
     
     observeEvent(input$freezer,{
       
-      shinyjs::toggleState("rack",  condition = input$freezer == "-80")
+      shinyjs::toggleState("rack",  condition = input$freezer == "-80\u00B0C")
     }, ignoreInit = TRUE)
     
     
