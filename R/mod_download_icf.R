@@ -26,10 +26,13 @@ mod_download_icf_server <- function(id, files_download){
     
     output$download <- downloadHandler(
       
-      
       filename = function() {
         
-        
+        if(!file.exists(files_download()$path_icf)){
+          
+          show_toast("error", "Something went wrong", "Could not find the ICF for this sample. Please contact support asap")
+          return()
+        }
         
         x <- try(files_download(), silent = TRUE)
         
