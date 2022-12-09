@@ -70,7 +70,7 @@ mod_modal_modifyValue_server <- function(id, dta){
       # Decide the input box type
       input_box <- NULL
       
-      browser()
+      
       if( id %in% names(col_values) ) {
         
         current_value <- dta[[id]]

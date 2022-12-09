@@ -2,7 +2,10 @@
 
 export("%>%")
 export(add_to_logFile)
+export(get_sample_info)
+export(get_specimen)
 export(run_app)
+export(update_duration)
 import(dplyr)
 import(shiny)
 import(shinydashboard)

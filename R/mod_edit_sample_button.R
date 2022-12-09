@@ -61,7 +61,7 @@ mod_edit_sample_button_server <- function(id, sample_info){
       
       unique_id <- sample_info()$unique_id
       
-      browser()
+      
       if(res$id %in% date_time_cols) {
         new_value <-  as.numeric(lubridate::dmy_hm(new_value, tz = "EET"))
       }
@@ -78,6 +78,37 @@ mod_edit_sample_button_server <- function(id, sample_info){
       sql_cmd <- glue::glue_sql("UPDATE sample_info SET {col} = {new_value} WHERE unique_id = {unique_id}", .con = dbase_specimen)
       
       rs <- DBI::dbExecute(dbase_specimen, sql_cmd)
+      
+      
+      # need to update the duration if one of these are changed
+      if(res$id %in% c("date_collection", "date_processing")){
+        
+        sample_info <- as.list(sample_info())
+        sample_info$date_processing <- get_fromDB(dbase_specimen, "specimen_info", "date_processing", unique_id)
+        sample_info$duration <- get_fromDB(dbase_specimen, "specimen_info", "duration", unique_id)
+        # this might be more than one
+        sample_info$lab_no <- get_fromDB(dbase_specimen, "specimen_info", "lab_no", unique_id)
+        
+        if(length(sample_info$lab_no) > 1 ){
+          
+          show_toast("warning", "Duration from collection to processing", 
+          "You are changing the 'Collection Date', but tThere are more than 1 specimens associated with this 
+                     Sample. Please contact support to make the change on the Duration 
+          from Sample collection to Sample Processing", keepVisible = TRUE)
+        } else {
+          tryCatch({
+            
+            update_duration(dbase_specimen, sample_info, session$userData$user)
+            rm(sample_info)
+            
+          }, error = function(e){
+            show_toast("warning", "Duration from collection to processing", 
+            "Could not update the Duration from Sample Collection to Sample Processing.
+                    Please contact support to make the change", keepVisible = TRUE)
+          })
+        }
+      }
+      
       
       if(rs == 1){ 
         

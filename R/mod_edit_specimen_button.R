@@ -60,7 +60,7 @@ mod_edit_specimen_button_server <- function(id, specimen){
       
       lab_no <- specimen()$lab_no
       
-      browser()
+      
       if(res$id %in% date_time_cols) {
         new_value <-  as.numeric(lubridate::dmy_hm(new_value, tz = "EET"))
       }
@@ -90,6 +90,16 @@ mod_edit_specimen_button_server <- function(id, specimen){
         
         rs1 <- DBI::dbExecute(dbase_specimen, sql_cmd1)
         
+      }
+      
+      # need to update the duration if one of these are changed
+      if(res$id %in% c("date_collection", "date_processing")){
+        
+        specimen <- get_specimen(dbase_specimen, lab_no )
+        specimen$date_collection <- get_fromDB(dbase_specimen, "sample_info", "date_collection", specimen$unique_id)
+        
+        update_duration(dbase_specimen, specimen, session$userData$user)
+        rm(specimen)
       }
       
       
