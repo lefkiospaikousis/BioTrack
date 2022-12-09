@@ -28,12 +28,6 @@ mod_download_icf_server <- function(id, files_download){
       
       filename = function() {
         
-        if(!file.exists(files_download()$path_icf)){
-          
-          show_toast("error", "Something went wrong", "Could not find the ICF for this sample. Please contact support asap")
-          return()
-        }
-        
         x <- try(files_download(), silent = TRUE)
         
         if( inherits(x, 'try-error') ){
@@ -52,6 +46,12 @@ mod_download_icf_server <- function(id, files_download){
         } 
         
         if(length(files) == 1){
+          
+          if(!file.exists(file.path("ICF", files_download()$unique_id, files))){
+            
+            show_toast("error", "Something went wrong", "Could not find the ICF for this sample. Please contact support asap")
+            return()
+          }
           
           return(
             paste0("ICF-", files_download()$lab_no, "-", files ,".pdf")
