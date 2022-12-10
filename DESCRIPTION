@@ -1,6 +1,6 @@
 Package: BioTrack
 Title: A title of BioTrack
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: person('Lefkios', 'Paikousis', email = 'lefkiospaikousis@yahoo.com', role = c('cre', 'aut'))
 Description: An ap to monitor the collection of biomedical material in BOCOC.
 License: What license is it under?
