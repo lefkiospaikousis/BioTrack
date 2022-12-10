@@ -13,6 +13,33 @@ mod_table_storage_ui <- function(id){
     span(mod_downloadTable_ui(ns("down_storage"), "Download Full Storage LOG as an .xlsx file"), 
          HTML("&nbsp;&nbsp;&nbsp;"), "OR", HTML("&nbsp;&nbsp;&nbsp;"),
          mod_download_icf_ui(ns("download_icf2"))),
+    hr(),
+    fluidRow(
+      col_2(
+        shinyWidgets::pickerInput(ns("specimen_type"), col_labels[["specimen_type"]], choices = NULL, multiple = TRUE,
+                                  options = shinyWidgets::pickerOptions(
+                                    liveSearchStyle = "contains",
+                                    noneSelectedText = "ALL"
+                                  )
+        )
+      ),
+      col_2(
+        shinyWidgets::pickerInput(ns("status"), col_labels[["status"]], choices = NULL, multiple = TRUE,
+                                  options = shinyWidgets::pickerOptions(
+                                    liveSearchStyle = "contains",
+                                    noneSelectedText = "ALL"
+                                  )
+        )
+      ),
+      col_2(
+        shinyWidgets::pickerInput(ns("quality"), col_labels[["quality"]], choices = NULL, multiple = TRUE,
+                                  options = shinyWidgets::pickerOptions(
+                                    liveSearchStyle = "contains",
+                                    noneSelectedText = "ALL"
+                                  )
+        )
+      )
+    ),
     reactableOutput(ns("tbl_storage"))
   )
 }
@@ -48,16 +75,46 @@ mod_table_storage_server <- function(id, merged){
       
     })
     
+    observeEvent(merged(), {
+      req(merged())
+      specimen_types <- unique(merged()$specimen_type)
+      shinyWidgets::updatePickerInput(session, "specimen_type", choices = c(specimen_types))
+      
+      statuses <- unique(merged()$status)
+      shinyWidgets::updatePickerInput(session, "status", choices = c(statuses))
+      
+      qualities <- unique(merged()$quality)
+      shinyWidgets::updatePickerInput(session, "quality", choices = c(qualities))
+      
+    })
+    
+    
     
     tbl_storage <- reactive({
       
-      merged() %>% 
+      orgl <- merged() %>% 
         select(
           lab_no, bococ, date_receipt, date_collection, date_processing,
           surname, firstname, civil_id, specimen_type, status,
           quality, duration,  
           freezer, place, comment_place, n_tubes
         )
+      
+      out <- orgl
+      
+      if(!is.null(input$specimen_type)){
+        out <- orgl %>% filter(specimen_type %in% input$specimen_type)
+      }
+      
+      if(!is.null(input$status)){
+        out <- out %>% filter(status %in% input$status)
+      }
+      
+      if(!is.null(input$quality)){
+        out <- out %>% filter(quality %in% input$quality)
+      }
+      
+      out
       
     })
     

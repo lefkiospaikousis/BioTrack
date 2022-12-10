@@ -13,6 +13,33 @@ mod_table_registry_ui <- function(id){
     span(mod_downloadTable_ui(ns("down_registry"), "Download Full Registry LOG as an .xlsx file"), 
          HTML("&nbsp;&nbsp;&nbsp;"), "OR", HTML("&nbsp;&nbsp;&nbsp;"),
          mod_download_icf_ui(ns("download_icf"))),
+    hr(),
+    fluidRow(
+      col_2(
+        shinyWidgets::pickerInput(ns("doctor"), col_labels[["doctor"]], choices = NULL, multiple = TRUE,
+                                  options = shinyWidgets::pickerOptions(
+                                    liveSearchStyle = "contains",
+                                    noneSelectedText = "ALL"
+                                  )
+        )
+      ),
+      col_2(
+        shinyWidgets::pickerInput(ns("status"), col_labels[["status"]], choices = NULL, multiple = TRUE,
+                                  options = shinyWidgets::pickerOptions(
+                                    liveSearchStyle = "contains",
+                                    noneSelectedText = "ALL"
+                                  )
+        )
+      ),
+      col_2(
+        shinyWidgets::pickerInput(ns("study"), col_labels[["study"]], choices = NULL, multiple = TRUE,
+                                  options = shinyWidgets::pickerOptions(
+                                    liveSearchStyle = "contains",
+                                    noneSelectedText = "ALL"
+                                  )
+        )
+      )
+    ),
     reactableOutput(ns("tbl_registry"))
     
   )
@@ -48,17 +75,44 @@ mod_table_registry_server <- function(id, merged){
       
     })
     
+    observeEvent(merged(), {
+      
+      doctors <- unique(merged()$doctor)
+      shinyWidgets::updatePickerInput(session, "doctor", choices = c(doctors))
+      
+      statuses <- unique(merged()$status)
+      shinyWidgets::updatePickerInput(session, "status", choices = c(statuses))
+      
+      studies <- unique(merged()$study)
+      shinyWidgets::updatePickerInput(session, "study", choices = c(studies))
+      
+    })
     
     
     tbl_registry <- reactive({
       
-      merged() %>% 
+      orgl <- merged() %>% 
         select(
           lab_no, bococ, civil_id, date_receipt, date_collection, at_bococ, phase, 
           surname, firstname, gender, nationality, consent, dob,  tube, specimen_type,
           doctor, diagnosis, status, study, study_id, path_icf, comments
         ) 
       
+      out <- orgl
+      
+      if(!is.null(input$doctor)){
+        out <- orgl %>% filter(doctor %in% input$doctor)
+      }
+      
+      if(!is.null(input$status)){
+        out <- out %>% filter(status %in% input$status)
+      }
+      
+      if(!is.null(input$study)){
+        out <- out %>% filter(study %in% input$study)
+      }
+      
+      out
     })
     
     # rename for download
