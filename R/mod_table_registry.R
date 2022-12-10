@@ -10,8 +10,9 @@
 mod_table_registry_ui <- function(id){
   ns <- NS(id)
   tagList(
-    mod_downloadTable_ui(ns("down_registry"), "Download Full Registry LOG as an .xlsx file"),
-    div(mod_download_icf_ui(ns("download_icf"))),
+    span(mod_downloadTable_ui(ns("down_registry"), "Download Full Registry LOG as an .xlsx file"), 
+         HTML("&nbsp;&nbsp;&nbsp;"), "OR", HTML("&nbsp;&nbsp;&nbsp;"),
+         mod_download_icf_ui(ns("download_icf"))),
     reactableOutput(ns("tbl_registry"))
     
   )
@@ -101,6 +102,9 @@ mod_table_registry_server <- function(id, merged){
             path_icf = colDef(name = col_labels[["path_icf"]]),
             comments = colDef(name = col_labels[["comments"]])
             
+          ),
+          theme = reactable::reactableTheme(
+            rowSelectedStyle = list(backgroundColor = "#acb3c2", boxShadow = "inset 2px 0 0 0 #2b64e0")
           )
           
         ) 

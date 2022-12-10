@@ -10,8 +10,9 @@
 mod_table_storage_ui <- function(id){
   ns <- NS(id)
   tagList(
-    mod_downloadTable_ui(ns("down_storage"), "Download Full Storage LOG as an .xlsx file"),
-    div(div(mod_download_icf_ui(ns("download_icf2")))),
+    span(mod_downloadTable_ui(ns("down_storage"), "Download Full Storage LOG as an .xlsx file"), 
+         HTML("&nbsp;&nbsp;&nbsp;"), "OR", HTML("&nbsp;&nbsp;&nbsp;"),
+         mod_download_icf_ui(ns("download_icf2"))),
     reactableOutput(ns("tbl_storage"))
   )
 }
@@ -96,6 +97,9 @@ mod_table_storage_server <- function(id, merged){
             comment_place = colDef(name = col_labels[["comment_place"]]),
             n_tubes = colDef(name = col_labels[["n_tubes"]])
             
+          ),
+          theme = reactable::reactableTheme(
+            rowSelectedStyle = list(backgroundColor = "#acb3c2", boxShadow = "inset 2px 0 0 0 #2b64e0")
           )
         ) 
       

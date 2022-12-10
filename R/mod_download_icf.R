@@ -34,7 +34,7 @@ mod_download_icf_server <- function(id, files_download){
         x <- try(files_download(), silent = TRUE)
         
         if( inherits(x, 'try-error') ){
-          show_toast("error", "", "Select a Lab no fist and then click to download the ICF")
+          show_toast("error", "", "Select a record on the table fist, and then click to download the ICF")
           
         }
         
