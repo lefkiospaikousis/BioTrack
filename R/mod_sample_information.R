@@ -156,15 +156,11 @@ mod_sample_information_ui <- function(id){
                       tags$tr(width = "100%",
                               tags$td(width = "30%", div(class = "input-label", "Date of collection:")),
                               tags$td(width = "70%", 
-                                      
-                                      splitLayout(cellWidths = c("40%", "40%"),
-                                                  div(dateInput(ns("date_collection"), NULL, lubridate::NA_Date_ , format = "dd/mm/yyyy", width = "90%")),
-                                                  div(style = "margin-top: 0px; margin-left:-5px" , shinyTime::timeInput(ns("time_collection"), NULL, seconds = FALSE))
+                                      splitLayout(cellWidths = c("55%", "60%"),
+                                                  div(dateInput(ns("date_collection"), NULL, lubridate::NA_Date_ , format = "dd/mm/yyyy", width = "80%")),
+                                                  div(style = "margin-top: 0px; margin-left:-20px" , 
+                                                      shinyTime::timeInput(ns("time_collection"), NULL, seconds = FALSE))
                                       )
-                                      
-                                      
-                                      
-                                      
                                       
                               )),
                       
