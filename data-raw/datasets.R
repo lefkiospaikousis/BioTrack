@@ -29,7 +29,7 @@ col_labels <- c(
   type5_ml          = "type5_ml",
   
   tube              = "Type of blood collection tube",
-  phase             = "Clinical trial phase",
+  phase             = "Timepoint of collection",
   at_bococ          = "Sample was collected at BOCOC",
   date_collection   = "Date of Collection",
   date_shipment     = 'Date of shipment',
