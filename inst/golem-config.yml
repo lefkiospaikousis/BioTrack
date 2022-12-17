@@ -6,7 +6,8 @@ default:
   path_db_specimen: !expr file.path('DB', 'dev', 'specimen')
   path_db_creds: !expr here::here("DB", "dev", "credentials.sqlite")
   users_passphrase: l@17797839
-  log_version: Log Version 3.0 April 2022
+  log_version80: Log Version 3.0 April 2022
+  log_version20: Log Version 2.0 June 2022
 production:
   app_prod: yes
   db_users: DB/prod/credentials.sqlite
