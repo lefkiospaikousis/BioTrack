@@ -14,7 +14,7 @@ mod_add_specimen_ui <- function(id, specimen_types){
   
   
   tagList(
- 
+    
     div(style = "font-size:13px",
         #hr(style = "width: 80%"),
         tags$table(
@@ -30,9 +30,9 @@ mod_add_specimen_ui <- function(id, specimen_types){
           
           tags$tr(width = "100%",
                   tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date & Time<br>of processing"))),
-
+                  
                   tags$td(width = "60%",
-
+                          
                           splitLayout(cellWidths = c("50%", "50%"),
                                       div(dateInput(ns("date_processing"), NULL, "", format = "dd/mm/yyyy", width = input_width)),
                                       div(style = "margin-top: 1px" , shinyTime::timeInput(ns("time_processing"), NULL, seconds = FALSE)),
@@ -62,8 +62,10 @@ mod_add_specimen_ui <- function(id, specimen_types){
           
           tags$tr(width = "100%",
                   tags$td(width = "30%", div(class = "input-label", "Box:")),
-                  tags$td(width = "70%", prettyRadioButtons(ns("box"), NULL, c(1:3), 
-                                                            inline = TRUE,  fill = TRUE, selected = character(0), width = input_width))),
+                  tags$td(width = "70%",  shinyjs::disabled(
+                    prettyRadioButtons(ns("box"), NULL, c(1:3), 
+                                       inline = TRUE,  fill = TRUE, selected = character(0), width = input_width))
+                  )),
           
           tags$tr(width = "100%",
                   tags$td(width = "30%", div(class = "input-label", "Comments:")),
@@ -84,14 +86,14 @@ mod_add_specimen_ui <- function(id, specimen_types){
     hr()
   )
 }
-    
+
 #' add_specimen Server Functions
 #'
 #' @noRd 
 mod_add_specimen_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
- 
+    
     submitted <- reactiveVal(0)
     close_form <- reactiveVal(0)
     
@@ -114,8 +116,8 @@ mod_add_specimen_server <- function(id){
     
     iv$add_rule("type", sv_required())
     iv$add_rule("freezer", sv_required())
+    
     iv$add_rule("drawer", sv_required())
-    iv$add_rule("box", sv_required())
     iv$add_rule("n_tubes", sv_gt(0))
     iv$add_rule("quality", sv_required())
     
@@ -132,7 +134,7 @@ mod_add_specimen_server <- function(id){
     iv_freezer$condition(~ input$freezer == "-80\u00B0C")
     
     iv_freezer$add_rule("rack", sv_required())
-    
+    iv_freezer$add_rule("box", sv_required())
     
     iv$add_validator(iv_freezer)
     
@@ -141,7 +143,7 @@ mod_add_specimen_server <- function(id){
     form_data <- reactive({
       
       # Temporary collection of the data 
-     
+      
       # To keep the output ids as column names - short&sweet and then
       # then possible rename using the same vector, when presenting
       all_fields <- unname(all_fields) %>% setNames(all_fields)
@@ -215,6 +217,7 @@ mod_add_specimen_server <- function(id){
     observeEvent(input$freezer,{
       
       shinyjs::toggleState("rack",  condition = input$freezer == "-80\u00B0C")
+      shinyjs::toggleState("box",  condition = input$freezer == "-80\u00B0C")
     }, ignoreInit = TRUE)
     
     
@@ -230,9 +233,9 @@ mod_add_specimen_server <- function(id){
     
   }) # End of Server
 }
-    
+
 ## To be copied in the UI
 # mod_add_specimen_ui("add_specimen_1")
-    
+
 ## To be copied in the server
 # mod_add_specimen_server("add_specimen_1")
