@@ -36,6 +36,7 @@ mod_storage_information_ui <- function(id){
 #' storage_information Server Functions
 #'
 #' @noRd
+#' @param sample_info A list of th sample information
 mod_storage_information_server <- function(id, sample_info){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
@@ -123,7 +124,11 @@ mod_storage_information_server <- function(id, sample_info){
         specimen <- specimen$dta()
         
         # If freezer != '-80' then rack = ""
-        if(specimen$freezer != "-80\u00B0C") specimen$rack <- ""
+        if(specimen$freezer != "-80\u00B0C") {
+          specimen$rack <- ""
+          specimen$box <- ""
+        }
+        
         specimen <- map(specimen, ~ . %||% NA_character_) # If NULL then NA. Othewise glue fails
         place = glue::glue("{specimen$rack}.{specimen$drawer}.{specimen$box}")
         

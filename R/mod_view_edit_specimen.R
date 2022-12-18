@@ -134,15 +134,17 @@ mod_view_edit_specimen_server <- function(id, focus){
               strong(specimen$quality), mod_edit_specimen_button_ui(ns("quality")) ),
             p("Specimen Type: ", 
               strong(specimen$specimen_type) #, mod_edit_specimen_button_ui(ns("specimen_type")) 
-              ),
+            ),
             p(span("Freezer: ", 
-                   strong(specimen$freezer) , " - Storage Place: ", strong(specimen$place))),
+                   strong(specimen$freezer) , " - Storage Place: ", strong(specimen$place)),
+              mod_edit_specimen_button_ui(ns("place"))
+            ),
             p("Comments: ", 
               strong(specimen$comment_place), mod_edit_specimen_button_ui(ns("comment_place")) 
             ),
             p("Date processing: ", strong(to_date_time(specimen$date_processing) %>% format("%d/%m/%Y %H:%M")),
               mod_edit_specimen_button_ui(ns("date_processing"))
-              ),
+            ),
             p(col_labels[["duration"]], ": ",  strong(specimen$duration)),
             p(col_labels[["n_tubes"]], ": ",  
               strong(specimen$n_tubes), mod_edit_specimen_button_ui(ns("n_tubes") )
@@ -157,7 +159,7 @@ mod_view_edit_specimen_server <- function(id, focus){
     mod_edit_specimen_button_server("comment_place", reactive(rv$specimen_selected))
     mod_edit_specimen_button_server("n_tubes", reactive(rv$specimen_selected))
     mod_edit_specimen_button_server("date_processing", reactive(rv$specimen_selected))
-    
+    mod_edit_specimen_button_server("place", reactive(rv$specimen_selected))
     
     # Sample Information UI ----
     output$sample_infoUI <- renderUI({
