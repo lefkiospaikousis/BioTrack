@@ -216,6 +216,18 @@ mod_view_edit_specimen_server <- function(id, focus){
               mod_edit_sample_button_ui(ns("doctor"))
             ),
             
+            p(col_labels[["consent"]], ": ",strong(sample_info$consent),
+              mod_edit_sample_button_ui(ns("consent"))
+            ),
+            
+            p(col_labels[["type1"]], ": ",strong(sample_info$type1),
+              mod_edit_sample_button_ui(ns("type1"))
+            ),
+            
+            p(col_labels[["type1_ml"]], ": ",strong(sample_info$type1_ml),
+              mod_edit_sample_button_ui(ns("type1_ml"))
+            ),
+            
             p(col_labels[["phase"]], ": ", strong(sample_info$phase),
               mod_edit_sample_button_ui(ns("phase"))
             ),
@@ -235,7 +247,6 @@ mod_view_edit_specimen_server <- function(id, focus){
               mod_edit_sample_button_ui(ns("date_shipment"))
             ),
             
-            
             p(col_labels[["date_receipt"]], ": ", strong(to_date_time(sample_info$date_receipt) %>% format("%d/%m/%Y %H:%M")),
               mod_edit_sample_button_ui(ns("date_receipt"))
             ),
@@ -245,6 +256,8 @@ mod_view_edit_specimen_server <- function(id, focus){
             ),
             p(col_labels[["study"]], ": ", strong(sample_info$study),
               mod_edit_sample_button_ui(ns("study"))
+            ),
+            p(col_labels[["path_icf"]], ": ", strong(sample_info$path_icf)
             ),
             p(col_labels[["comments"]], ": ", strong(sample_info$comments),
               mod_edit_sample_button_ui(ns("comments"))
@@ -266,7 +279,11 @@ mod_view_edit_specimen_server <- function(id, focus){
     mod_edit_sample_button_server("status", reactive(rv$sample_selected))
     mod_edit_sample_button_server("doctor", reactive(rv$sample_selected))
     mod_edit_sample_button_server("diagnosis", reactive(rv$sample_selected))
-    mod_edit_sample_button_server("doctor", reactive(rv$sample_selected))
+    mod_edit_sample_button_server("consent", reactive(rv$sample_selected))
+    
+    mod_edit_sample_button_server("type1", reactive(rv$sample_selected))
+    mod_edit_sample_button_server("type1_ml", reactive(rv$sample_selected))
+    
     mod_edit_sample_button_server("phase", reactive(rv$sample_selected))
     mod_edit_sample_button_server("study_id", reactive(rv$sample_selected))
     mod_edit_sample_button_server("study", reactive(rv$sample_selected))
@@ -278,6 +295,8 @@ mod_view_edit_specimen_server <- function(id, focus){
     mod_edit_sample_button_server("nationality", reactive(rv$sample_selected))
     mod_edit_sample_button_server("dob", reactive(rv$sample_selected))
     mod_edit_sample_button_server("comments", reactive(rv$sample_selected))
+    
+    mod_edit_sample_button_server("icf", reactive(rv$sample_selected))
     
     mod_edit_sample_button_server("date_collection", reactive(rv$sample_selected))
     mod_edit_sample_button_server("date_shipment", reactive(rv$sample_selected))

@@ -18,15 +18,15 @@ col_labels <- c(
   consent           = "Consent Signed",
   
   type1             = "Sample Type 1",
-  type1_ml          = "type1_ml",
+  type1_ml          = "Sample Type 1 (ml)",
   type2             = "Sample Type 2",
-  type2_ml          = "type2_ml",
+  type2_ml          = "Sample Type 2 (ml)",
   type3             = "Sample Type 3",
-  type3_ml          = "type3_ml",
+  type3_ml          = "Sample Type 3 (ml)",
   type4             = "Sample Type 4",
-  type4_ml          = "type4_ml",
+  type4_ml          = "Sample Type 4 (ml)",
   type5             = "Sample Type 5",
-  type5_ml          = "type5_ml",
+  type5_ml          = "Sample Type 5 (ml)",
   
   tube              = "Type of blood collection tube",
   phase             = "Timepoint of collection",
@@ -83,7 +83,13 @@ col_values <- list(
   sample_types = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations"),
   at_bococ     = c("Yes", "No"),
   quality      = c("Good", "Heamolysed", "Thawed"),
-  specimen_type = names(specimen_types)
+  specimen_type = names(specimen_types),
+  type1        = names(specimen_types),
+  type2        = names(specimen_types),
+  type3        = names(specimen_types),
+  type4        = names(specimen_types),
+  type5        = names(specimen_types)
+  
 )
 
   #bococ = "function",

@@ -93,7 +93,7 @@ mod_table_registry_server <- function(id, merged){
       
       orgl <- merged() %>% 
         select(
-          lab_no, bococ, civil_id, date_receipt, date_collection, at_bococ, phase, 
+          lab_no, bococ, civil_id, date_receipt, date_collection, type1, type1_ml, at_bococ, phase, 
           surname, firstname, gender, nationality, consent, dob,  tube, specimen_type,
           doctor, diagnosis, status, study, study_id, path_icf, comments
         ) 
@@ -138,6 +138,8 @@ mod_table_registry_server <- function(id, merged){
             civil_id = colDef(name = col_labels[["civil_id"]]),
             date_receipt = colDef( name = col_labels[["date_receipt"]], format = colFormat(datetime = TRUE, locales = "en-GB") ),
             date_collection = colDef( name = col_labels[["date_collection"]], format = colFormat(datetime = TRUE, locales = "el-GR") ),
+            type1 = colDef(name = col_labels[["type1"]]),
+            type1_ml = colDef(name = col_labels[["type1_ml"]]),
             at_bococ = colDef( name = col_labels[["at_bococ"]]),
             phase = colDef( name = col_labels[["phase"]]),
             #surname = colDef(name = col_labels[["surname"]]),
@@ -145,7 +147,7 @@ mod_table_registry_server <- function(id, merged){
             gender = colDef(name = col_labels[["gender"]]),
             nationality = colDef(name = col_labels[["nationality"]]),
             consent = colDef(name = col_labels[["consent"]]),
-            dob = colDef(show = FALSE, name = col_labels[["dob"]], format = colFormat(date = TRUE, locales = "el-GR")),
+            dob = colDef(show = TRUE, name = col_labels[["dob"]], format = colFormat(date = TRUE, locales = "el-GR")),
             tube = colDef(name = col_labels[["tube"]]),
             specimen_type = colDef(name = col_labels[["specimen_type"]]),
             doctor = colDef(name = col_labels[["doctor"]]),
