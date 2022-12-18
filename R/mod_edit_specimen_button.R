@@ -104,7 +104,8 @@ mod_edit_specimen_button_server <- function(id, specimen){
         session$userData$db_trigger(session$userData$db_trigger() + 1)
         show_toast("success", "", "Successful change")
         
-        if(!golem::app_prod()) showNotification(
+        #if(!golem::app_prod()) 
+        showNotification(
           glue::glue("Updated Specimen Storage for Lab No: {lab_no} - changed `Storage Place` to {place}")
         )
         
@@ -200,7 +201,8 @@ mod_edit_specimen_button_server <- function(id, specimen){
         
       }
       
-      if(!golem::app_prod()) showNotification(
+      #if(!golem::app_prod()) 
+      showNotification(
         glue::glue("Updated specimen ", lab_no, " - changed {col} to {new_value}")
       )
       

@@ -120,7 +120,8 @@ mod_edit_sample_button_server <- function(id, sample_info){
         
       }
       
-      if(!golem::app_prod()) showNotification(
+      #if(!golem::app_prod()) 
+      showNotification(
         glue::glue("Updated sample_info ", unique_id, " - changed {col} to {new_value}")
       )
       
