@@ -130,14 +130,11 @@ mod_sample_information_ui <- function(id){
                       
                       tags$tr(width = "100%",
                               tags$td(width = "40%", div(class = "input-label",style = "", HTML("Type of blood <br>Collection tube"))),
-                              tags$td(width = "60%", selectInput(ns("tube"), NULL, c("", "EDTA", "Streck", "Sodium Heparin", "Sodium Citrate"), width = input_width))),
+                              tags$td(width = "60%", selectInput(ns("tube"), NULL, c("", col_values[["tube"]]), width = input_width))),
                       
                       tags$tr(width = "100%",
                               tags$td(width = "40%", div(class = "input-label",style = "", "Sample was collected at:")),
-                              tags$td(width = "60%", selectInput(ns("phase"), NULL, 
-                                                                 c("", "Baseline", "Day of treatment", "Week 3", 
-                                                                   "Week 6", "Week 9", "Week 12", "End of treatment", "Other"), 
-                                                                 width = input_width))),
+                              tags$td(width = "60%", selectInput(ns("phase"), NULL, c("", col_values[["phase"]]), width = input_width))),
                       
                       
                       
