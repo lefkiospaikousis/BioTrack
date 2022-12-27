@@ -182,7 +182,7 @@ mod_edit_specimen_button_server <- function(id, specimen){
       
       # need to update the duration if one of these are changed
       if(res$id %in% c("date_collection", "date_processing")){
-        
+        # get the updated specimen info
         specimen <- get_specimen(dbase_specimen, lab_no )
         specimen$date_collection <- get_fromDB(dbase_specimen, "sample_info", "date_collection", specimen$unique_id)
         

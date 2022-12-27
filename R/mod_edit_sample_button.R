@@ -83,7 +83,9 @@ mod_edit_sample_button_server <- function(id, sample_info){
       # need to update the duration if one of these are changed
       if(res$id %in% c("date_collection", "date_processing")){
         
-        sample_info <- as.list(sample_info())
+        # get the updated sample Info, after I changed the value fo date_collection
+        sample_info <- get_sample_info(dbase_specimen, unique_id)
+        #sample_info <- as.list(sample_info())
         sample_info$date_processing <- get_fromDB(dbase_specimen, "specimen_info", "date_processing", unique_id)
         sample_info$duration <- get_fromDB(dbase_specimen, "specimen_info", "duration", unique_id)
         # this might be more than one
