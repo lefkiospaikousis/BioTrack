@@ -79,7 +79,7 @@ col_values <- list(
   status       = c("Metastatic", "Non metastatic"),
   consent      = c("Yes", "No"),
   tube         = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate"),
-  phase        = c("Baseline", "Day of treatment", "Week 3", "Week 6", "Week 9", "Week 12", "End of treatment", "Other"),
+  phase        = c("Baseline", "Day of treatment", "Month 3", "Month 6", "Month 9", "Month 12", "End of treatment", "Other"),
   sample_types = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations"),
   at_bococ     = c("Yes", "No"),
   quality      = c("Good", "Heamolysed", "Thawed"),
