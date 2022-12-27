@@ -52,7 +52,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
     output$down_freezer_log <- downloadHandler(
       
       filename = function(){
-        glue::glue("Freezer_{input$freezer}{rv$rack_text}-{format(Sys.time(), '%d/%m/%Y-%H:%M')}.docx")
+        glue::glue("Freezer_{input$freezer}{rv$rack_text}-{format(Sys.time(), '%d/%m/%Y-%H_%M')}.docx")
       },
       
       content = function(file) {
