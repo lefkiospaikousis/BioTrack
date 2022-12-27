@@ -14,7 +14,7 @@ mod_freezer_log_ui <- function(id){
       sidebarPanel(width = 2,
                    selectInput(ns("freezer"), "Freezer", choices = c("-80\u00B0C", "-20\u00B0C")),
                    selectInput(ns("rack"),"Rack", choices = c("A", "B", "C", "D")),
-                   downloadLink(ns("down_freezer_log"), "Download Log as .docx")
+                   downloadLink(ns("down_freezer_log"), "Download Log as .html")
       ),
       mainPanel(width = 8,
                 box(width = NULL,
@@ -33,7 +33,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
-    page_props <- officer::prop_section(page_size = officer::page_size(orient = "landscape"))
+    #page_props <- officer::prop_section(page_size = officer::page_size(orient = "landscape"))
     
     rv <- reactiveValues(rack_text = NULL)
     
@@ -52,17 +52,18 @@ mod_freezer_log_server <- function(id, tbl_merged){
     output$down_freezer_log <- downloadHandler(
       
       filename = function(){
-        glue::glue("Freezer_{input$freezer}{rv$rack_text}-{format(Sys.time(), '%d/%m/%Y-%H_%M')}.docx")
+        glue::glue("Freezer_{input$freezer}{rv$rack_text}-{format(Sys.time(), '%d/%m/%Y-%H_%M')}.html")
       },
       
       content = function(file) {
         
         spec_log() %>% 
           flextable::add_footer_lines(glue::glue("Date exported: ", format(Sys.time(), "%d/%m/%Y %H:%M"))) %>% 
-          flextable::save_as_docx(
-            path = file,
-            pr_section = page_props
-          )
+          flextable::save_as_html(path = file)
+          # flextable::save_as_docx(
+          #   path = file,
+          #   pr_section = page_props
+          # )
         
         
       }
