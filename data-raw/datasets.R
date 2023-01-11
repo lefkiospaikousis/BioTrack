@@ -28,7 +28,7 @@ col_labels <- c(
   type5             = "Sample Type 5",
   type5_ml          = "Sample Type 5 (ml)",
   
-  tube              = "Type of blood collection tube",
+  tube              = "Type of collection tube",
   phase             = "Timepoint of collection",
   at_bococ          = "Sample was collected at BOCOC",
   date_collection   = "Date of Collection",
@@ -78,7 +78,7 @@ col_values <- list(
   gender       = c("Male", "Female", "Other"),
   status       = c("Metastatic", "Non metastatic"),
   consent      = c("Yes", "No"),
-  tube         = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate"),
+  tube         = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate", "N/A"),
   phase        = c("Baseline", "Day of treatment", "Month 3", "Month 6", "Month 9", "Month 12", "End of treatment", "Other"),
   sample_types = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations"),
   at_bococ     = c("Yes", "No"),
