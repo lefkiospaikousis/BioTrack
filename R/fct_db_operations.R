@@ -146,6 +146,17 @@ add_to_logFile <- function(what, who, info){
   
   time <- as.character(lubridate::as_datetime(Sys.time(), "EET"))
   
+  if(info$col %in% date_time_cols) {
+    info$new_value <-  to_date_time(info$new_value)
+    info$old_value <-  to_date_time(info$old_value)
+  }
+  
+  if(info$col %in% date_cols) {
+    info$new_value <-  to_date(info$new_value)
+    info$old_value <-  to_date(info$old_value)
+  }
+  
+  
   entry <- switch (what,
                    "Added Sample Information Form" = list(time_stamp3 = time, 
                                                           user = who, 
