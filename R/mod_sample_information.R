@@ -129,18 +129,18 @@ mod_sample_information_ui <- function(id){
                     tags$table(
                       
                       tags$tr(width = "100%",
-                              tags$td(width = "40%", div(class = "input-label",style = "", HTML("Type of blood <br>Collection tube"))),
+                              tags$td(width = "40%", div(class = "input-label",style = "", HTML("Type of <br>Collection tube"))),
                               tags$td(width = "60%", selectInput(ns("tube"), NULL, c("", col_values[["tube"]]), width = input_width))),
                       
                       tags$tr(width = "100%",
-                              tags$td(width = "40%", div(class = "input-label",style = "", "Sample was collected at:")),
+                              tags$td(width = "40%", div(class = "input-label",style = "", col_labels[["phase"]])),
                               tags$td(width = "60%", selectInput(ns("phase"), NULL, c("", col_values[["phase"]]), width = input_width))),
                       
                       
                       
                       
                       tags$tr(width = "100%",
-                              tags$td(width = "50%",  shinyjs::hidden(div(class = "input-label",style = "", "Other:"))),
+                              tags$td(width = "50%",  shinyjs::hidden(div(class = "input-label", style = "", "Other:"))),
                               tags$td(width = "50%",  shinyjs::hidden(textInput(ns("phase_other"), NULL, width = input_width,
                                                                                 placeholder = "Please describe")))),
                       

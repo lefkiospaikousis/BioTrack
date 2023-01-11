@@ -42,7 +42,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
       shinyjs::toggleState("rack", condition = input$freezer != "-20\u00B0C")
       
       rv$rack_text <- switch (input$freezer,
-                              "-80\u00B0C" = paste0("-RACK ", input$rack),
+                              "-80\u00B0C" = paste0("RACK ", input$rack),
                               # other freezers do not have racks
                               ""
       )
