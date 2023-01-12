@@ -29,16 +29,12 @@ mod_add_specimen_ui <- function(id, specimen_types){
                   tags$td(width = "60%", selectInput(ns("quality"), NULL, c("", col_values[["quality"]]), width = input_width))),
           
           tags$tr(width = "100%",
-                  tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date & Time<br>of processing"))),
-                  
-                  tags$td(width = "60%",
+                  tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date of processing"))),
+                  tags$td(width = "60%", div(htmlOutput(ns("dateProcessing"), width = input_width), style = "margin-bottom: 7px"))),
                           
-                          splitLayout(cellWidths = c("50%", "50%"),
-                                      div(dateInput(ns("date_processing"), NULL, "", format = "dd/mm/yyyy", width = input_width)),
-                                      div(style = "margin-top: 1px" , shinyTime::timeInput(ns("time_processing"), NULL, seconds = FALSE)),
-                          ))),
-          
-          
+          tags$tr(width = "100%",
+                  tags$td(width = "40%", div(class = "input-label", "Time of processing:")),
+                  tags$td(width = "60%", shinyTime::timeInput(ns("time_processing"), NULL, seconds = FALSE))),
           
           tags$tr(width = "100%",
                   tags$td(width = "30%", h4("Storage place"))),
@@ -90,7 +86,7 @@ mod_add_specimen_ui <- function(id, specimen_types){
 #' add_specimen Server Functions
 #'
 #' @noRd 
-mod_add_specimen_server <- function(id){
+mod_add_specimen_server <- function(id, sample_info){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
@@ -121,12 +117,25 @@ mod_add_specimen_server <- function(id){
     iv$add_rule("n_tubes", sv_gt(0))
     iv$add_rule("quality", sv_required())
     
-    iv$add_rule("date_processing", sv_required())
-    iv$add_rule("date_processing", function(date){
-      if(date > Sys.Date() ){
-        "Processing date cannot be later than today"
-      }
-    })
+    
+    # Date of processing will be the same as date of receipt
+    #iv$add_rule("date_processing", sv_required())
+    # iv$add_rule("date_processing", function(date){
+    # 
+    #   if(date > Sys.Date() ){
+    # 
+    #     return("Processing date cannot be later than today")
+    #   }
+    # 
+    #   if(date != as.Date(sample_info()$date_receipt )){
+    # 
+    #     return(
+    #       glue::glue("Processing date must be equal to Receipt Date{sample_info()$date_receipt}")
+    #     )
+    #   }
+    # 
+    # 
+    # })
     
     iv$add_rule("time_processing", sv_required())
     
@@ -160,8 +169,10 @@ mod_add_specimen_server <- function(id){
         
       })
       
+      
       # # because the returned value is a date-time
       list_dta$time_processing <- strftime(list_dta$time_processing, "%R")
+      list_dta$date_processing <- as.character(as.Date(sample_info()$date_receipt))
       list_dta$date_processing  <- ymd(list_dta$date_processing, tz = "EET") + hm(list_dta$time_processing)
       list_dta$time_processing <- NULL
       
@@ -183,6 +194,12 @@ mod_add_specimen_server <- function(id){
     }) %>% 
       bindEvent(input$submit)
     
+    # date of processing should be the same as date of receipt 
+    output$dateProcessing <- renderText({
+      
+      paste0("<b>", as.Date(sample_info()$date_receipt) %>% format("%d/%m/%Y"), "<b>")
+      
+    })
     
     observeEvent(input$cancel, {
       

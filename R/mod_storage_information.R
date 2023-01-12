@@ -103,7 +103,7 @@ mod_storage_information_server <- function(id, sample_info){
       ))
     })
     
-    specimen <- mod_add_specimen_server("add_specimen_1")
+    specimen <- mod_add_specimen_server("add_specimen_1", sample_info)
     
     observeEvent(specimen$cancel(), {
       
