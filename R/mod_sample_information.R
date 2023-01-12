@@ -94,29 +94,29 @@ mod_sample_information_ui <- function(id){
                               tags$td(div(class = "input-label2", style = "", "ml:")),
                               tags$td(numericInput(ns("type1_ml"), NULL, NA, width = "50%"))),
                       
-                      tags$tr(width = "100%",
-                              tags$td(width = "5%", div(class = "input-label",style = "", "2.:")),
-                              tags$td(width = "50%", selectInput(ns("type2"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
-                              tags$td(div(class = "input-label2", style = "", "ml:")),
-                              tags$td( numericInput(ns("type2_ml"), NULL, NA, width = "50%"))),
-                      
-                      tags$tr(width = "100%",
-                              tags$td(width = "5%", div(class = "input-label",style = "", "3.:")),
-                              tags$td(width = "50%", selectInput(ns("type3"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
-                              tags$td(div(class = "input-label2", style = "", "ml:")),
-                              tags$td(numericInput(ns("type3_ml"), NULL, NA, width = "50%"))),
-                      
-                      tags$tr(width = "100%",
-                              tags$td(width = "5%", div(class = "input-label",style = "", "4.:")),
-                              tags$td(width = "50%", selectInput(ns("type4"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
-                              tags$td(div(class = "input-label2", style = "", "ml:")),
-                              tags$td(numericInput(ns("type4_ml"), NULL, NA, width = "50%"))),
-                      
-                      tags$tr(width = "100%",
-                              tags$td(width = "5%", div(class = "input-label",style = "", "5.:")),
-                              tags$td(width = "50%", selectInput(ns("type5"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
-                              tags$td(div(class = "input-label2", style = "", "ml:")),
-                              tags$td(numericInput(ns("type5_ml"), NULL, NA, width = "50%")))
+                      # tags$tr(width = "100%",
+                      #         tags$td(width = "5%", div(class = "input-label",style = "", "2.:")),
+                      #         tags$td(width = "50%", selectInput(ns("type2"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
+                      #         tags$td(div(class = "input-label2", style = "", "ml:")),
+                      #         tags$td( numericInput(ns("type2_ml"), NULL, NA, width = "50%"))),
+                      # 
+                      # tags$tr(width = "100%",
+                      #         tags$td(width = "5%", div(class = "input-label",style = "", "3.:")),
+                      #         tags$td(width = "50%", selectInput(ns("type3"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
+                      #         tags$td(div(class = "input-label2", style = "", "ml:")),
+                      #         tags$td(numericInput(ns("type3_ml"), NULL, NA, width = "50%"))),
+                      # 
+                      # tags$tr(width = "100%",
+                      #         tags$td(width = "5%", div(class = "input-label",style = "", "4.:")),
+                      #         tags$td(width = "50%", selectInput(ns("type4"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
+                      #         tags$td(div(class = "input-label2", style = "", "ml:")),
+                      #         tags$td(numericInput(ns("type4_ml"), NULL, NA, width = "50%"))),
+                      # 
+                      # tags$tr(width = "100%",
+                      #         tags$td(width = "5%", div(class = "input-label",style = "", "5.:")),
+                      #         tags$td(width = "50%", selectInput(ns("type5"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
+                      #         tags$td(div(class = "input-label2", style = "", "ml:")),
+                      #         tags$td(numericInput(ns("type5_ml"), NULL, NA, width = "50%")))
                       
                       
                     )
@@ -133,15 +133,15 @@ mod_sample_information_ui <- function(id){
                               tags$td(width = "60%", selectInput(ns("tube"), NULL, c("", col_values[["tube"]]), width = input_width))),
                       
                       tags$tr(width = "100%",
-                              tags$td(width = "40%", div(class = "input-label",style = "", col_labels[["phase"]])),
-                              tags$td(width = "60%", selectInput(ns("phase"), NULL, c("", col_values[["phase"]]), width = input_width))),
+                              tags$td(width = "30%", div(class = "input-label",style = "", col_labels[["phase"]])),
+                              tags$td(width = "70%", selectInput(ns("phase"), NULL, c("", col_values[["phase"]]), width = input_width))),
                       
                       
                       
                       
                       tags$tr(width = "100%",
-                              tags$td(width = "50%",  shinyjs::hidden(div(class = "input-label", style = "", "Other:"))),
-                              tags$td(width = "50%",  shinyjs::hidden(textInput(ns("phase_other"), NULL, width = input_width,
+                              tags$td(width = "30%",  shinyjs::hidden(div(class = "input-label", style = "", "Other:"))),
+                              tags$td(width = "70%",  shinyjs::hidden(textInput(ns("phase_other"), NULL, width = input_width,
                                                                                 placeholder = "Please describe")))),
                       
                       
@@ -248,8 +248,10 @@ mod_sample_information_server <- function(id){
         "status",
         "doctor",
         "consent",
-        paste0("type", 1:5),
-        paste0("type", 1:5, "_ml"),
+        # paste0("type", 1:5),
+        # paste0("type", 1:5, "_ml"),
+        'type1',
+        'type1_ml',
         "tube",
         "phase",
         "at_bococ",
