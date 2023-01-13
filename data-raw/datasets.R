@@ -126,4 +126,10 @@ usethis::use_data(
   col_values,
   specimen_types,
   type_names,
+  freezers_80,
+  freezer_80_big,   
+  freezer_80_small, 
+  freezer_20,       
+  freezer_04,       
+  freezer_internals,
   overwrite = TRUE)
