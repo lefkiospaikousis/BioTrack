@@ -7,16 +7,14 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-#' @importFrom shinyWidgets awesomeCheckboxGroup radioGroupButtons prettyRadioButtons airDatepickerInput
+#' @importFrom shinyWidgets awesomeCheckboxGroup radioGroupButtons prettyRadioButtons airDatepickerInput updatePrettyRadioButtons
 mod_storage_information_ui <- function(id){
   ns <- NS(id)
   
   input_width <- "80%"
   
   tagList(
-    #hr(),
     p("Specimen storage Information for: ", htmlOutput(ns("patient_info"), inline = TRUE)),
-    #p("Unique ID: ", htmlOutput(ns("unique_id"), inline = TRUE)),
     hr(),
     tableOutput(ns("tbl_specimens")),
     fluidRow(
@@ -87,7 +85,6 @@ mod_storage_information_server <- function(id, sample_info){
     
     output$n_specimens <- renderText({
       
-      # name <- glue::glue("{sample_info()$firstname} (BOCOC: {sample_info()$bococ} )")
       as.character(span(nrow(rv$specimens), style = 'font-weight: bold'))
       
     })
@@ -123,13 +120,14 @@ mod_storage_information_server <- function(id, sample_info){
         
         specimen <- specimen$dta()
         
-        # If freezer != '-80' then rack = ""
-        if(specimen$freezer != "-80\u00B0C") {
+        if(!specimen$freezer %in% freezers_80) {
+          
           specimen$rack <- ""
           specimen$box <- ""
+          
         }
         
-        specimen <- map(specimen, ~ . %||% NA_character_) # If NULL then NA. Othewise glue fails
+        specimen <- map(specimen, ~ . %||% NA_character_) # If NULL then NA. Otherwise glue fails
         place = glue::glue("{specimen$rack}.{specimen$drawer}.{specimen$box}")
         
         #build lab_no
@@ -177,8 +175,6 @@ mod_storage_information_server <- function(id, sample_info){
         
         #showNotification("Saved specimen to Database!")
         show_toast("success", "", glue::glue("Specimen {new_specimen$lab_no} successfully saved!"))
-        
-        # rv$db_trigger <- rv$db_trigger + 1
         
         session$userData$db_trigger(session$userData$db_trigger() + 1)
         

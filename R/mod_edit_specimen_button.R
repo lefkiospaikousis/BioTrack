@@ -73,7 +73,7 @@ mod_edit_specimen_button_server <- function(id, specimen){
       
       new_data <- res_mod_place$dta()
       
-      if(new_data$freezer != "-80\u00B0C") {
+      if(!new_data$freezer %in% freezers_80) {
         rack <- ""
         box <- ""
         drawer = new_data$drawer%||% NA_character_

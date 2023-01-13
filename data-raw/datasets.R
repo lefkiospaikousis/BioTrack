@@ -74,23 +74,40 @@ specimen_types <- c("Peripheral blood" = "PB",
 
 type_names <- setNames(names(specimen_types), specimen_types)
 
+
+freezer_80_big   <- "-80\u00B0C(B)"
+freezer_80_small <- "-80\u00B0C(S)"
+freezer_20       <- "-20\u00B0C"
+freezer_04       <- c("+4\u00B0C") 
+
+freezers_80 <- c(freezer_80_big, freezer_80_small)
+
+freezer_internals <- list(
+  "-80\u00B0C(B)" = list( rack = LETTERS[1:19], drawer = c(1:6), box = c(1:5) ),
+  "-80\u00B0C(S)" = list( rack = LETTERS[1:4], drawer = c(1:5), box = c(1:3) ),
+  "-20\u00B0C" = list( rack = NULL, drawer = c(1:5), box = NULL ),
+  "+4\u00B0C" = list( rack = NULL, drawer = NULL, box = NULL )
+)
+
 col_values <- list(
-  gender       = c("Male", "Female", "Other"),
-  status       = c("Metastatic", "Non metastatic"),
-  consent      = c("Yes", "No"),
-  tube         = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate", "N/A"),
-  phase        = c("Baseline", "Day of treatment", "Month 3", "Month 6", "Month 9", "Month 12", "End of treatment", "Other"),
-  sample_types = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations"),
-  at_bococ     = c("Yes", "No"),
-  quality      = c("Good", "Heamolysed", "Thawed"),
+  gender        = c("Male", "Female", "Other"),
+  status        = c("Metastatic", "Non metastatic"),
+  consent       = c("Yes", "No"),
+  tube          = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate", "N/A"),
+  phase         = c("Baseline", "Day of treatment", "Month 3", "Month 6", "Month 9", "Month 12", "End of treatment", "Other"),
+  sample_types  = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations"),
+  at_bococ      = c("Yes", "No"),
+  quality       = c("Good", "Heamolysed", "Thawed"),
+  freezer       = names(freezer_internals),
   specimen_type = names(specimen_types),
-  type1        = names(specimen_types),
-  type2        = names(specimen_types),
-  type3        = names(specimen_types),
-  type4        = names(specimen_types),
-  type5        = names(specimen_types)
+  type1         = names(specimen_types),
+  type2         = names(specimen_types),
+  type3         = names(specimen_types),
+  type4         = names(specimen_types),
+  type5         = names(specimen_types)
   
 )
+
 
   #bococ = "function",
 

@@ -12,8 +12,8 @@ mod_freezer_log_ui <- function(id){
   tagList(
     sidebarLayout(
       sidebarPanel(width = 2,
-                   selectInput(ns("freezer"), "Freezer", choices = c("-80\u00B0C", "-20\u00B0C")),
-                   selectInput(ns("rack"),"Rack", choices = c("A", "B", "C", "D")),
+                   selectInput(ns("freezer"), "Freezer", choices = c(freezer_20, freezers_80)),
+                   selectInput(ns("rack"),"Rack", choices = NULL),
                    downloadLink(ns("down_freezer_log"), "Download Log as .html")
       ),
       mainPanel(width = 8,
@@ -37,15 +37,25 @@ mod_freezer_log_server <- function(id, tbl_merged){
     
     rv <- reactiveValues(rack_text = NULL)
     
-    observe({
+    observeEvent(input$freezer, {
       req(input$freezer)
-      shinyjs::toggleState("rack", condition = input$freezer != "-20\u00B0C")
       
-      rv$rack_text <- switch (input$freezer,
-                              "-80\u00B0C" = paste0("RACK ", input$rack),
-                              # other freezers do not have racks
-                              ""
-      )
+      updateSelectInput(session, "rack", choices = freezer_internals[[input$freezer]]$rack)
+      
+      shinyjs::toggleState("rack", condition = input$freezer %in% freezers_80)
+      
+    })
+    
+    observeEvent(input$rack, {
+      
+      rv$rack_text <- 
+        if(input$freezer %in% freezers_80) {
+          paste0("RACK ", input$rack)
+        } else {
+          # other freezers do not have racks
+          ""
+          
+        }
       
     })
     
@@ -60,10 +70,10 @@ mod_freezer_log_server <- function(id, tbl_merged){
         spec_log() %>% 
           flextable::add_footer_lines(glue::glue("Date exported: ", format(Sys.time(), "%d/%m/%Y %H:%M"))) %>% 
           flextable::save_as_html(path = file)
-          # flextable::save_as_docx(
-          #   path = file,
-          #   pr_section = page_props
-          # )
+        # flextable::save_as_docx(
+        #   path = file,
+        #   pr_section = page_props
+        # )
         
         
       }
@@ -82,8 +92,10 @@ mod_freezer_log_server <- function(id, tbl_merged){
     
     spec_log <- reactive({
       
+      drawers <- freezer_internals[[input$freezer]]$drawer
+      boxes <-  freezer_internals[[input$freezer]]$box
       
-      if(input$freezer == "-80\u00B0C"){
+      if(input$freezer %in% freezers_80){
         
         log_version <- get_golem_config("log_version80") 
         title <- glue::glue("{input$freezer} Freezer - {rv$rack_text} - Specimen Log")
@@ -92,7 +104,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
           select(lab_no, freezer, box, rack, drawer, unique_id) %>% 
           filter(freezer == !!input$freezer, rack == !!input$rack) %>% 
           select(drawer, box, lab_no) %>% 
-          tidyr::complete(box = as.character(c(1:3)), drawer = as.character(c(1:5))) %>%  
+          tidyr::complete(box = as.character(boxes), drawer = as.character(drawers)) %>%  
           rename (Box = box) %>% 
           tidyr::pivot_wider( 
             names_from = drawer, 
@@ -103,7 +115,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
         
         out <- rack_tbl %>% 
           flextable::flextable() %>% 
-          flextable::add_header_row(values = c(rv$rack_text, "Drawers"), colwidths = c(1, 5)) %>% 
+          flextable::add_header_row(values = c(rv$rack_text, "Drawers"), colwidths = c(1, length(drawers))) %>% 
           flextable::theme_box() %>%
           flextable::set_caption(
             flextable::as_paragraph(flextable::as_chunk(title, 
@@ -111,7 +123,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
             fp_p = officer::fp_par(padding.bottom = 10)
           ) %>% 
           flextable::set_table_properties("fixed") %>% 
-          flextable::width( j = c(2:6), width = 1.80) %>% 
+          flextable::width( j = c(2:(length(drawers)+1)), width = 1.80) %>% 
           flextable::fontsize(size = 9) %>% 
           flextable::add_footer_lines(glue::glue("BOCOC: {input$freezer} Freezer. {rv$rack_text}. Specimen {log_version}")) 
         
@@ -121,9 +133,9 @@ mod_freezer_log_server <- function(id, tbl_merged){
       } 
       
       
-      if(input$freezer == "-20\u00B0C"){
+      if(input$freezer == freezer_20){
         
-        # Freezer -2, does not have Racks nor Boxes. Just Drawers
+        # Freezer -20, does not have Racks nor Boxes. Just Drawers
         
         title <- glue::glue("{input$freezer} Freezer - Specimen Log")
         log_version <- get_golem_config("log_version20") 
@@ -132,7 +144,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
           select(lab_no, freezer, drawer, unique_id) %>% 
           filter(freezer == !!input$freezer) %>% 
           select(drawer, lab_no) %>% 
-          tidyr::complete(drawer = as.character(c(1:5))) %>%  
+          tidyr::complete(drawer = as.character(drawers)) %>%  
           tidyr::pivot_wider( 
             names_from = drawer, 
             values_from = lab_no, 
@@ -142,7 +154,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
         
         out <- rack_tbl %>% 
           flextable::flextable() %>% 
-          flextable::add_header_row(values = c("Drawers"), colwidths = c(5)) %>% 
+          flextable::add_header_row(values = c("Drawers"), colwidths = length(drawers)) %>% 
           flextable::theme_box() %>%
           flextable::set_caption(
             flextable::as_paragraph(flextable::as_chunk(title, 
@@ -150,7 +162,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
             fp_p = officer::fp_par(padding.bottom = 10)
           ) %>% 
           flextable::set_table_properties("fixed") %>% 
-          flextable::width( j = c(1:5), width = 1.80) %>% 
+          flextable::width( j = c(1:length(drawers)), width = 1.80) %>% 
           flextable::fontsize(size = 9) %>% 
           flextable::add_footer_lines(glue::glue("BOCOC: {input$freezer} Freezer. Specimen {log_version}"))
         

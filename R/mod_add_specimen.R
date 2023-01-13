@@ -16,12 +16,12 @@ mod_add_specimen_ui <- function(id, specimen_types){
   tagList(
     
     div(style = "font-size:13px",
-        #hr(style = "width: 80%"),
+        
         tags$table(
           
           tags$tr(width = "100%",
-                  tags$td(width = "30%", div(class = "input-label",style = "", "Specimen Type:")),
-                  tags$td(width = "70%", selectInput(ns("type"), NULL, 
+                  tags$td(width = "40%", div(class = "input-label",style = "", "Specimen Type:")),
+                  tags$td(width = "60%", selectInput(ns("type"), NULL, 
                                                      c("", specimen_types), 
                                                      width = input_width))),
           tags$tr(width = "100%",
@@ -31,37 +31,12 @@ mod_add_specimen_ui <- function(id, specimen_types){
           tags$tr(width = "100%",
                   tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date of processing"))),
                   tags$td(width = "60%", div(htmlOutput(ns("dateProcessing"), width = input_width), style = "margin-bottom: 7px"))),
-                          
+          
           tags$tr(width = "100%",
                   tags$td(width = "40%", div(class = "input-label", "Time of processing:")),
                   tags$td(width = "60%", shinyTime::timeInput(ns("time_processing"), NULL, seconds = FALSE))),
           
-          tags$tr(width = "100%",
-                  tags$td(width = "30%", h4("Storage place"))),
-          
-          tags$tr(width = "100%",
-                  tags$td(width = "30%", div(class = "input-label",style = "", "Freezer:")),
-                  tags$td(width = "70%", prettyRadioButtons(ns("freezer"), NULL, c("-80\u00B0C", "-20\u00B0C", "+4\u00B0C"), 
-                                                            inline = TRUE,  fill = TRUE, selected = character(0), width = "100%"))),
-          
-          tags$tr(width = "100%",
-                  tags$td(width = "30%", div(class = "input-label", "Rack:")),
-                  tags$td(width = "70%", shinyjs::disabled(
-                    prettyRadioButtons(ns("rack"), NULL, c("A", "B", "C", "D"), 
-                                       fill = TRUE, inline = TRUE, selected = character(0), width = "100%"))
-                  )),
-          
-          tags$tr(width = "100%",
-                  tags$td(width = "30%", div(class = "input-label", "Drawer:")),
-                  tags$td(width = "70%", prettyRadioButtons(ns("drawer"), NULL, c(1:5), 
-                                                            inline = TRUE,  fill = TRUE, selected = character(0), width = "100%"))),
-          
-          tags$tr(width = "100%",
-                  tags$td(width = "30%", div(class = "input-label", "Box:")),
-                  tags$td(width = "70%",  shinyjs::disabled(
-                    prettyRadioButtons(ns("box"), NULL, c(1:3), 
-                                       inline = TRUE,  fill = TRUE, selected = character(0), width = input_width))
-                  )),
+          storage_placeUI(ns),
           
           tags$tr(width = "100%",
                   tags$td(width = "30%", div(class = "input-label", "Comments:")),
@@ -69,7 +44,7 @@ mod_add_specimen_ui <- function(id, specimen_types){
           
           tags$tr(width = "100%",
                   tags$td(width = "30%", div(class = "input-label", "Number of tubes:")),
-                  tags$td(width = "70%", numericInput(ns("n_tubes"), NULL, NA, min = 1, width = "40%"))),
+                  tags$td(width = "70%", numericInput(ns("n_tubes"), NULL, NA, min = 1, width = "40%")))
           
           
         )
@@ -113,7 +88,6 @@ mod_add_specimen_server <- function(id, sample_info){
     iv$add_rule("type", sv_required())
     iv$add_rule("freezer", sv_required())
     
-    iv$add_rule("drawer", sv_required())
     iv$add_rule("n_tubes", sv_gt(0))
     iv$add_rule("quality", sv_required())
     
@@ -139,13 +113,68 @@ mod_add_specimen_server <- function(id, sample_info){
     
     iv$add_rule("time_processing", sv_required())
     
-    iv_freezer <- shinyvalidate::InputValidator$new()
-    iv_freezer$condition(~ input$freezer == "-80\u00B0C")
+    # Drawer -80 validation
+    iv_freezer80 <- shinyvalidate::InputValidator$new()
+    iv_freezer80$condition(~ input$freezer  %in% freezers_80 )
     
-    iv_freezer$add_rule("rack", sv_required())
-    iv_freezer$add_rule("box", sv_required())
+    iv_freezer80$add_rule("rack", sv_required())
+    iv_freezer80$add_rule("box", sv_required())
+    iv_freezer80$add_rule("drawer", sv_required())
     
-    iv$add_validator(iv_freezer)
+    iv$add_validator(iv_freezer80)
+    
+    # Drawer -20 validation
+    iv_freezer20 <- shinyvalidate::InputValidator$new()
+    iv_freezer20$condition(~ input$freezer  == freezer_20 )
+    
+    iv_freezer20$add_rule("drawer", sv_required())
+    
+    iv$add_validator(iv_freezer20)
+    
+    # Freezers ----
+    
+    observeEvent(input$freezer, {
+      
+      req(input$freezer)
+      
+      if(input$freezer == freezer_80_small){
+        
+        updateSelectInput(session, "rack", choices = LETTERS[1:4])
+        updatePrettyRadioButtons(session, "drawer", choices = c(1:5), inline = TRUE)
+        updatePrettyRadioButtons(session, "box", choices = c(1:3), inline = TRUE)
+        
+      }
+      
+      if(input$freezer == freezer_80_big){
+        
+        updateSelectInput(session, "rack", choices = LETTERS[1:19])
+        updatePrettyRadioButtons(session, "drawer", choices = c(1:6), inline = TRUE)
+        updatePrettyRadioButtons(session, "box", choices = c(1:5), inline = TRUE)
+        
+      }
+      
+      if(input$freezer == freezer_20){
+        
+        updateSelectInput(session, "rack", selected = character(0))
+        updatePrettyRadioButtons(session, "drawer", choices = c(1:5), inline = TRUE)
+        updatePrettyRadioButtons(session, "box", selected = character(0), inline = TRUE)
+      }
+      
+      if(input$freezer == freezer_04){
+        
+        updateSelectInput(session, "rack", selected = character(0))
+        updatePrettyRadioButtons(session, "box", selected = character(0), inline = TRUE)
+        updatePrettyRadioButtons(session, "drawer", selected = character(0), inline = TRUE)
+        
+      }
+      
+      shinyjs::toggleState("rack",  condition = input$freezer %in% freezers_80 )
+      shinyjs::toggleState("box",  condition = input$freezer %in% freezers_80 )
+      
+    },ignoreInit = TRUE)
+    
+    
+    
     
     # Data collection ----
     
@@ -229,13 +258,6 @@ mod_add_specimen_server <- function(id, sample_info){
       
       
     })
-    
-    
-    observeEvent(input$freezer,{
-      
-      shinyjs::toggleState("rack",  condition = input$freezer == "-80\u00B0C")
-      shinyjs::toggleState("box",  condition = input$freezer == "-80\u00B0C")
-    }, ignoreInit = TRUE)
     
     
     # Return ####

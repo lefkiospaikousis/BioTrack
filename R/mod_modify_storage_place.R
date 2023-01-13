@@ -40,9 +40,6 @@ mod_modify_storage_place_server <- function(id, specimen){
       "rack",
       "drawer",
       "box"
-      
-      #"n_tubes",
-      #"comment_place"
     )
     
     
@@ -52,62 +49,82 @@ mod_modify_storage_place_server <- function(id, specimen){
     
     iv$add_rule("freezer", sv_required())
     
-    iv$add_rule("drawer", sv_required())
-    #iv$add_rule("n_tubes", sv_gt(0))
+    # Drawer -80 validation
+    iv_freezer80 <- shinyvalidate::InputValidator$new()
+    iv_freezer80$condition(~ input$freezer  %in% freezers_80 )
     
-    iv_freezer <- shinyvalidate::InputValidator$new()
-    iv_freezer$condition(~ input$freezer == "-80\u00B0C")
+    iv_freezer80$add_rule("rack", sv_required())
+    iv_freezer80$add_rule("box", sv_required())
+    iv_freezer80$add_rule("drawer", sv_required())
     
-    iv_freezer$add_rule("rack", sv_required())
-    iv_freezer$add_rule("box", sv_required())
+    iv$add_validator(iv_freezer80)
     
-    iv$add_validator(iv_freezer)
+    # Drawer -20 validation
+    iv_freezer20 <- shinyvalidate::InputValidator$new()
+    iv_freezer20$condition(~ input$freezer == freezer_20 )
+    
+    iv_freezer20$add_rule("drawer", sv_required())
+    
+    iv$add_validator(iv_freezer20)
+    
+    # Freezers ----
+    
+    observeEvent(input$freezer, {
+      
+      req(input$freezer)
+      
+      if(input$freezer == freezer_80_small){
+        
+        updateSelectInput(session, "rack", choices = LETTERS[1:4])
+        updatePrettyRadioButtons(session, "drawer", choices = c(1:5), inline = TRUE)
+        updatePrettyRadioButtons(session, "box", choices = c(1:3), inline = TRUE)
+        
+      }
+      
+      if(input$freezer == freezer_80_big){
+        
+        updateSelectInput(session, "rack", choices = LETTERS[1:19])
+        updatePrettyRadioButtons(session, "drawer", choices = c(1:6), inline = TRUE)
+        updatePrettyRadioButtons(session, "box", choices = c(1:5), inline = TRUE)
+        
+      }
+      
+      if(input$freezer == freezer_20){
+        
+        updateSelectInput(session, "rack", selected = character(0))
+        updatePrettyRadioButtons(session, "drawer", choices = c(1:5), inline = TRUE)
+        updatePrettyRadioButtons(session, "box", selected = character(0), inline = TRUE)
+      }
+      
+      if(input$freezer == freezer_04){
+        
+        updateSelectInput(session, "rack", selected = character(0))
+        updatePrettyRadioButtons(session, "box", selected = character(0), inline = TRUE)
+        updatePrettyRadioButtons(session, "drawer", selected = character(0), inline = TRUE)
+        
+      }
+      
+      shinyjs::toggleState("rack",  condition = input$freezer %in% freezers_80 )
+      shinyjs::toggleState("box",  condition = input$freezer %in% freezers_80 )
+      
+    },ignoreInit = TRUE)
     
     
     output$info_ui <- renderUI({
       
-      # reget specimen in case the detials were changed just now
+      # re-fetch specimen in case the details were changed just now
       specimen <- get_specimen(dbase_specimen, specimen()$lab_no)
       session$userData$db_trigger()
       
       tagList(
         div(
-          
           p("Lab no: ", strong(specimen$lab_no)),
           hr(),
           p("You are changing the Storage Place of the Specimen"),
-          p("Current Storage Place: ", strong(specimen$place))
+          p("Current Storage Place: ", strong(specimen$freezer), " at " , strong(specimen$place))
         ),
-        div(style = "font-size:13px",
-            #hr(style = "width: 80%"),
-            h4("Storage place"),
-            tags$table(
-              
-              tags$tr(width = "100%",
-                      tags$td(width = "30%", div(class = "input-label",style = "", "Freezer:")),
-                      tags$td(width = "70%", prettyRadioButtons(ns("freezer"), NULL, c("-80\u00B0C", "-20\u00B0C", "+4\u00B0C"), 
-                                                                inline = TRUE,  fill = TRUE, selected = specimen$freezer, width = "100%"))),
-              
-              tags$tr(width = "100%",
-                      tags$td(width = "30%", div(class = "input-label", "Rack:")),
-                      tags$td(width = "70%", 
-                              prettyRadioButtons(ns("rack"), NULL, c("A", "B", "C", "D"), 
-                                                 fill = TRUE, inline = TRUE, selected = specimen$rack, width = "100%")
-                      )),
-              
-              tags$tr(width = "100%",
-                      tags$td(width = "30%", div(class = "input-label", "Drawer:")),
-                      tags$td(width = "70%", prettyRadioButtons(ns("drawer"), NULL, c(1:5), 
-                                                                inline = TRUE,  fill = TRUE, selected = specimen$drawer, width = "100%"))),
-              
-              tags$tr(width = "100%",
-                      tags$td(width = "30%", div(class = "input-label", "Box:")),
-                      tags$td(width = "70%",  
-                              prettyRadioButtons(ns("box"), NULL, c(1:3), 
-                                                 inline = TRUE,  fill = TRUE, selected = specimen$box, width = "100%")
-                      )),
-              
-            )
+        div(
+          storage_placeUI(ns), style = "font-size:13px",
         )
       )
       
@@ -169,13 +186,6 @@ mod_modify_storage_place_server <- function(id, specimen){
       
       
     })
-    
-    
-    observeEvent(input$freezer,{
-      
-      shinyjs::toggleState("rack",  condition = input$freezer == "-80\u00B0C")
-      shinyjs::toggleState("box",  condition = input$freezer == "-80\u00B0C")
-    }, ignoreInit = TRUE)
     
     
     #Return ####
