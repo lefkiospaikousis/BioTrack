@@ -33,7 +33,7 @@ mod_freezer_log_server <- function(id, tbl_merged){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
-    #page_props <- officer::prop_section(page_size = officer::page_size(orient = "landscape"))
+    page_props <- officer::prop_section(page_size = officer::page_size(orient = "landscape"))
     
     rv <- reactiveValues(rack_text = NULL)
     
@@ -63,18 +63,21 @@ mod_freezer_log_server <- function(id, tbl_merged){
     output$down_freezer_log <- downloadHandler(
       
       filename = function(){
-        glue::glue("Freezer_{input$freezer}{rv$rack_text}-{format(Sys.time(), '%d/%m/%Y-%H_%M')}.html")
+        #glue::glue("Freezer_{input$freezer}{rv$rack_text}-{format(Sys.time(), '%d/%m/%Y-%H_%M')}.html")
+        # for some weird reason, the above filename creates issues when the shiny runs on the shiny server
+        # a the shiny user. However, when I run the app thought a user, then no problems...WTF
+        "storage_log.docx"
       },
       
       content = function(file) {
         
         spec_log() %>% 
           flextable::add_footer_lines(glue::glue("Date exported: ", format(Sys.time(), "%d/%m/%Y %H:%M"))) %>% 
-          flextable::save_as_html(path = file)
-        # flextable::save_as_docx(
-        #   path = file,
-        #   pr_section = page_props
-        # )
+          #flextable::save_as_html(path = file)
+          flextable::save_as_docx(
+            path = file,
+            pr_section = page_props
+          )
         
         
       }
