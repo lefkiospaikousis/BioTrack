@@ -14,7 +14,7 @@ mod_freezer_log_ui <- function(id){
       sidebarPanel(width = 2,
                    selectInput(ns("freezer"), "Freezer", choices = c(freezer_20, freezers_80)),
                    selectInput(ns("rack"),"Rack", choices = NULL),
-                   downloadLink(ns("down_freezer_log"), "Download Log as .html")
+                   downloadLink(ns("down_freezer_log"), "Download Log as .docx")
       ),
       mainPanel(width = 8,
                 box(width = NULL,
