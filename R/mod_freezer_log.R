@@ -40,7 +40,8 @@ mod_freezer_log_server <- function(id, tbl_merged){
     observeEvent(input$freezer, {
       req(input$freezer)
       
-      updateSelectInput(session, "rack", choices = freezer_internals[[input$freezer]]$rack)
+      choices <- freezer_internals(input$freezer)$rack 
+      updateSelectInput(session, "rack", choices = choices)
       
       shinyjs::toggleState("rack", condition = input$freezer %in% freezers_80)
       
@@ -92,8 +93,8 @@ mod_freezer_log_server <- function(id, tbl_merged){
     
     spec_log <- reactive({
       
-      drawers <- freezer_internals[[input$freezer]]$drawer
-      boxes <-  freezer_internals[[input$freezer]]$box
+      drawers <- freezer_internals(input$freezer)$drawer
+      boxes <-  freezer_internals(input$freezer)$box
       
       if(input$freezer %in% freezers_80){
         
