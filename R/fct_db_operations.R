@@ -146,12 +146,13 @@ add_to_logFile <- function(what, who, info){
   
   time <- as.character(lubridate::as_datetime(Sys.time(), "EET"))
   
-  if(info$col %in% date_time_cols) {
+  
+  if( !is.null(info$col) && info$col %in% date_time_cols) {
     info$new_value <-  to_date_time(info$new_value)
     info$old_value <-  to_date_time(info$old_value)
   }
   
-  if(info$col %in% date_cols) {
+  if( !is.null(info$col) && info$col %in% date_cols) {
     info$new_value <-  to_date(info$new_value)
     info$old_value <-  to_date(info$old_value)
   }
@@ -163,7 +164,7 @@ add_to_logFile <- function(what, who, info){
                                                           action = what, 
                                                           bococ = info$bococ,
                                                           comments = glue::glue("{what}: BOCOC-{info$bococ}")
-                                                          ),
+                   ),
                    
                    "Added Specimen Type" = list(time_stamp3 = time, 
                                                 user = who, 
@@ -171,7 +172,7 @@ add_to_logFile <- function(what, who, info){
                                                 bococ = info$bococ %||% NA_character_, 
                                                 lab_no = info$lab_no,
                                                 comments = glue::glue("{what}: {info$lab_no}")
-                                                ),
+                   ),
                    
                    "Modified specimen info" = list(time_stamp3 = time, 
                                                    user = who, 
@@ -183,12 +184,12 @@ add_to_logFile <- function(what, who, info){
                                                                          from `{info$old_value}`")),
                    
                    "Modified Sample Information data" = list(time_stamp3 = time, 
-                                                   user = who, 
-                                                   action = what, 
-                                                   bococ = info$bococ %||% NA_character_, 
-                                                   lab_no = info$lab_no, 
-                                                   comments = glue::glue(
-                                                   "Modified data for BOCOC: `{info$bococ}`: Changed `{col_labels[[info$col]]}` to `{info$new_value}` 
+                                                             user = who, 
+                                                             action = what, 
+                                                             bococ = info$bococ %||% NA_character_, 
+                                                             lab_no = info$lab_no, 
+                                                             comments = glue::glue(
+                                                               "Modified data for BOCOC: `{info$bococ}`: Changed `{col_labels[[info$col]]}` to `{info$new_value}` 
                                                                          from `{info$old_value}`")),
                    
                    stop("Unknown action in add_to_logFile")
