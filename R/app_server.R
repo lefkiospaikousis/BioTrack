@@ -7,14 +7,12 @@
 app_server <- function(input, output, session) {
   # Your application server logic
   
-  configuration <- Sys.getenv("GOLEM_CONFIG_ACTIVE")
-  
   res_auth <- shinymanager::secure_server(
     
     check_credentials = shinymanager::check_credentials(
-      "DB/dev/credentials.sqlite",
-      #passphrase = key_get("bococ-biotrack", "lefkios")
-      passphrase = get_golem_config("users_passphrase", configuration)
+      db = get_golem_config("db_users"),
+      
+      passphrase = get_golem_config("users_passphrase")
     ),
     keep_token = TRUE
   )
@@ -41,7 +39,7 @@ app_server <- function(input, output, session) {
     session$userData$user_info <- reactiveValuesToList(res_auth)
   })
   output$userName <- renderText({
-    #user_info()$user
+    
     paste0("User: ", session$userData$user)
     
   })
