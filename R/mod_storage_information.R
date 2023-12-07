@@ -96,7 +96,6 @@ mod_storage_information_server <- function(id, sample_info){
       
     })
     
-    
     observeEvent(input$add_specimen, {
       
       insertUI(
@@ -112,8 +111,6 @@ mod_storage_information_server <- function(id, sample_info){
     observeEvent(specimen$cancel(), {
       
       removeUI( paste0("#", ns("to_remove"))    )
-      
-      # removeModal()
       
     }, ignoreInit = TRUE)
     
@@ -182,19 +179,17 @@ mod_storage_information_server <- function(id, sample_info){
         
         cat("Saved ", res_save, " specimen\n")
         
-        #showNotification("Saved specimen to Database!")
         show_toast("success", "", glue::glue("Specimen {new_specimen$lab_no} successfully saved!"))
         
         session$userData$db_trigger(session$userData$db_trigger() + 1)
         
         # Add to log
         bococ <- sample_info()$bococ
-        #bococ <- dbase_specimen %>% tbl("sample_info") %>% filter(unique_id == !!new_specimen$unique_id) %>% pull(bococ)
         info = append(new_specimen, list(bococ = bococ))
         try({add_to_logFile("Added Specimen Type", session$userData$user, info = info)}, silent = TRUE)
         
         removeUI( paste0("#", ns("to_remove"))    )
-        #removeModal()
+        
         
       }, error = function(e){
         cat("Error capturing the speciment entry\n")

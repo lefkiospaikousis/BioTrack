@@ -16,7 +16,7 @@ mod_add_sample_type_ui <- function(id){
   tagList(
     splitLayout(
       div(style = "font-size:13px",
-          h4("3.Collection information:"),
+          h4("3. Sample Collection information:"),
           hr(style = "width: 80%"),
           tags$table(
             tags$tr(width = "100%",

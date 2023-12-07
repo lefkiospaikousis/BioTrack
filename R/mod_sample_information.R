@@ -82,7 +82,7 @@ mod_sample_information_ui <- function(id){
               
               br(),
               br(),
-              actionButton(ns("add_sample"), "Add sample"),
+              actionButton(ns("add_sample"), "Add sample", icon = icon("plus")),
               tableOutput(ns("tbl_samples")),
               hr(),
               splitLayout(
@@ -142,11 +142,10 @@ mod_sample_information_server <- function(id){
       
       samples_list <- reactiveValuesToList(samples)
       
-      if( length(samples_list) == 0 ) validate("No samples added yet")
+      req( length(samples_list) > 0 )
       
-      tbl <- bind_rows(samples_list)
-      
-      tbl |>  
+      samples_list |> 
+        bind_rows() |>  
         mutate(
           across(c(date_collection,date_receipt), ~format(., "%d/%m/%Y - %H:%M"))
         ) |> 
@@ -176,7 +175,7 @@ mod_sample_information_server <- function(id){
       
     })
     
-    # Adding sample collection infromation ----
+    # Adding sample collection information ----
     observeEvent(res_sample$cancel(), {
       
       removeModal()
@@ -191,21 +190,23 @@ mod_sample_information_server <- function(id){
       
       samples[[sample$unique_id]] <- sample
       session$userData$db_trigger(session$userData$db_trigger() + 1)
-      show_toast("success", "", glue::glue("Sample `{sample$type1}` successfully saved!"))
+      #show_toast("success", "", glue::glue("Sample `{sample$type1}` successfully saved!"))
       
       active_sample(sample)
-      removeModal()
+      
       
     }, ignoreInit = TRUE)
     
     observeEvent(active_sample(), {
+      removeModal()
       
-      waiter::waiter_update(html = html_waiter("Moving to Storage information"))
-      Sys.sleep(1)     
+      show_waiter("Moving to Storage information.. Please wait", sleep = 1)
+      waiter::waiter_hide()
       
       showModal(modalDialog(
         
-        mod_storage_information_ui(ns("a_sample"))
+        mod_storage_information_ui(ns("a_sample")),
+        footer = NULL
       ))
       
     })
@@ -251,20 +252,6 @@ mod_sample_information_server <- function(id){
         "status",
         "doctor",
         "consent",
-        
-        #'type1',
-        #'type1_ml',
-        # "tube",
-        # "phase",
-        # "at_bococ",
-        # "date_collection",
-        # "time_collection",
-        #"date_shipment",
-        
-        # "date_processing",
-        # "time_processing",
-       # "date_receipt",
-        #"time_receipt",
         "civil_id",
         "study_id",
         "study",
@@ -294,11 +281,9 @@ mod_sample_information_server <- function(id){
     
     #2. Clinical Information
     iv$add_rule("diagnosis", sv_required())
-    #iv$add_rule("status", sv_required())
     iv$add_rule("doctor", sv_required())
     iv$add_rule("consent", sv_required())
     
-    #iv$add_rule("date_processing", sv_required())
     iv$add_rule("study_id", sv_required())
     iv$add_rule("study", sv_required())
     
@@ -342,7 +327,7 @@ mod_sample_information_server <- function(id){
         
         
         if( length(reactiveValuesToList(samples) ) == 0 ) {
-          show_toast("error", "Hold on", "You haven't added any samples yet")
+          show_toast("error", "Hold on", "You haven't saved any samples yet")
           return()
         }
         
@@ -352,7 +337,7 @@ mod_sample_information_server <- function(id){
         
         iv$enable() # Start showing validation feedback
         
-        #if(golem::app_dev()) submitted(submitted() + 1) # only in dev, I allow to proceed withou the validaiton
+        if(golem::app_dev()) submitted(submitted() + 1) # only in dev, I allow to proceed without the validaiton
         
         showNotification(
           "Please correct the errors in the form and try again",

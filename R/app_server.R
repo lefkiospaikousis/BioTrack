@@ -20,24 +20,16 @@ app_server <- function(input, output, session) {
   # Set Up Reactive Values ----
   rv <- reactiveValues(
     
-    sample_info = NULL,
-    processed_sample_info = NULL,
-    db_trigger = NULL,
-    
     focus = 0 # I use it as a trigger to focus the input$lab_no in tab View/Edit Specimen
     
-    
   )
-  
-  added_sample_info <- reactiveVal(FALSE)
-  added_specimens <- reactiveVal(FALSE)
   
   session$userData$db_trigger <- reactiveVal(0)
   
   observe({
-    session$userData$user <- "lefkios"# res_auth$user
-    #session$userData$user_info <- reactiveValuesToList(res_auth)
-    session$userData$user_info$admin = TRUE
+    session$userData$user <- res_auth$user #"lefkios"#
+    session$userData$user_info <- reactiveValuesToList(res_auth)
+    #session$userData$user_info$admin = TRUE
   })
   output$userName <- renderText({
     
@@ -55,34 +47,26 @@ app_server <- function(input, output, session) {
   mod_view_edit_specimen_server("view_edit_specimen_1", reactive(rv$focus)) 
   mod_tables_server("tables_1", tbl_merged)
   mod_log_file_server("log_file_1")
-  # Switching between tabs ----
-  
-  # Step 1 - Add Sample Information
-  # observeEvent(input$add_sample_info, {
+
+  # # Step 2 -Add specimens and storage information
+  # observeEvent(added_sample_info(), {
   #   
-  #   updateTabsetPanel(session, inputId = "tabs", selected = "Add sample info")
+  #   if(isTRUE(added_sample_info())) {
+  #     updateTabsetPanel(session, inputId = "tabs", selected = "Specimen")
+  #     added_sample_info(FALSE)
+  #   }
   #   
-  # })
-  
-  # Step 2 -Add specimens and storage information
-  observeEvent(added_sample_info(), {
-    
-    if(isTRUE(added_sample_info())) {
-      updateTabsetPanel(session, inputId = "tabs", selected = "Specimen")
-      added_sample_info(FALSE)
-    }
-    
-  }, ignoreInit = TRUE)
+  # }, ignoreInit = TRUE)
   
   # END. Go back to Step 1
-  observeEvent(added_specimens(),{
-    
-    waiter::waiter_update(html = html_waiter("Initialising. Please wait..."))
-    Sys.sleep(1)
-    shinyjs::refresh()
-    
-    
-  }, ignoreInit = TRUE)
+  # observeEvent(added_specimens(),{
+  #   
+  #   waiter::waiter_update(html = html_waiter("Initialising. Please wait..."))
+  #   Sys.sleep(1)
+  #   shinyjs::refresh()
+  #   
+  #   
+  # }, ignoreInit = TRUE)
   
   
   # Adding sample Information -----
@@ -127,7 +111,7 @@ app_server <- function(input, output, session) {
                                   firstname = {sample_info$firstname}, 
                                   surname = {sample_info$surname}, 
                                   gender = {sample_info$gender}, 
-                                  dob = {sample_info$dob}, 
+                                  dob = {as.numeric(sample_info$dob)}, 
                                   nationality = {sample_info$nationality}, 
                                   diagnosis = {sample_info$diagnosis}, 
                                   status = {sample_info$status}, 
@@ -153,6 +137,8 @@ app_server <- function(input, output, session) {
       # Add to log. Only the patient info
       try({add_to_logFile("Finalised Sample Information Form", session$userData$user, info = sample_info)}, silent = FALSE)
       
+      show_toast("success", "", "Done with the sample information")
+      Sys.sleep(1)
       shinyjs::refresh()
       
     }, error = function(e){
@@ -169,7 +155,7 @@ app_server <- function(input, output, session) {
                                  If the problem persists, please contact support")
       
       try({
-        saveRDS(rv$sample_info, paste0("failed_submission", file_time(), ".rds"))
+        saveRDS(sample_info, paste0("failed_submission", file_time(), ".rds"))
       })
       
     }, finally = {

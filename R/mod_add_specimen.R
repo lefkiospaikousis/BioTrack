@@ -49,8 +49,8 @@ mod_add_specimen_ui <- function(id, specimen_types){
           
         ),
     hr(),
-    actionButton(ns("submit"), "Done with this specimen", class = "btn-submit-specimen",
-                 icon("glyphicon glyphicon-ok", lib = "glyphicon")),
+    actionButton(ns("submit"), "Save this specimen", class = "btn-add",
+                 icon("glyphicon glyphicon-saved", lib = "glyphicon")),
     actionButton(ns('cancel'), "Cancel", class = "btn-cancel right", 
                  icon("glyphicon glyphicon-remove", lib = "glyphicon"))
     )
