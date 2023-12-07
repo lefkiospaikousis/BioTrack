@@ -143,7 +143,7 @@ mod_sample_information_server <- function(id){
       samples_list <- reactiveValuesToList(samples)
       
       if( length(samples_list) == 0 ) validate("No samples added yet")
-      browser()
+      
       tbl <- bind_rows(samples_list)
       
       tbl |>  
@@ -187,8 +187,6 @@ mod_sample_information_server <- function(id){
     
     observeEvent(res_sample$submit(), {
       
-      browser()
-      
       sample <- process_sample( c(res_sample$dta(), list(bococ = input$bococ)) )
       
       samples[[sample$unique_id]] <- sample
@@ -217,7 +215,7 @@ mod_sample_information_server <- function(id){
     observeEvent(res_storage$submit(), {
       
       hide_waiter()
-      browser()
+      
       show_waiter("Saving the infomation.. Please wait", sleep = 1)
       id <- active_sample()$unique_id
       n_specimens <- nrow(res_storage$dta())
@@ -399,7 +397,6 @@ mod_sample_information_server <- function(id){
         samples  = samples,
         icf_path = reactive(rv$icf_path),
         submit   = submitted
-        #cancel  = cancel
       )
     )
     

@@ -55,7 +55,7 @@ mod_storage_information_server <- function(id, sample_info){
     output$tbl_specimens <- renderTable({
       
       if(is.null(rv$specimens)) validate("No specimens added yet")
-      browser()
+      
       rv$specimens %>% 
         mutate(date_processing = date_processing %>% format("%d/%m/%Y")) %>% 
         select("Lab no"                              = lab_no,
