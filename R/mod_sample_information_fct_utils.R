@@ -69,7 +69,12 @@ process_sample <- function(sample){
   
   stopifnot(inherits(sample, "list"))
   
-  sample$unique_id  <- uuid::UUIDgenerate()
+  sample$time_stamp <- epochTime()  
+  
+  sample$bococ <- stringr::str_pad(sample$bococ, 6, 'left', '0')
+  
+  # The id already initialised when the specimens are created
+  sample$unique_id <- uuid::UUIDgenerate()
   
   # # because the returned value is a date-time
   sample$time_receipt <- strftime(sample$time_receipt, "%R")

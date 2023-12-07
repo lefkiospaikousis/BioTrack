@@ -15,7 +15,7 @@ mod_add_specimen_ui <- function(id, specimen_types){
   
   tagList(
     
-    div(style = "font-size:13px",
+    div(style = "font-size:13px; border: solid silver; padding: 10px", 
         
         tags$table(
           
@@ -47,14 +47,13 @@ mod_add_specimen_ui <- function(id, specimen_types){
                   tags$td(width = "70%", numericInput(ns("n_tubes"), NULL, NA, min = 1, width = "40%")))
           
           
-        )
-    ),
+        ),
     hr(),
-    actionButton(ns("submit"), "Done", class = "btn-submit",
+    actionButton(ns("submit"), "Done with this specimen", class = "btn-submit-specimen",
                  icon("glyphicon glyphicon-ok", lib = "glyphicon")),
     actionButton(ns('cancel'), "Cancel", class = "btn-cancel right", 
-                 icon("glyphicon glyphicon-remove", lib = "glyphicon")),
-    hr()
+                 icon("glyphicon glyphicon-remove", lib = "glyphicon"))
+    )
   )
 }
 
@@ -225,7 +224,7 @@ mod_add_specimen_server <- function(id, sample_info){
     
     # date of processing should be the same as date of receipt 
     output$dateProcessing <- renderText({
-      
+      req(sample_info())
       paste0("<b>", as.Date(sample_info()$date_receipt) %>% format("%d/%m/%Y"), "<b>")
       
     })

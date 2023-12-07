@@ -136,12 +136,14 @@ mod_sample_information_server <- function(id){
     
     samples <- reactiveValues()
     
+    active_sample <- reactiveVal()
+    
     output$tbl_samples <- renderTable({
       
       samples_list <- reactiveValuesToList(samples)
       
       if( length(samples_list) == 0 ) validate("No samples added yet")
-      
+      browser()
       tbl <- bind_rows(samples_list)
       
       tbl |>  
@@ -162,6 +164,11 @@ mod_sample_information_server <- function(id){
     
     observeEvent(input$add_sample, {
       
+      if(isTRUE(is.na(input$bococ))){
+        show_toast("error", "", "Please add a BOCOC number first")
+        return()
+      }
+      
       showModal(modalDialog(
         mod_add_sample_type_ui(ns("add_sample_type_1"))
         , footer = NULL
@@ -180,13 +187,57 @@ mod_sample_information_server <- function(id){
     
     observeEvent(res_sample$submit(), {
       
-      sample <- process_sample(res_sample$dta())
+      browser()
+      
+      sample <- process_sample( c(res_sample$dta(), list(bococ = input$bococ)) )
       
       samples[[sample$unique_id]] <- sample
       session$userData$db_trigger(session$userData$db_trigger() + 1)
       show_toast("success", "", glue::glue("Sample `{sample$type1}` successfully saved!"))
+      
+      active_sample(sample)
       removeModal()
+      
     }, ignoreInit = TRUE)
+    
+    observeEvent(active_sample(), {
+      
+      waiter::waiter_update(html = html_waiter("Moving to Storage information"))
+      Sys.sleep(1)     
+      
+      showModal(modalDialog(
+        
+        mod_storage_information_ui(ns("a_sample"))
+      ))
+      
+    })
+    
+    res_storage <- mod_storage_information_server("a_sample", reactive( active_sample()) )
+    
+    observeEvent(res_storage$submit(), {
+      
+      hide_waiter()
+      browser()
+      show_waiter("Saving the infomation.. Please wait", sleep = 1)
+      id <- active_sample()$unique_id
+      n_specimens <- nrow(res_storage$dta())
+      
+      processed_sample <- active_sample()
+      processed_sample$specimens <- n_specimens
+      
+      rs <- DBI::dbAppendTable(dbase_specimen, "sample_info", as.data.frame(processed_sample))
+      
+      cat("Added sample information for ", rs, " sample \n")
+      
+      if(!golem::app_prod()) showNotification("Added sample information to DB")
+      
+      session$userData$db_trigger(session$userData$db_trigger() + 1)
+      
+      hide_waiter()
+      removeModal()
+      
+    }, ignoreInit = TRUE)
+    
     
     
     # Fields. Collect the input ids
@@ -248,35 +299,6 @@ mod_sample_information_server <- function(id){
     #iv$add_rule("status", sv_required())
     iv$add_rule("doctor", sv_required())
     iv$add_rule("consent", sv_required())
-    
-    #3. Sample type
-    # only 1 required
-    # iv$add_rule("type1", sv_required())
-    # 
-    # #4. Collection information
-    # iv$add_rule("tube", sv_required())
-    # iv$add_rule("phase", sv_required())
-    # iv$add_rule("at_bococ", sv_required())
-    # iv$add_rule("date_collection", sv_required())
-    # iv$add_rule("date_collection",  ~valid_date(., "Collection date"))
-    
-    # iv_date_shipment <- shinyvalidate::InputValidator$new()
-    # iv_date_shipment$condition(~ input$at_bococ == 'No')
-    # 
-    # iv_date_shipment$add_rule("date_shipment", sv_required())
-    # iv_date_shipment$add_rule("date_shipment", ~valid_date(., "Shipment date"))
-    # 
-    # iv$add_validator(iv_date_shipment)
-    
-    # iv$add_rule("date_receipt", sv_required())
-    # iv$add_rule("date_receipt",  ~valid_date(., "Receipt date"))
-    # 
-    # iv$add_rule("time_receipt", function(time){
-    #   if(identical(strftime(time, "%R"), "00:00")){
-    #     "Required"
-    #   }
-    # })
-    
     
     #iv$add_rule("date_processing", sv_required())
     iv$add_rule("study_id", sv_required())
