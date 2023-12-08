@@ -104,6 +104,8 @@ mod_storage_information_server <- function(id, sample_info){
         where = "afterEnd"
       )
       
+      shinyjs::disable("add_specimen")
+      
     })
     
     specimen <- mod_add_specimen_server("add_specimen_1", sample_info)
@@ -111,6 +113,8 @@ mod_storage_information_server <- function(id, sample_info){
     observeEvent(specimen$cancel(), {
       
       removeUI( paste0("#", ns("to_remove"))    )
+      
+      shinyjs::enable("add_specimen")
       
     }, ignoreInit = TRUE)
     
@@ -189,7 +193,7 @@ mod_storage_information_server <- function(id, sample_info){
         try({add_to_logFile("Added Specimen Type", session$userData$user, info = info)}, silent = TRUE)
         
         removeUI( paste0("#", ns("to_remove"))    )
-        
+        shinyjs::enable("add_specimen")
         
       }, error = function(e){
         cat("Error capturing the speciment entry\n")
@@ -198,6 +202,7 @@ mod_storage_information_server <- function(id, sample_info){
                                  keepVisible = TRUE, .options = list(positionClass = "toast-top-center"),
                                  "Could not save this specimen to Database! Check your network connectivity and try again.
                                  If the problem persists, please contact support")
+        shinyjs::enable("add_specimen")
       })
       
       hide_waiter()
