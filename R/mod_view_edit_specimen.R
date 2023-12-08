@@ -133,7 +133,7 @@ mod_view_edit_specimen_server <- function(id, focus){
             p("Quality of Sample: ", 
               strong(specimen$quality), mod_edit_specimen_button_ui(ns("quality")) ),
             p("Specimen Type: ", 
-              strong(specimen$specimen_type) #, mod_edit_specimen_button_ui(ns("specimen_type")) 
+              strong(specimen$specimen_type), mod_edit_specimen_button_ui(ns("specimen_type")) 
             ),
             p(span("Freezer: ", 
                    strong(specimen$freezer) , " - Storage Place: ", strong(specimen$place)),
@@ -155,11 +155,17 @@ mod_view_edit_specimen_server <- function(id, focus){
     })
     
     mod_edit_specimen_button_server("quality", reactive(rv$specimen_selected))
-    mod_edit_specimen_button_server("specimen_type", reactive(rv$specimen_selected))
     mod_edit_specimen_button_server("comment_place", reactive(rv$specimen_selected))
     mod_edit_specimen_button_server("n_tubes", reactive(rv$specimen_selected))
     mod_edit_specimen_button_server("date_processing", reactive(rv$specimen_selected))
     mod_edit_specimen_button_server("place", reactive(rv$specimen_selected))
+    
+    res <- mod_edit_specimen_button_server("specimen_type", reactive(rv$specimen_selected))
+    
+    observeEvent(res$trigger, {
+      
+      updateTextInput(session, "lab_no", value = res$new_lab_no )
+    },ignoreInit = TRUE)
     
     # Sample Information UI ----
     output$sample_infoUI <- renderUI({

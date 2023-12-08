@@ -21,6 +21,11 @@ mod_edit_specimen_button_server <- function(id, specimen){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
+    trigger_type <- reactiveValues(
+      new_lab_no = NULL,
+      trigger = 0
+    )
+    
     observeEvent(input$edit, {
       
       ids_allowed_all <- c("n_tubes", "status")
@@ -171,13 +176,15 @@ mod_edit_specimen_button_server <- function(id, specimen){
       if(res$id == "specimen_type"){
         # Update also the lab_no
         
-        
         new_lab_no <- gsub("[A-Z]{2}$", specimen_types[[new_value]], lab_no)
         
         sql_cmd1 <- glue::glue_sql("UPDATE specimen_info SET lab_no = {new_lab_no} WHERE lab_no = {lab_no}", .con = dbase_specimen)
         
         rs1 <- DBI::dbExecute(dbase_specimen, sql_cmd1)
         
+        # trigger this change to update the Specimen Lab No textInput in the mod_view_edit_specimen module
+        trigger_type$new_lab_no = new_lab_no
+        trigger_type$trigger = trigger_type$trigger + 1
       }
       
       # need to update the duration if one of these are changed
@@ -225,6 +232,9 @@ mod_edit_specimen_button_server <- function(id, specimen){
       
       
     }, ignoreInit = TRUE)
+    
+    
+    return(trigger_type)
     
   })
 }
