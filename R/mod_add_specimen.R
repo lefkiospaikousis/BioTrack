@@ -30,7 +30,12 @@ mod_add_specimen_ui <- function(id, specimen_types){
           
           tags$tr(width = "100%",
                   tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date of processing"))),
-                  tags$td(width = "60%", div(htmlOutput(ns("dateProcessing"), width = input_width), style = "margin-bottom: 7px"))),
+                  tags$td(width = "60%", shinyjs::disabled(dateInput(ns("date_processing"), NULL, 
+                                                                     lubridate::NA_Date_ , format = "dd/mm/yyyy", width = input_width) )
+                  )
+                  
+                  #tags$td(width = "60%", div(htmlOutput(ns("dateProcessing"), width = input_width), style = "margin-bottom: 7px"))
+          ),
           
           tags$tr(width = "100%",
                   tags$td(width = "40%", div(class = "input-label", "Time of processing:")),
@@ -48,11 +53,11 @@ mod_add_specimen_ui <- function(id, specimen_types){
           
           
         ),
-    hr(),
-    actionButton(ns("submit"), "Save this specimen", class = "btn-add",
-                 icon("glyphicon glyphicon-saved", lib = "glyphicon")),
-    actionButton(ns('cancel'), "Cancel", class = "btn-cancel right", 
-                 icon("glyphicon glyphicon-remove", lib = "glyphicon"))
+        hr(),
+        actionButton(ns("submit"), "Save this specimen", class = "btn-add",
+                     icon("glyphicon glyphicon-saved", lib = "glyphicon")),
+        actionButton(ns('cancel'), "Cancel", class = "btn-cancel right", 
+                     icon("glyphicon glyphicon-remove", lib = "glyphicon"))
     )
   )
 }
@@ -66,6 +71,17 @@ mod_add_specimen_server <- function(id, sample_info){
     
     submitted <- reactiveVal(0)
     close_form <- reactiveVal(0)
+    
+    observe({
+      
+      updateDateInput(session, "date_processing", value = as.Date(sample_info()$date_receipt) )
+      
+      shinyjs::toggleState("date_processing", sample_info()$tube == "Streck")
+
+    }) |> 
+      # this trick makes sure that the ui of this module is rendered 
+      # before I update the date_processing. Otherwise it is not updated
+      bindEvent(input$type, ignoreInit = TRUE)
     
     all_fields <- c(
       "type",
@@ -92,23 +108,28 @@ mod_add_specimen_server <- function(id, sample_info){
     
     
     # Date of processing will be the same as date of receipt
-    #iv$add_rule("date_processing", sv_required())
-    # iv$add_rule("date_processing", function(date){
-    # 
-    #   if(date > Sys.Date() ){
-    # 
-    #     return("Processing date cannot be later than today")
-    #   }
-    # 
-    #   if(date != as.Date(sample_info()$date_receipt )){
-    # 
-    #     return(
-    #       glue::glue("Processing date must be equal to Receipt Date{sample_info()$date_receipt}")
-    #     )
-    #   }
-    # 
-    # 
-    # })
+    iv$add_rule("date_processing", sv_required())
+    iv$add_rule("date_processing", function(date){
+
+      # if(date > Sys.Date() ){
+      #   return("Processing date cannot be later than today")
+      # }
+      # if(date != as.Date(sample_info()$date_receipt )){
+      #   return(
+      #     glue::glue("Processing date must be equal to Receipt Date{sample_info()$date_receipt}")
+      #   )
+      # }
+      
+      if( sample_info()$tube == "Streck" ) {
+        
+        if( date > (as.Date(sample_info()$date_receipt) + 5 ) ){
+          return("This needs to be no later than the receipt date + 5 ")
+        }
+      } 
+
+    })
+    
+
     
     iv$add_rule("time_processing", sv_required())
     
@@ -197,10 +218,10 @@ mod_add_specimen_server <- function(id, sample_info){
         
       })
       
-      
+     
       # # because the returned value is a date-time
       list_dta$time_processing <- strftime(list_dta$time_processing, "%R")
-      list_dta$date_processing <- as.character(as.Date(sample_info()$date_receipt))
+      #list_dta$date_processing <- as.character(as.Date(sample_info()$date_receipt))
       list_dta$date_processing  <- ymd(list_dta$date_processing, tz = "EET") + hm(list_dta$time_processing)
       list_dta$time_processing <- NULL
       
