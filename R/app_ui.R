@@ -19,6 +19,7 @@ app_ui <- function(request) {
                     menuItem("Specimen Logs", tabName = "tables", icon = icon("table")),
                     menuItem("Freezer Logs", tabName = "freezer_log", icon = icon("file")),
                     menuItem("Traceability records", tabName = "log_file", icon = icon("box")),
+                    menuItem("Statistics", tabName = "statistics", icon = icon("chart-simple")),
                     tags$hr(style = "border-color: white;width: 80%"),
                     p(paste0("Version: ", golem::get_golem_version()), style = "margin-left:25px"),
                     div(textOutput("userName"), style = "margin-left:25px")
@@ -72,6 +73,9 @@ app_ui <- function(request) {
           ),
           tabItem(tabName = "log_file", 
                   mod_log_file_ui("log_file_1")
+          ),
+          tabItem(tabName = "statistics", 
+                  mod_statistics_ui("statistics_1")
           )
         )
       )
@@ -103,7 +107,7 @@ golem_add_external_resources <- function() {
     shinyFeedback::useShinyFeedback(),
     shinyjs::useShinyjs(),
     shinyjs::extendShinyjs(text = jsResetCode, functions = "reset1"),
-    waiter::use_waiter()
+    waiter::useWaiter()
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
   )
