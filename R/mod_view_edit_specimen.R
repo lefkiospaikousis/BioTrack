@@ -238,6 +238,10 @@ mod_view_edit_specimen_server <- function(id, focus){
               mod_edit_sample_button_ui(ns("phase"))
             ),
             
+            p(col_labels[["lab"]], ": ", strong(sample_info$lab),
+              mod_edit_sample_button_ui(ns("lab"))
+            ),
+            
             p(col_labels[["date_collection"]], ": ", strong(to_date_time(sample_info$date_collection) %>% format("%d/%m/%Y %H:%M")),
               mod_edit_sample_button_ui(ns("date_collection"))
             ),
@@ -298,6 +302,7 @@ mod_view_edit_specimen_server <- function(id, focus){
     mod_edit_sample_button_server("gender", reactive(rv$sample_selected))
     mod_edit_sample_button_server("tube", reactive(rv$sample_selected))
     mod_edit_sample_button_server("at_bococ", reactive(rv$sample_selected))
+    mod_edit_sample_button_server("lab", reactive(rv$sample_selected))
     mod_edit_sample_button_server("nationality", reactive(rv$sample_selected))
     mod_edit_sample_button_server("dob", reactive(rv$sample_selected))
     mod_edit_sample_button_server("comments", reactive(rv$sample_selected))

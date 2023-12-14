@@ -23,8 +23,9 @@ mod_add_sample_type_ui <- function(id){
                     tags$td(width = "5%", div(class = "input-label",style = "", "Sample Type Received:")),
                     tags$td(width = "50%", 
                             
-                            splitLayout(cellWidths = c("55%", "60%"),
-                                        div(selectInput(ns("type1"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
+                            splitLayout(cellWidths = c("60%", "13%", "45%"),
+                                        div(selectInput(ns("type1"), NULL, c("", col_values[["sample_types"]]), width = "90%")),
+                                        div("ml", style = "margin-top:7px"),
                                         div( style = "margin-top: 0px; margin-left:-20px" , numericInput(ns("type1_ml"), NULL, NA, width = "50%"))
                             ) #div(class = "input-label2", style = "", "ml:"),
                     )
@@ -42,6 +43,14 @@ mod_add_sample_type_ui <- function(id){
                     tags$td(width = "70%",  shinyjs::hidden(textInput(ns("phase_other"), NULL, width = input_width,
                                                                       placeholder = "Please describe")))),
             
+            tags$tr(width = "100%",
+                    tags$td(width = "30%", div(class = "input-label",style = "", col_labels[["lab"]])),
+                    tags$td(width = "70%", selectInput(ns("lab"), NULL, c("", col_values[["lab"]]), width = input_width))),
+            
+            tags$tr(width = "100%",
+                    tags$td(width = "30%",  shinyjs::hidden(div(class = "input-label", style = "", ""))),
+                    tags$td(width = "70%",  shinyjs::hidden(textInput(ns("lab_other"), NULL, width = input_width,
+                                                                      placeholder = "Please type")))),
             
             tags$tr(width = "100%",
                     tags$td(width = "30%", div(class = "input-label",style = "", "Collected at BOCOC?:")),
@@ -101,6 +110,7 @@ mod_add_sample_type_server <- function(id){
       'type1_ml',
       "tube",
       "phase",
+      "lab",
       "at_bococ",
       "date_collection",
       "time_collection",
@@ -143,9 +153,11 @@ mod_add_sample_type_server <- function(id){
     
     
     observe({
-      
       shinyjs::toggle("phase_other", anim = TRUE, condition = input$phase == "Other")
-      
+    })
+    
+    observe({
+      shinyjs::toggle("lab_other", anim = TRUE, condition = input$lab == "Other")
     })
     
     # Data collection ----
@@ -177,6 +189,7 @@ mod_add_sample_type_server <- function(id){
         }) 
       
       if(input$phase == "Other") list_dta$phase <- paste0("Other:", input$phase_other)
+      if(input$lab == "Other") list_dta$lab <- input$lab_other
       
       list_dta
       
