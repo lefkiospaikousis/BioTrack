@@ -201,10 +201,10 @@ mod_statistics_server <- function(id){
       
       content = function(file) {
         
-        x <- list(tbl_stats())
-        names(x) <- paste0("Study_", input$study, "-", input$phase) |> clean_string()
+        #x <- list(tbl_stats())
+        #names(x) <- paste0("Study_", input$study, "-", input$phase) |> clean_string()
         readr::write_excel_csv(
-          x,
+          tbl_stats(),
           file = file
         )
       }
