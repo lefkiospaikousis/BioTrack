@@ -203,7 +203,10 @@ mod_statistics_server <- function(id){
         
         x <- list(tbl_stats())
         names(x) <- paste0("Study_", input$study, "-", input$phase) |> clean_string()
-        writexl::write_xlsx( x, file )
+        readr::write_excel_csv(
+          x,
+          file = file
+        )
       }
     )
     
