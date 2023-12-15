@@ -47,7 +47,7 @@ app_server <- function(input, output, session) {
   mod_view_edit_specimen_server("view_edit_specimen_1", reactive(rv$focus)) 
   mod_tables_server("tables_1", tbl_merged)
   mod_log_file_server("log_file_1")
-
+  mod_statistics_server("statistics_1")
   # # Step 2 -Add specimens and storage information
   # observeEvent(added_sample_info(), {
   #   
@@ -137,7 +137,9 @@ app_server <- function(input, output, session) {
       # Add to log. Only the patient info
       try({add_to_logFile("Finalised Sample Information Form", session$userData$user, info = sample_info)}, silent = FALSE)
       
-      show_toast("success", "", "Done with the sample information")
+      waiter::waiter_update(html = html_waiter("Succesfull submission of Sample Information"))
+      Sys.sleep(2)
+      waiter::waiter_update(html = html_waiter("Initialising. Please wait..."))
       Sys.sleep(1)
       shinyjs::refresh()
       
