@@ -26,7 +26,7 @@ mod_statistics_ui <- function(id){
                    downloadLink(ns("down_docx"), "Download as .docx"),
                    br(),
                    br(),
-                   downloadLink(ns("down_xlsx"), "Download as .xlsx")
+                   downloadLink(ns("down_xlsx"), "Download as .csv")
       ),
       mainPanel(width = 8,
                 box(width = NULL,
