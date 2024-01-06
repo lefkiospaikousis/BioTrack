@@ -196,7 +196,7 @@ mod_statistics_server <- function(id){
     output$down_xlsx <- downloadHandler(
       
       filename = function(){
-        "statistics.xlsx"
+        "statistics.csv"
       },
       
       content = function(file) {
