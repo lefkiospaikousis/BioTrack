@@ -1,6 +1,6 @@
 default:
   golem_name: BioTrack
-  golem_version: 0.1.1.9000
+  golem_version: 0.1.2
   app_prod: no
   db_users: DB/dev/credentials.sqlite
   path_db_specimen: DB/dev/specimen
