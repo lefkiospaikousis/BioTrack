@@ -114,6 +114,15 @@ label {
   margin-left; 120px
 }
 
+.btn-submit-specimen{
+  
+  width: 60%;
+  background-color: #04FF6D;
+  color: #fff;
+  margin-left; 120px
+}
+
+
 .btn-submit:hover {
   background-color: #3e8e41;
   color: #fff;

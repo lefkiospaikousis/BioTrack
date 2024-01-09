@@ -20,23 +20,16 @@ app_server <- function(input, output, session) {
   # Set Up Reactive Values ----
   rv <- reactiveValues(
     
-    sample_info = NULL,
-    processed_sample_info = NULL,
-    db_trigger = NULL,
-    
     focus = 0 # I use it as a trigger to focus the input$lab_no in tab View/Edit Specimen
     
-    
   )
-  
-  added_sample_info <- reactiveVal(FALSE)
-  added_specimens <- reactiveVal(FALSE)
   
   session$userData$db_trigger <- reactiveVal(0)
   
   observe({
-    session$userData$user <- res_auth$user
+    session$userData$user <- res_auth$user #"lefkios"#
     session$userData$user_info <- reactiveValuesToList(res_auth)
+    #session$userData$user_info$admin = TRUE
   })
   output$userName <- renderText({
     
@@ -45,6 +38,7 @@ app_server <- function(input, output, session) {
   })
   
   observeEvent(input$left_tabs, {
+    
     if(input$left_tabs == "view") {
       rv$focus = rv$focus + 1
     }
@@ -53,72 +47,48 @@ app_server <- function(input, output, session) {
   mod_view_edit_specimen_server("view_edit_specimen_1", reactive(rv$focus)) 
   mod_tables_server("tables_1", tbl_merged)
   mod_log_file_server("log_file_1")
-  # Switching between tabs ----
-  
-  # Step 1 - Add Sample Information
-  # observeEvent(input$add_sample_info, {
+  mod_statistics_server("statistics_1")
+  # # Step 2 -Add specimens and storage information
+  # observeEvent(added_sample_info(), {
   #   
-  #   updateTabsetPanel(session, inputId = "tabs", selected = "Add sample info")
+  #   if(isTRUE(added_sample_info())) {
+  #     updateTabsetPanel(session, inputId = "tabs", selected = "Specimen")
+  #     added_sample_info(FALSE)
+  #   }
   #   
-  # })
-  
-  # Step 2 -Add specimens and storage information
-  observeEvent(added_sample_info(), {
-    
-    if(isTRUE(added_sample_info())) {
-      updateTabsetPanel(session, inputId = "tabs", selected = "Specimen")
-      added_sample_info(FALSE)
-    }
-    
-  }, ignoreInit = TRUE)
+  # }, ignoreInit = TRUE)
   
   # END. Go back to Step 1
-  observeEvent(added_specimens(),{
-    
-    waiter::waiter_update(html = html_waiter("Initialising. Please wait..."))
-    Sys.sleep(1)
-    # I have split the process in 3 pages
-    # when I move from page to page,the form details of each page stays there
-    # Need to reload to be cleared
-    # TODO use shinjs::reset() ?
-    shinyjs::js$reset1()
-    session$reload()
-    
-    
-  }, ignoreInit = TRUE)
+  # observeEvent(added_specimens(),{
+  #   
+  #   waiter::waiter_update(html = html_waiter("Initialising. Please wait..."))
+  #   Sys.sleep(1)
+  #   shinyjs::refresh()
+  #   
+  #   
+  # }, ignoreInit = TRUE)
   
   
   # Adding sample Information -----
-  
   
   res_sample_info <- mod_sample_information_server("sample_information_1")
   
   
   observeEvent(res_sample_info$submit(), {
     
-    rv$sample_info <- res_sample_info$dta()
-    rv$sample_info$path_icf <- res_sample_info$icf_path()
-    
-  }, ignoreInit = TRUE)
-  
-  
-  observeEvent(rv$sample_info, {
-    
-    removeModal()
-    
     show_waiter("Processing.. Please wait!", sleep = 0.5)
     
-    ## SAVE to DB
+    ## Update sample_info to DB
     tryCatch({
       
-      sample_info <- process_submission(rv$sample_info)
+      the_samples <- reactiveValuesToList( res_sample_info$samples )
+      sample_info <- res_sample_info$dta()
       
-      # save the icf file to the correct location
-      dir.create(path_dir <- file.path("ICF", sample_info$unique_id))
-      #new_path <- file.path(path_dir, "ICF.pdf")
-      new_path <- file.path(path_dir, sample_info$path_icf$name)
-      
-      res <- file.copy(sample_info$path_icf$datapath, new_path)
+      # save the icf file to the correct location. Pick any id form the ones form the sample
+      an_id <- the_samples[[1]][["unique_id"]]
+      dir.create(path_dir <- file.path("ICF", an_id))
+      new_path <- file.path(path_dir, res_sample_info$icf_path()$name)
+      res <- file.copy(res_sample_info$icf_path()$datapath, new_path, overwrite = TRUE)
       sample_info$path_icf <- basename(new_path) %>% paste(collapse = "\n")
       
       if(isFALSE(res)){
@@ -132,22 +102,46 @@ app_server <- function(input, output, session) {
         sample_info$path_icf <- NA_character_
       }
       
-      res_save <- DBI::dbAppendTable(dbase_specimen, "sample_info", as.data.frame(sample_info))
+      # Add all the patient information to all their sample
       
-      cat("Saved ", res_save, " form\n")
+      updated <- purrr::map_int(names(the_samples),  function(id){
+        
+        
+        sql_cmd <- glue::glue_sql("UPDATE sample_info SET 
+                                  firstname = {sample_info$firstname}, 
+                                  surname = {sample_info$surname}, 
+                                  gender = {sample_info$gender}, 
+                                  dob = {as.numeric(sample_info$dob)}, 
+                                  nationality = {sample_info$nationality}, 
+                                  diagnosis = {sample_info$diagnosis}, 
+                                  status = {sample_info$status}, 
+                                  doctor = {sample_info$doctor}, 
+                                  consent = {sample_info$consent}, 
+                                  civil_id = {sample_info$civil_id}, 
+                                  study_id = {sample_info$study_id}, 
+                                  study = {sample_info$study}, 
+                                  comments = {sample_info$comments}, 
+                                  path_icf = {sample_info$path_icf}
+                                  WHERE unique_id = {id}", .con = dbase_specimen)
+        
+        rs <- DBI::dbExecute(dbase_specimen, sql_cmd)
+        
+        rs
+        
+      })
       
-      if(!golem::app_prod()) showNotification("Saved to Database!")
-      
-      rv$processed_sample_info <- sample_info
-      
-      waiter::waiter_update(html = html_waiter("Moving to Storage information"))
-      Sys.sleep(1)      
-      added_sample_info(TRUE)
+      stopifnot({ all(as.logical(updated)) })
       
       session$userData$db_trigger(session$userData$db_trigger() + 1)
       
-      # Add to log
-      try({add_to_logFile("Added Sample Information Form", session$userData$user, info = sample_info)}, silent = TRUE)
+      # Add to log. Only the patient info
+      try({add_to_logFile("Finalised Sample Information Form", session$userData$user, info = sample_info)}, silent = FALSE)
+      
+      waiter::waiter_update(html = html_waiter("Succesfull submission of Sample Information"))
+      Sys.sleep(2)
+      waiter::waiter_update(html = html_waiter("Initialising. Please wait..."))
+      Sys.sleep(1)
+      shinyjs::refresh()
       
     }, error = function(e){
       
@@ -163,20 +157,13 @@ app_server <- function(input, output, session) {
                                  If the problem persists, please contact support")
       
       try({
-        saveRDS(rv$sample_info, paste0("failed_submission", file_time(), ".rds"))
+        saveRDS(sample_info, paste0("failed_submission", file_time(), ".rds"))
       })
       
-    }, finally = hide_waiter())
-    
-  })
-  
-  # Adding specimen and storage information ----
-  
-  res_storage_info <- mod_storage_information_server("storage_information_1", reactive(rv$processed_sample_info))
-  
-  observeEvent(res_storage_info$submit(), {
-    
-    added_specimens(TRUE)
+    }, finally = {
+      
+      hide_waiter()
+    })
     
   }, ignoreInit = TRUE)
   

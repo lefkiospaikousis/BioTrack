@@ -63,45 +63,63 @@ lapsed_time <- function (start_time, end_time = Sys.time())
   as.character(round(x, 1))
 }
 
-process_submission <- function(submission){
+
+# Process the sample information
+process_sample <- function(sample){
   
-  stopifnot(inherits(submission, "list"))
+  stopifnot(inherits(sample, "list"))
   
-  submission$unique_id  <- uuid::UUIDgenerate()
+  sample$time_stamp <- epochTime()  
   
-  submission$time_stamp <- epochTime()  
+  sample$bococ <- stringr::str_pad(sample$bococ, 6, 'left', '0')
   
-  submission$bococ <- stringr::str_pad(submission$bococ, 6, 'left', '0')
+  # The id already initialised when the specimens are created
+  sample$unique_id <- uuid::UUIDgenerate()
+  
   # # because the returned value is a date-time
-  submission$time_receipt <- strftime(submission$time_receipt, "%R")
-  submission$date_receipt <- ymd(submission$date_receipt, tz = "EET") + hm(submission$time_receipt)
-  submission$time_receipt <- NULL
+  sample$time_receipt <- strftime(sample$time_receipt, "%R")
+  sample$date_receipt <- ymd(sample$date_receipt, tz = "EET") + hm(sample$time_receipt)
+  sample$time_receipt <- NULL
   
-  submission$time_collection <- strftime(submission$time_collection, "%R")
-  submission$date_collection <- ymd(submission$date_collection, tz = "EET") + hm(submission$time_collection)
-  submission$time_collection <- NULL
+  sample$time_collection <- strftime(sample$time_collection, "%R")
+  sample$date_collection <- ymd(sample$date_collection, tz = "EET") + hm(sample$time_collection)
+  sample$time_collection <- NULL
   
   # Initialise the number of specimens - 0 for now.Will be updated later in the mod_add_specimen
-  submission$specimens <- 0
-  
-  # submission$time_processing <- strftime(submission$time_processing, "%R")
-  # submission$date_processing <- ymd(submission$date_processing, tz = "EET") + hm(submission$time_processing)
-  # submission["time_processing"] <- NULL
+  sample$specimens <- 0
   
   # If Date(0) object or zero length dateTime object, then needs to be NA_integer_
   # otherwise cannot be save in the DB. lubridate::is.timepoint works for both Date and Posixct objects
   # So if any of the date or datetime inputs are not there (e.g. date_shipment is not mandatory) this 
   # will make sure all is good for saving in the DB
-  submission <- submission %>% 
+  sample <- sample %>% 
     purrr::map_if(lubridate::is.timepoint, function(x){
-      
-      if(length(x) == 0) {
-        NA_integer_
-      } else {
-        x
-      }
+      if(length(x) == 0) NA_integer_ else x 
     }) 
   
+  # if nulls turn them to NA_character. Used for the check boxes
+  sample <- map(sample, ~ . %||% NA_character_)
+  
+  sample 
+}
+
+# Process the rest of the submission
+process_submission <- function(submission){
+  
+  stopifnot(inherits(submission, "list"))
+  
+  submission$time_stamp <- epochTime()  
+  
+  submission$bococ <- stringr::str_pad(submission$bococ, 6, 'left', '0')
+  
+  # If Date(0) object or zero length dateTime object, then needs to be NA_integer_
+  # otherwise cannot be save in the DB. lubridate::is.timepoint works for both Date and Posixct objects
+  # So if any of the date or datetime inputs are not there (e.g. date_shipment is not mandatory) this 
+  # will make sure all is good for saving in the DB
+  submission <- submission |> 
+    purrr::map_if(lubridate::is.timepoint, function(x){
+      if(length(x) == 0) NA_integer_ else x 
+    }) 
   
   # if nulls turn them to NA_character. Used for the check boxes
   submission <- map(submission, ~ . %||% NA_character_)

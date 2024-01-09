@@ -159,7 +159,7 @@ add_to_logFile <- function(what, who, info){
   
   
   entry <- switch (what,
-                   "Added Sample Information Form" = list(time_stamp3 = time, 
+                   "Finalised Sample Information Form" = list(time_stamp3 = time, 
                                                           user = who, 
                                                           action = what, 
                                                           bococ = info$bococ,

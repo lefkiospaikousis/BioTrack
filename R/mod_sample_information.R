@@ -82,95 +82,9 @@ mod_sample_information_ui <- function(id){
               
               br(),
               br(),
-              
-              splitLayout(
-                div(style = "font-size:13px",
-                    h4("3.Sample Type received:"),
-                    hr(style = "width: 80%"),
-                    tags$table(
-                      tags$tr(width = "100%",
-                              tags$td(width = "5%", div(class = "input-label",style = "", "1.:")),
-                              tags$td(width = "50%", selectInput(ns("type1"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
-                              tags$td(div(class = "input-label2", style = "", "ml:")),
-                              tags$td(numericInput(ns("type1_ml"), NULL, NA, width = "50%"))),
-                      
-                      # tags$tr(width = "100%",
-                      #         tags$td(width = "5%", div(class = "input-label",style = "", "2.:")),
-                      #         tags$td(width = "50%", selectInput(ns("type2"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
-                      #         tags$td(div(class = "input-label2", style = "", "ml:")),
-                      #         tags$td( numericInput(ns("type2_ml"), NULL, NA, width = "50%"))),
-                      # 
-                      # tags$tr(width = "100%",
-                      #         tags$td(width = "5%", div(class = "input-label",style = "", "3.:")),
-                      #         tags$td(width = "50%", selectInput(ns("type3"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
-                      #         tags$td(div(class = "input-label2", style = "", "ml:")),
-                      #         tags$td(numericInput(ns("type3_ml"), NULL, NA, width = "50%"))),
-                      # 
-                      # tags$tr(width = "100%",
-                      #         tags$td(width = "5%", div(class = "input-label",style = "", "4.:")),
-                      #         tags$td(width = "50%", selectInput(ns("type4"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
-                      #         tags$td(div(class = "input-label2", style = "", "ml:")),
-                      #         tags$td(numericInput(ns("type4_ml"), NULL, NA, width = "50%"))),
-                      # 
-                      # tags$tr(width = "100%",
-                      #         tags$td(width = "5%", div(class = "input-label",style = "", "5.:")),
-                      #         tags$td(width = "50%", selectInput(ns("type5"), NULL, c("", col_values[["sample_types"]]), width = input_width)),
-                      #         tags$td(div(class = "input-label2", style = "", "ml:")),
-                      #         tags$td(numericInput(ns("type5_ml"), NULL, NA, width = "50%")))
-                      
-                      
-                    )
-                    
-                ),
-                
-                div(style = "font-size:13px",
-                    h4("4.Collection information:"),
-                    hr(style = "width: 80%"),
-                    tags$table(
-                      
-                      tags$tr(width = "100%",
-                              tags$td(width = "40%", div(class = "input-label",style = "", HTML("Type of <br>Collection tube"))),
-                              tags$td(width = "60%", selectInput(ns("tube"), NULL, c("", col_values[["tube"]]), width = input_width))),
-                      
-                      tags$tr(width = "100%",
-                              tags$td(width = "30%", div(class = "input-label",style = "", col_labels[["phase"]])),
-                              tags$td(width = "70%", selectInput(ns("phase"), NULL, c("", col_values[["phase"]]), width = input_width))),
-                      
-                      
-                      
-                      
-                      tags$tr(width = "100%",
-                              tags$td(width = "30%",  shinyjs::hidden(div(class = "input-label", style = "", "Other:"))),
-                              tags$td(width = "70%",  shinyjs::hidden(textInput(ns("phase_other"), NULL, width = input_width,
-                                                                                placeholder = "Please describe")))),
-                      
-                      
-                      tags$tr(width = "100%",
-                              tags$td(width = "30%", div(class = "input-label",style = "", "Collected at BOCOC?:")),
-                              tags$td(width = "70%", selectInput(ns("at_bococ"), NULL, c("", col_values[["at_bococ"]]), width = input_width))),
-                      
-                      
-                      tags$tr(width = "100%",
-                              tags$td(width = "30%", div(class = "input-label", "Date of collection:")),
-                              tags$td(width = "70%", 
-                                      splitLayout(cellWidths = c("55%", "60%"),
-                                                  div(dateInput(ns("date_collection"), NULL, lubridate::NA_Date_ , format = "dd/mm/yyyy", width = "80%")),
-                                                  div(style = "margin-top: 0px; margin-left:-20px" , 
-                                                      shinyTime::timeInput(ns("time_collection"), NULL, seconds = FALSE))
-                                      )
-                                      
-                              )),
-                      
-                      tags$tr(width = "100%",
-                              tags$td(width = "30%", div(class = "input-label", "Date of shipment:")),
-                              tags$td(width = "70%", dateInput(ns("date_shipment"), NULL, lubridate::NA_Date_ , format = "dd/mm/yyyy", width = input_width))),
-                      
-                    )
-                )
-              ),
+              actionButton(ns("add_sample"), "Add sample", icon = icon("plus")),
+              tableOutput(ns("tbl_samples")),
               hr(),
-              
-              
               splitLayout(
                 div(style = "font-size:13px",
                     h4("BOCOC Lab use only"),
@@ -186,15 +100,6 @@ mod_sample_information_ui <- function(id){
                               tags$td(width = "30%", div(class = "input-label",style = "", "Study involved")),
                               tags$td(width = "70%", textInput(ns("study"), NULL, NA, width = input_width))),
                       
-                      tags$tr(width = "100%",
-                              tags$td(width = "40%", div(class = "input-label",style = "", HTML("Date & Time<br>of receipt"))),
-                              tags$td(width = "60%", 
-                                      
-                                      splitLayout(cellWidths = c("40%", "50%"),
-                                                  div(dateInput(ns("date_receipt"), NULL, lubridate::NA_Date_ , format = "dd/mm/yyyy", width = "90%")),
-                                                  div(style = "margin-top: 0px; margin-left:-5px" , shinyTime::timeInput(ns("time_receipt"), NULL, seconds = FALSE)),
-                                      )
-                              ))
                     )
                 ),
                 div(style = "font-size:13px",
@@ -218,7 +123,7 @@ mod_sample_information_ui <- function(id){
 
 #' sample_information Server Functions
 #'
-#' @noRd 
+#' @noRd
 mod_sample_information_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
@@ -229,11 +134,110 @@ mod_sample_information_server <- function(id){
     uploaded_icf <- reactiveVal(FALSE)
     rv <- reactiveValues(icf_path = NULL)
     
-    observe({
+    samples <- reactiveValues()
+    
+    active_sample <- reactiveVal()
+    
+    output$tbl_samples <- renderTable({
       
-      shinyjs::toggle("phase_other", anim = TRUE, condition = input$phase == "Other")
+      samples_list <- reactiveValuesToList(samples)
+      
+      req( length(samples_list) > 0 )
+      
+      samples_list |> 
+        bind_rows() |>  
+        mutate(
+          across(c(date_collection,date_receipt), ~format(., "%d/%m/%Y - %H:%M"))
+        ) |> 
+        select(
+          "Type"                      = type1,
+          "ml"                        = type1_ml,
+          "Tube"                      = tube,
+          'Date & time of receipt'    = date_receipt, 
+          'Date & time of collection' = date_collection,
+          "Phase"                     = phase,
+          "At BOCOC"                  = at_bococ
+        )
+      
+    }, align = "c")
+    
+    observeEvent(input$add_sample, {
+      
+      if(isTRUE(is.na(input$bococ))){
+        show_toast("error", "", "Please add a BOCOC number first")
+        return()
+      }
+      
+      showModal(modalDialog(
+        mod_add_sample_type_ui(ns("add_sample_type_1"))
+        , footer = NULL
+      ))
       
     })
+    
+    # Adding sample collection information ----
+    observeEvent(res_sample$cancel(), {
+      
+      removeModal()
+      
+    }, ignoreInit = TRUE)
+    
+    res_sample <- mod_add_sample_type_server("add_sample_type_1")
+    
+    observeEvent(res_sample$submit(), {
+      
+      sample <- process_sample( c(res_sample$dta(), list(bococ = input$bococ)) )
+      
+      samples[[sample$unique_id]] <- sample
+      session$userData$db_trigger(session$userData$db_trigger() + 1)
+      #show_toast("success", "", glue::glue("Sample `{sample$type1}` successfully saved!"))
+      
+      active_sample(sample)
+      
+      
+    }, ignoreInit = TRUE)
+    
+    observeEvent(active_sample(), {
+      removeModal()
+      
+      show_waiter("Moving to Storage information.. Please wait", sleep = 1)
+      waiter::waiter_hide()
+      
+      showModal(modalDialog(
+        
+        mod_storage_information_ui(ns("a_sample")),
+        footer = NULL
+      ))
+      
+    })
+    
+    res_storage <- mod_storage_information_server("a_sample", reactive( active_sample()) )
+    
+    observeEvent(res_storage$submit(), {
+      
+      hide_waiter()
+      
+      show_waiter("Saving the infomation.. Please wait", sleep = 1)
+      id <- active_sample()$unique_id
+      n_specimens <- nrow(res_storage$dta())
+      
+      processed_sample <- active_sample()
+      processed_sample$specimens <- n_specimens
+      
+      rs <- DBI::dbAppendTable(dbase_specimen, "sample_info", as.data.frame(processed_sample))
+      
+      cat("Added sample information for ", rs, " sample \n")
+      
+      if(!golem::app_prod()) showNotification("Added sample information to DB")
+      
+      session$userData$db_trigger(session$userData$db_trigger() + 1)
+      
+      hide_waiter()
+      removeModal()
+      
+    }, ignoreInit = TRUE)
+    
+    
     
     # Fields. Collect the input ids
     all_fields <- 
@@ -248,21 +252,6 @@ mod_sample_information_server <- function(id){
         "status",
         "doctor",
         "consent",
-        # paste0("type", 1:5),
-        # paste0("type", 1:5, "_ml"),
-        'type1',
-        'type1_ml',
-        "tube",
-        "phase",
-        "at_bococ",
-        "date_collection",
-        "time_collection",
-        "date_shipment",
-        
-        # "date_processing",
-        # "time_processing",
-        "date_receipt",
-        "time_receipt",
         "civil_id",
         "study_id",
         "study",
@@ -292,41 +281,9 @@ mod_sample_information_server <- function(id){
     
     #2. Clinical Information
     iv$add_rule("diagnosis", sv_required())
-    #iv$add_rule("status", sv_required())
     iv$add_rule("doctor", sv_required())
     iv$add_rule("consent", sv_required())
     
-    #3. Sample type
-    # only 1 required
-    iv$add_rule("type1", sv_required())
-    
-    #4. Collection information
-    iv$add_rule("tube", sv_required())
-    iv$add_rule("phase", sv_required())
-    iv$add_rule("at_bococ", sv_required())
-    iv$add_rule("date_collection", sv_required())
-    iv$add_rule("date_collection",  ~valid_date(., "Collection date"))
-    
-    iv_date_shipment <- shinyvalidate::InputValidator$new()
-    iv_date_shipment$condition(~ input$at_bococ == 'No')
-    
-    iv_date_shipment$add_rule("date_shipment", sv_required())
-    iv_date_shipment$add_rule("date_shipment", ~valid_date(., "Shipment date"))
-    
-    iv$add_validator(iv_date_shipment)
-    
-    
-    iv$add_rule("date_receipt", sv_required())
-    iv$add_rule("date_receipt",  ~valid_date(., "Receipt date"))
-    
-    iv$add_rule("time_receipt", function(time){
-      if(identical(strftime(time, "%R"), "00:00")){
-        "Required"
-      }
-    })
-    
-    
-    #iv$add_rule("date_processing", sv_required())
     iv$add_rule("study_id", sv_required())
     iv$add_rule("study", sv_required())
     
@@ -350,8 +307,6 @@ mod_sample_information_server <- function(id){
         
       }) 
       
-      if(input$phase == "Other") list_dta$phase <- paste0("Other:", input$phase_other)
-      
       list_dta
       
     }) %>% 
@@ -365,23 +320,24 @@ mod_sample_information_server <- function(id){
         iv$disable()
         removeNotification("submit_message")
         
-        
-        
         if(isFALSE(uploaded_icf())) {
           show_toast("error", "One more thing", "You need to upload an ICF form")
-        } else {
-          
-          shinyjs::reset("form")
-          submitted(submitted() + 1)
-          
+          return()
+        } 
+        
+        
+        if( length(reactiveValuesToList(samples) ) == 0 ) {
+          show_toast("error", "Hold on", "You haven't saved any samples yet")
+          return()
         }
         
+        submitted(submitted() + 1)
         
       } else {
         
         iv$enable() # Start showing validation feedback
         
-        if(golem::app_dev()) submitted(submitted() + 1) # only in dev, I allow to proceed withou the validaiton
+        if(golem::app_dev()) submitted(submitted() + 1) # only in dev, I allow to proceed without the validaiton
         
         showNotification(
           "Please correct the errors in the form and try again",
@@ -394,6 +350,7 @@ mod_sample_information_server <- function(id){
     observeEvent(input$cancel, {
       
       cancel(cancel() + 1)
+      
     })
     
     
@@ -422,9 +379,9 @@ mod_sample_information_server <- function(id){
       
       list(
         dta      = form_data,
+        samples  = samples,
         icf_path = reactive(rv$icf_path),
         submit   = submitted
-        #cancel  = cancel
       )
     )
     

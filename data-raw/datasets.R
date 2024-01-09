@@ -30,6 +30,7 @@ col_labels <- c(
   
   tube              = "Type of collection tube",
   phase             = "Timepoint of collection",
+  lab               = "Histopathology lab",
   at_bococ          = "Sample was collected at BOCOC",
   date_collection   = "Date of Collection",
   date_shipment     = 'Date of shipment',
@@ -95,6 +96,7 @@ col_values <- list(
   consent       = c("Yes", "No"),
   tube          = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate", "N/A"),
   phase         = c("Baseline", "Day of treatment", "Month 3", "Month 6", "Month 9", "Month 12", "End of treatment", "Other"),
+  lab           = c("NGH", "SGS Diagnostic Centre", "ECC Lab", "Dr. Pavlos Constantinou Lab", " Lysiotis Lab", "Biopsy diagnosis", "Oxinou Lab", "Other"),
   sample_types  = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations"),
   at_bococ      = c("Yes", "No"),
   quality       = c("Good", "Heamolysed", "Thawed"),
