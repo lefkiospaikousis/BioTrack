@@ -74,7 +74,11 @@ mod_modal_modifyValue_server <- function(id, dta){
       if( id %in% names(col_values) ) {
         
         current_value <- dta[[id]]
-        input_box <- selectInput(ns("new_value"), "Enter new value", choices = c("",  col_values[id]))
+        
+        input_box <- tagList(
+          selectInput(ns("new_value"), "Enter new value", choices = c("",  col_values[id])),
+          shinyjs::hidden(textInput(ns("other_choice"), "Please type"))
+        )
         
       }
       
@@ -104,6 +108,7 @@ mod_modal_modifyValue_server <- function(id, dta){
         })
         
       }
+      
       
       if( !id %in% names(col_values) && !id %in% date_time_cols && !id %in% date_cols){
         
@@ -161,7 +166,6 @@ mod_modal_modifyValue_server <- function(id, dta){
         iv$disable()
         removeNotification("submit_message")
         
-        #shinyjs::reset("form")
         submitted(submitted()+1)
         
       } else {
@@ -175,11 +179,27 @@ mod_modal_modifyValue_server <- function(id, dta){
       
     })
     
+    new_value <- reactiveVal(NULL)
     
+    observe({
+      shinyjs::toggle("other_choice", anim = TRUE, condition = input$new_value == "Other")
+    })
+    
+    
+    observeEvent(input$new_value, {
+      
+      new_value(input$new_value)
+      
+    })
+    
+    observeEvent(input$other_choice, {
+      
+      new_value(input$other_choice)
+    })
     
     return(
       list(
-        new_value = reactive(input$new_value),
+        new_value = new_value,
         submit = submitted,
         cancel = close_form,
         id  = id # to know what changed
