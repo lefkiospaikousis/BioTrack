@@ -92,8 +92,6 @@ update_duration <- function(conn, specimen, user){
     specimen$date_collection <- to_date_time(specimen$date_collection)
   }
   
-  stopifnot(length(specimen$lab_no) == 1 )
-  
   stopifnot(all(c("date_processing", "date_collection") %in% names(specimen)))
   
   stopifnot(lubridate::is.POSIXct(specimen$date_collection))
@@ -107,28 +105,30 @@ update_duration <- function(conn, specimen, user){
   # might have more than 1 lab no's in case I change the date_collection of a sample_info with more than 1 lab_nos
   #x <- glue::glue_sql("UPDATE specimen_info SET duration = {new_duration} WHERE lab_no IN ({lab_nos*})", lab_nos = specimen$lab_no, .con = conn)
   
-  
-  rs <- DBI::dbExecute(conn, x)
-  
-  if(rs == 1){ 
+  for(sql_statement in x){
     
-    cat("Updated duration for ", rs, " specimen with lab_no: ", specimen$lab_no, "\n")
+    rs <- DBI::dbExecute(conn, sql_statement)
     
-  } else {
-    
-    cat("Failed to update the duration for specimen with lab_no: ", specimen$lab_no, "\n")
+    if(rs == 1){ 
+      
+      cat("Updated duration for ", rs, " specimen with lab_no: ", specimen$lab_no, "\n")
+      
+    } else {
+      
+      cat("Failed to update the duration for specimen with lab_no: ", specimen$lab_no, "\n")
+      
+    }
+    # Add to log
+    try({add_to_logFile("Modified specimen info", user, 
+                        info = list(lab_no = specimen$lab_no,
+                                    bococ = specimen$bococ,
+                                    col = "duration",
+                                    old_value = old_duration,
+                                    new_value = new_duration
+                                    
+                        ))}, silent = TRUE)
     
   }
-  # Add to log
-  try({add_to_logFile("Modified specimen info", user, 
-                      info = list(lab_no = specimen$lab_no,
-                                  bococ = specimen$bococ,
-                                  col = "duration",
-                                  old_value = old_duration,
-                                  new_value = new_duration
-                                  
-                      ))}, silent = TRUE)
-  
   
 }
 
@@ -160,10 +160,10 @@ add_to_logFile <- function(what, who, info){
   
   entry <- switch (what,
                    "Finalised Sample Information Form" = list(time_stamp3 = time, 
-                                                          user = who, 
-                                                          action = what, 
-                                                          bococ = info$bococ,
-                                                          comments = glue::glue("{what}: BOCOC-{info$bococ}")
+                                                              user = who, 
+                                                              action = what, 
+                                                              bococ = info$bococ,
+                                                              comments = glue::glue("{what}: BOCOC-{info$bococ}")
                    ),
                    
                    "Added Specimen Type" = list(time_stamp3 = time, 
