@@ -40,7 +40,7 @@ mod_table_registry_ui <- function(id){
         )
       )
     ),
-    reactableOutput(ns("tbl_registry"))
+    reactableOutput(ns("tbl_registry")) |> shinycssloaders::withSpinner()
     
   )
 }

@@ -40,7 +40,7 @@ mod_table_storage_ui <- function(id){
         )
       )
     ),
-    reactableOutput(ns("tbl_storage"))
+    reactableOutput(ns("tbl_storage")) |> shinycssloaders::withSpinner()
   )
 }
     
