@@ -8,6 +8,7 @@ app_server <- function(input, output, session) {
   # Your application server logic
   
   res_auth <- shinymanager::secure_server(
+    timeout = 30,
     
     check_credentials = shinymanager::check_credentials(
       db = get_golem_config("db_users"),
