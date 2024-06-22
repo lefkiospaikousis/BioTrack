@@ -83,13 +83,6 @@ freezer_04       <- "+4\u00B0C"
 
 freezers_80 <- c(freezer_80_big, freezer_80_small)
 
-# freezer_internals <- list(
-#   "-80\u00B0C(B)" = list( rack = LETTERS[1:19], drawer = c(1:6), box = c(1:5) ),
-#   "-80\u00B0C(S)" = list( rack = LETTERS[1:4], drawer = c(1:5), box = c(1:3) ),
-#   "-20\u00B0C" = list( rack = NULL, drawer = c(1:5), box = NULL ),
-#   "+4\u00B0C" = list( rack = NULL, drawer = NULL, box = NULL )
-# )
-
 col_values <- list(
   gender        = c("Male", "Female", "Other"),
   status        = c("Metastatic", "Non metastatic"),
@@ -111,12 +104,9 @@ col_values <- list(
 )
 
 
-  #bococ = "function",
-
 date_cols <- c("dob", "date_shipment")
 
 date_time_cols <- c("date_receipt", "date_collection", "date_processing")
-
 
 
 usethis::use_data(

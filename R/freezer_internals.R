@@ -16,7 +16,7 @@ freezer_internals <- function(freezer){
   
   if(freezer == freezer_20){
     return(
-      list( rack = NULL, drawer = c(1:5), box = NULL )
+      list( rack = c('A1', 'A2', 'B1', 'B2'), drawer = NULL, box = NULL )
     )
   }
   

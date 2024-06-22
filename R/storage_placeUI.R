@@ -24,8 +24,11 @@ storage_placeUI <- function(ns){
     
     tags$tr(width = "100%",
             tags$td(width = "30%", div(class = "input-label", "Drawer:")),
-            tags$td(width = "70%", prettyRadioButtons(ns("drawer"), NULL, NULL,
-                                                      inline = TRUE,  fill = TRUE, selected = character(0), width = "100%"))),
+            
+            tags$td(width = "70%",  shinyjs::disabled(
+              prettyRadioButtons(ns("drawer"), NULL, NULL,
+                                 inline = TRUE,  fill = TRUE, selected = character(0), width = "100%"))
+            )),
     
     tags$tr(width = "100%",
             tags$td(width = "30%", div(class = "input-label", "Box:")),

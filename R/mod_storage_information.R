@@ -125,15 +125,23 @@ mod_storage_information_server <- function(id, sample_info){
       req(sample_info())
       
       show_waiter("Processing.. Please wait")
-      
+      browser()
       tryCatch({
         
         specimen <- specimen$dta()
         
-        if(!specimen$freezer %in% freezers_80) {
+        if(specimen$freezer == freezer_04) {
           
-          specimen$rack <- ""
-          specimen$box <- ""
+          specimen$rack   <- ""
+          specimen$drawer <- ""
+          specimen$box    <- ""
+          
+        }
+        
+        if(specimen$freezer == freezer_20) {
+          
+          specimen$box    <- ""
+          specimen$drawer <- ""
           
         }
         
