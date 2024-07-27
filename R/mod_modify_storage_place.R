@@ -63,7 +63,7 @@ mod_modify_storage_place_server <- function(id, specimen){
     iv_freezer20 <- shinyvalidate::InputValidator$new()
     iv_freezer20$condition(~ input$freezer == freezer_20 )
     
-    iv_freezer20$add_rule("drawer", sv_required())
+    iv_freezer20$add_rule("rack", sv_required())
     
     iv$add_validator(iv_freezer20)
     
@@ -75,24 +75,24 @@ mod_modify_storage_place_server <- function(id, specimen){
       
       if(input$freezer == freezer_80_small){
         
-        updateSelectInput(session, "rack", choices = LETTERS[1:4])
-        updatePrettyRadioButtons(session, "drawer", choices = c(1:5), inline = TRUE)
-        updatePrettyRadioButtons(session, "box", choices = c(1:3), inline = TRUE)
+        updateSelectInput(session, "rack", choices = freezer_internals(freezer_80_small)$rack)
+        updatePrettyRadioButtons(session, "drawer", choices = freezer_internals(freezer_80_small)$drawer , inline = TRUE)
+        updatePrettyRadioButtons(session, "box", choices = freezer_internals(freezer_80_small)$box, inline = TRUE)
         
       }
       
       if(input$freezer == freezer_80_big){
         
-        updateSelectInput(session, "rack", choices = LETTERS[1:19])
-        updatePrettyRadioButtons(session, "drawer", choices = c(1:6), inline = TRUE)
-        updatePrettyRadioButtons(session, "box", choices = c(1:5), inline = TRUE)
+        updateSelectInput(session, "rack", choices = freezer_internals(freezer_80_big)$rack)
+        updatePrettyRadioButtons(session, "drawer", choices = freezer_internals(freezer_80_big)$drawer, inline = TRUE)
+        updatePrettyRadioButtons(session, "box", choices = freezer_internals(freezer_80_big)$box, inline = TRUE)
         
       }
       
       if(input$freezer == freezer_20){
         
-        updateSelectInput(session, "rack", selected = character(0))
-        updatePrettyRadioButtons(session, "drawer", choices = c(1:5), inline = TRUE)
+        updateSelectInput(session, "rack", choices = freezer_internals(freezer_20)$rack)
+        updatePrettyRadioButtons(session, "drawer", selected = character(0), inline = TRUE)
         updatePrettyRadioButtons(session, "box", selected = character(0), inline = TRUE)
       }
       
@@ -104,8 +104,10 @@ mod_modify_storage_place_server <- function(id, specimen){
         
       }
       
-      shinyjs::toggleState("rack",  condition = input$freezer %in% freezers_80 )
+      shinyjs::toggleState("rack",  condition = input$freezer %in% c(freezers_80, freezer_20 ))
+      shinyjs::toggleState("drawer", condition = input$freezer %in% c(freezers_80 ))
       shinyjs::toggleState("box",  condition = input$freezer %in% freezers_80 )
+      
       
     },ignoreInit = TRUE)
     
@@ -120,7 +122,7 @@ mod_modify_storage_place_server <- function(id, specimen){
         div(
           p("Lab no: ", strong(specimen$lab_no)),
           hr(),
-          p("You are changing the Storage Place of the Specimen"),
+          p("You are changing the Storage Place of the Specimen: ", strong(specimen$lab_no)),
           p("Current Storage Place: ", strong(specimen$freezer), " at " , strong(specimen$place))
         ),
         div(
