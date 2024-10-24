@@ -182,6 +182,7 @@ mod_modal_modifyValue_server <- function(id, dta){
     new_value <- reactiveVal(NULL)
     
     observe({
+      req( !inherits(input$new_value, "Date") )
       shinyjs::toggle("other_choice", anim = TRUE, condition = input$new_value == "Other")
     })
     
