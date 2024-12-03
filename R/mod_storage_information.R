@@ -125,7 +125,7 @@ mod_storage_information_server <- function(id, sample_info){
       req(sample_info())
       
       show_waiter("Processing.. Please wait")
-      browser()
+  
       tryCatch({
         
         specimen <- specimen$dta()
