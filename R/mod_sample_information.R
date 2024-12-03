@@ -147,7 +147,7 @@ mod_sample_information_server <- function(id){
       samples_list |> 
         bind_rows() |>  
         mutate(
-          across(c(date_collection,date_receipt), ~format(., "%d/%m/%Y - %H:%M"))
+          across(c(date_collection, date_receipt), ~format(., "%d/%m/%Y - %H:%M"))
         ) |> 
         select(
           "Type"                      = type1,
@@ -175,7 +175,7 @@ mod_sample_information_server <- function(id){
       
     })
     
-    # Adding sample collection information ----
+    # ADD SAMPLE information ---------------------------------------
     observeEvent(res_sample$cancel(), {
       
       removeModal()
@@ -196,6 +196,9 @@ mod_sample_information_server <- function(id){
       
       
     }, ignoreInit = TRUE)
+    
+    
+    # STORAGE ----------------------------------------------------------------
     
     observeEvent(active_sample(), {
       removeModal()
@@ -237,29 +240,8 @@ mod_sample_information_server <- function(id){
       
     }, ignoreInit = TRUE)
     
-    
-    
-    # Fields. Collect the input ids
-    all_fields <- 
-      c(
-        "firstname",
-        "surname",
-        "gender",
-        "bococ",
-        "dob",
-        "nationality",
-        "diagnosis",
-        "status",
-        "doctor",
-        "consent",
-        "civil_id",
-        "study_id",
-        "study",
-        "comments"
-        
-      )
-    
-    # Validation ----
+
+    # VALIDATION -----------------------------------------------------------
     
     iv <- shinyvalidate::InputValidator$new()
     
@@ -287,17 +269,38 @@ mod_sample_information_server <- function(id){
     iv$add_rule("study_id", sv_required())
     iv$add_rule("study", sv_required())
     
+    
+    # COLLECT Form Data ------------------------------------------------------
+    # Collect the input ids
+    all_fields <- 
+      c(
+        "firstname",
+        "surname",
+        "gender",
+        "bococ",
+        "dob",
+        "nationality",
+        "diagnosis",
+        "status",
+        "doctor",
+        "consent",
+        "civil_id",
+        "study_id",
+        "study",
+        "comments"
+        
+      )
+    
     form_data <- reactive({
       
-      # Temporary collection of the data - see later final_forma_data
-      
+      # Temporary collection of the data from the form
       # To keep the output ids as column names - short&sweet and then
       # then possible rename using the same vector, when presenting
       all_fields <- unname(all_fields) %>% setNames(all_fields)
       
-      list_dta <- map(all_fields, function(x) {
+      list_dta <- purrr::map(all_fields, function(x) {
         
-        # Because the Checks1 input maybe have more than one value and then it goes to 
+        # Because the CheckBox input maybe have more than one value and then it goes to 
         # more than one row in the table. I need one row per submission
         if(length(input[[x]]) > 1) {
           paste(input[[x]], collapse = ", ")
@@ -353,6 +356,7 @@ mod_sample_information_server <- function(id){
       
     })
     
+    # ICF UPLOAD -----------------------------------------------------------
     
     observeEvent(input$icf, {
       
@@ -374,6 +378,7 @@ mod_sample_information_server <- function(id){
       
     }, ignoreInit = TRUE)
     
+    # RETURN Form DATA ----------------------------------------------------------
     
     return(
       
