@@ -49,7 +49,7 @@ mod_storage_information_server <- function(id, sample_info){
     
     observe({
       rv$specimens <- NULL
-      }) |> 
+    }) |> 
       bindEvent(sample_info())
     
     output$tbl_specimens <- renderTable({
@@ -74,20 +74,27 @@ mod_storage_information_server <- function(id, sample_info){
       
       req(sample_info())
       
-      name <- glue::glue("BOCOC: {sample_info()$bococ} / Sample: {sample_info()$type1} ({sample_info()$type1_ml} ml)")
+      if(!is.na(sample_info()$type1_ml)){
+        
+        ml <- paste0(sample_info()$type1_ml, " ml")
+      } else {
+        ml = ""
+      }
+      
+      name <- glue::glue("BOCOC: {sample_info()$bococ} / Sample: {sample_info()$type1} {ml}")
       
       as.character(span(name, style = 'font-weight: bold'))
       
     })
     
     output$unique_id <- renderText({
-
+      
       req(sample_info())
-
+      
       name <- glue::glue("{sample_info()$unique_id}")
-
+      
       as.character(span(name, style = 'font-weight: bold'))
-
+      
     })
     
     output$n_specimens <- renderText({
@@ -125,7 +132,7 @@ mod_storage_information_server <- function(id, sample_info){
       req(sample_info())
       
       show_waiter("Processing.. Please wait")
-  
+      
       tryCatch({
         
         specimen <- specimen$dta()

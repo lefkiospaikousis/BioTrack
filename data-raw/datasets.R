@@ -35,6 +35,10 @@ col_labels <- c(
   date_collection   = "Date of Collection",
   date_shipment     = 'Date of shipment',
   date_receipt      = "Date & Time of receipt",
+  sample_origin     = "Sample origin",
+  location_lesion   = "Location of lesion",
+  anatomical_site   = "Anatomical site of sampling",
+  sampling_technique = "Sampling technique",
   civil_id          = "Patient ID",
   study_id          = "Study ID",
   study             = 'Study',
@@ -70,7 +74,10 @@ specimen_types <- c("Peripheral blood" = "PB",
                     "Urine" = "UR", 
                     "Stools" = "ST", 
                     "Bronchial aspirations" = "BA",
-                    "Buffy coat" = "BC"
+                    "Buffy coat" = "BC",
+                    "FFPE Block" = "TB",
+                    "FFPE Slide" = "TS",
+                    "Fresh tumour sample" = "TF"
 )
 
 type_names <- setNames(names(specimen_types), specimen_types)
@@ -89,8 +96,12 @@ col_values <- list(
   consent       = c("Yes", "No"),
   tube          = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate", "N/A"),
   phase         = c("Baseline", "Day of treatment", "Month 3", "Month 6", "Month 9", "Month 12", "End of treatment", "Other"),
+  phase_FFPE    = c("Diagnosis", "After treatment", "Re-biopsy at diagnosis", "Other"),
   lab           = c("NGH", "SGS Diagnostic Centre", "ECC Lab", "Dr. Pavlos Constantinou Lab", " Lysiotis Lab", "Biopsy diagnosis", "Oxinou Lab", "Other"),
   sample_types  = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations"),
+  sample_types_FFPE = c("FFPE Block", "FFPE Slide", "Fresh tumour sample"),
+  FFPE_origin   = c("Primary Tumour", "Metastatic lesion", "Lumph nodes"),
+  FFPE_sampling_technique = c("Core needle biopsy", "Fine needle aspiration biopsy", "Resection specimen", "Other"),
   at_bococ      = c("Yes", "No"),
   quality       = c("Good", "Heamolysed", "Thawed"),
   freezer       = c(freezer_04, freezer_20, freezers_80),
