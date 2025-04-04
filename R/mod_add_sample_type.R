@@ -20,9 +20,7 @@ mod_add_sample_type_ui <- function(id){
         tags$table(
           tags$tr(width = "100%",
                   tags$td(width = "40%", div(class = "input-label",style = "", "Sample Type Received:")),
-                  tags$td(width = "60%", selectInput(ns("type1"), NULL,  c("", 
-                                                                          col_values[["sample_types"]],
-                                                                          col_values[["sample_types_FFPE"]] ), width = input_width))
+                  tags$td(width = "60%", selectInput(ns("type1"), NULL,  c("", col_values[["sample_types"]]), width = input_width))
           ),
           
           tags$tr(width = "100%", id = ns('sample_ml'),
@@ -87,7 +85,7 @@ mod_add_sample_type_ui <- function(id){
           shinyjs::hidden(
             tags$tr(width = "100%", id = ns("ffpe_field_origin"),
                     tags$td(width = "30%", div(class = "input-label",style = "", col_labels[["sample_origin"]])),
-                    tags$td(width = "70%", selectInput(ns("sample_origin"), NULL, c("", col_values[["FFPE_origin"]]), width = input_width))
+                    tags$td(width = "70%", selectInput(ns("sample_origin"), NULL, c("", col_values[["sample_origin"]]), width = input_width))
             ),
             tags$tr(width = "100%", id = ns("ffpe_field_location"),
                     tags$td(width = "30%", div(class = "input-label", style = "")),
@@ -100,15 +98,15 @@ mod_add_sample_type_ui <- function(id){
             ),
             tags$tr(width = "100%", id = ns("ffpe_field_technique"),
                     tags$td(width = "30%", div(class = "input-label",style = "", col_labels[["sampling_technique"]])),
-                    tags$td(width = "70%", selectInput(ns("sampling_technique"), NULL, c("", col_values[["FFPE_sampling_technique"]]), width = input_width))
+                    tags$td(width = "70%", selectInput(ns("sampling_technique"), NULL, c("", col_values[["sampling_technique"]]), width = input_width))
             ),
             tags$tr(width = "100%", id = ns("ffpe_field_technique_other"),
                     tags$td(width = "30%", div(class = "input-label", style = "")),
                     tags$td(width = "70%", textInput(ns("sampling_technique_other"), NULL, width = input_width,
                                                      placeholder = 'Please describe'))
             )
+            
           )
-          
         )
     ),
     hr(),
@@ -146,6 +144,7 @@ mod_add_sample_type_server <- function(id){
       "location_lesion",
       "anatomical_site",
       "sampling_technique",
+      "sampling_technique_other",
       
       "date_receipt",
       "time_receipt"
@@ -155,7 +154,7 @@ mod_add_sample_type_server <- function(id){
     observe({
       
       req(input$type1)
-      is_ffpe <- input$type1 %in% col_values[["sample_types_FFPE"]]
+      is_ffpe <- input$type1 %in% sample_types_FFPE
       
       if(is_ffpe) {
         shinyjs::show("ffpe_field_origin")
@@ -166,7 +165,7 @@ mod_add_sample_type_server <- function(id){
         updateNumericInput(session, "type1_ml", value = NA)
         shinyjs::disable("sample_ml")
         
-        updateSelectInput(session, "phase", choices = c("", col_values[["phase_FFPE"]]))
+        updateSelectInput(session, "phase", choices = c("", phase_FFPE))
         
         # # Only show the technique_other field if "Other" is selected
         # if(input$sampling_technique == "Other") {
@@ -184,7 +183,9 @@ mod_add_sample_type_server <- function(id){
         
         shinyjs::enable("sample_ml")
         
-        updateSelectInput(session, "phase", choices = c("", col_values[["phase"]]))
+        non_ffpe <- col_values[["phase"]] |> purrr::discard(~ . %in% phase_FFPE) |> c('Other')
+        
+        updateSelectInput(session, "phase", choices = c("", non_ffpe))
       }
     }) |> 
       bindEvent(input$type1)
@@ -221,21 +222,26 @@ mod_add_sample_type_server <- function(id){
     
     # Add validation for FFPE specific fields
     iv_ffpe_fields <- shinyvalidate::InputValidator$new()
-    iv_ffpe_fields$condition(~ input$type1 %in% col_values[["sample_types_FFPE"]])
+    iv_ffpe_fields$condition(~ input$type1 %in% sample_types_FFPE)
     
     iv_ffpe_fields$add_rule("sample_origin", sv_required())
-    iv_ffpe_fields$add_rule("location_lesion", sv_required())
     iv_ffpe_fields$add_rule("anatomical_site", sv_required())
     iv_ffpe_fields$add_rule("sampling_technique", sv_required())
     
+    # Validation for sample origin in case of lesion
+    iv_sample_origin <- shinyvalidate::InputValidator$new()
+    iv_sample_origin$condition(~ input$type1 %in% sample_types_FFPE && input$sample_origin == "Metastatic lesion")
+    iv_sample_origin$add_rule("location_lesion", sv_required())
+    
     # Validation for sampling_technique_other
     iv_sampling_other <- shinyvalidate::InputValidator$new()
-    iv_sampling_other$condition(~ input$type1 %in% col_values[["sample_types_FFPE"]] && input$sampling_technique == "Other")
+    iv_sampling_other$condition(~ input$type1 %in% sample_types_FFPE && input$sampling_technique == "Other")
     iv_sampling_other$add_rule("sampling_technique_other", sv_required())
     
     iv_ffpe_fields$add_validator(iv_sampling_other)
-    iv$add_validator(iv_ffpe_fields)
+    iv_ffpe_fields$add_validator(iv_sample_origin)
     
+    iv$add_validator(iv_ffpe_fields)
     
     observe({
       shinyjs::toggle("phase_other", anim = TRUE, condition = input$phase == "Other")
@@ -255,7 +261,7 @@ mod_add_sample_type_server <- function(id){
     
     
     observe({
-      shinyjs::toggle("original_fields", anim = TRUE, condition = !input$type1 %in% col_values$sample_types_FFPE)
+      shinyjs::toggle("original_fields", anim = TRUE, condition = !input$type1 %in% sample_types_FFPE)
     })
     
     
@@ -292,13 +298,13 @@ mod_add_sample_type_server <- function(id){
       if(input$sampling_technique == "Other") list_dta$sampling_technique <- paste0("Other:", input$sampling_technique_other)
       
       # Only include FFPE fields if relevant
-      if(!input$type1 %in% col_values[["sample_types_FFPE"]]) {
+      if(!input$type1 %in% sample_types_FFPE) {
         list_dta$sample_origin <- NA
         list_dta$location_lesion <- NA
         list_dta$anatomical_site <- NA
         list_dta$sampling_technique <- NA
         list_dta$sampling_technique_other <- NA
-      }
+      } 
       
       
       list_dta

@@ -28,7 +28,7 @@ mod_edit_specimen_button_server <- function(id, specimen){
     
     observeEvent(input$edit, {
       
-      ids_allowed_all <- c("n_tubes", "status")
+      ids_allowed_all <- c("n_tubes", "n_slides", "n_blocks", "status")
       
       if(isTRUE(as.logical(session$userData$user_info$admin)) | id %in% ids_allowed_all) {
         
@@ -77,7 +77,7 @@ mod_edit_specimen_button_server <- function(id, specimen){
     observeEvent(res_mod_place$submit(), {
       
       new_data <- res_mod_place$dta()
-      browser()
+     
       if(new_data$freezer == freezer_04) {
         
         rack   = ""

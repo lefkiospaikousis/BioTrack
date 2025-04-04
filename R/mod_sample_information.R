@@ -220,7 +220,7 @@ mod_sample_information_server <- function(id){
       
       hide_waiter()
       
-      show_waiter("Saving the infomation.. Please wait", sleep = 1)
+      show_waiter("Saving the information.. Please wait", sleep = 1)
       id <- active_sample()$unique_id
       n_specimens <- nrow(res_storage$dta())
       

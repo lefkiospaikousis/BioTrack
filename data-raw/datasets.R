@@ -39,6 +39,8 @@ col_labels <- c(
   location_lesion   = "Location of lesion",
   anatomical_site   = "Anatomical site of sampling",
   sampling_technique = "Sampling technique",
+  tumour_cellularity = "Tumour cellularity",
+  surface_area       = "Surface area",
   civil_id          = "Patient ID",
   study_id          = "Study ID",
   study             = 'Study',
@@ -62,7 +64,9 @@ col_labels <- c(
   box               = "Box",
   place             = 'Storage place',
   comment_place     = "Comments",
-  n_tubes           = "Number of tubes"
+  n_tubes           = "Number of tubes",
+  n_blocks          = "Number of blocks",
+  n_slides          = "Number of slides"
   
 )
 
@@ -90,18 +94,22 @@ freezer_04       <- "+4\u00B0C"
 
 freezers_80 <- c(freezer_80_big, freezer_80_small)
 
+sample_types_FFPE = c("FFPE Block", "FFPE Slide", "Fresh tumour sample")
+phase_FFPE    = c("Diagnosis", "After treatment", "Re-biopsy at diagnosis", "Other")
+
 col_values <- list(
   gender        = c("Male", "Female", "Other"),
   status        = c("Metastatic", "Non metastatic"),
   consent       = c("Yes", "No"),
   tube          = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate", "N/A"),
-  phase         = c("Baseline", "Day of treatment", "Month 3", "Month 6", "Month 9", "Month 12", "End of treatment", "Other"),
-  phase_FFPE    = c("Diagnosis", "After treatment", "Re-biopsy at diagnosis", "Other"),
+  phase         = c("Baseline", "Day of treatment", "Month 3", "Month 6", "Month 9", "Month 12", "End of treatment", "Other", phase_FFPE) |> unique(),
   lab           = c("NGH", "SGS Diagnostic Centre", "ECC Lab", "Dr. Pavlos Constantinou Lab", " Lysiotis Lab", "Biopsy diagnosis", "Oxinou Lab", "Other"),
-  sample_types  = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations"),
-  sample_types_FFPE = c("FFPE Block", "FFPE Slide", "Fresh tumour sample"),
-  FFPE_origin   = c("Primary Tumour", "Metastatic lesion", "Lumph nodes"),
-  FFPE_sampling_technique = c("Core needle biopsy", "Fine needle aspiration biopsy", "Resection specimen", "Other"),
+  sample_types  = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations", sample_types_FFPE),
+  
+  # FFPE
+  sample_origin = c("Primary Tumour", "Metastatic lesion", "Lumph nodes"),
+  sampling_technique = c("Core needle biopsy", "Fine needle aspiration biopsy", "Resection specimen", "Other"),
+  
   at_bococ      = c("Yes", "No"),
   quality       = c("Good", "Heamolysed", "Thawed"),
   freezer       = c(freezer_04, freezer_20, freezers_80),
@@ -127,6 +135,8 @@ usethis::use_data(
   date_time_cols,
   col_labels, 
   col_values,
+  sample_types_FFPE,
+  phase_FFPE,
   specimen_types,
   type_names,
   freezers_80,

@@ -148,6 +148,18 @@ mod_view_edit_specimen_server <- function(id, focus){
             p(col_labels[["duration"]], ": ",  strong(specimen$duration)),
             p(col_labels[["n_tubes"]], ": ",  
               strong(specimen$n_tubes), mod_edit_specimen_button_ui(ns("n_tubes") )
+            ),
+            p(col_labels[["surface_area"]], ": ",  
+              strong(specimen$surface_area), mod_edit_specimen_button_ui(ns("surface_area") )
+            ),
+            p(col_labels[["tumour_cellularity"]], ": ",  
+              strong(specimen$tumour_cellularity), mod_edit_specimen_button_ui(ns("tumour_cellularity") )
+            ),
+            p(col_labels[["n_blocks"]], ": ",  
+              strong(specimen$n_blocks), mod_edit_specimen_button_ui(ns("n_blocks") )
+            ),
+            p(col_labels[["n_slides"]], ": ",  
+              strong(specimen$n_slides), mod_edit_specimen_button_ui(ns("n_slides") )
             )
           )  
       )
@@ -157,6 +169,10 @@ mod_view_edit_specimen_server <- function(id, focus){
     mod_edit_specimen_button_server("quality", reactive(rv$specimen_selected))
     mod_edit_specimen_button_server("comment_place", reactive(rv$specimen_selected))
     mod_edit_specimen_button_server("n_tubes", reactive(rv$specimen_selected))
+    mod_edit_specimen_button_server("n_blocks", reactive(rv$specimen_selected))
+    mod_edit_specimen_button_server("n_slides", reactive(rv$specimen_selected))
+    mod_edit_specimen_button_server("surface_area", reactive(rv$specimen_selected))
+    mod_edit_specimen_button_server("tumour_cellularity", reactive(rv$specimen_selected))
     mod_edit_specimen_button_server("date_processing", reactive(rv$specimen_selected))
     mod_edit_specimen_button_server("place", reactive(rv$specimen_selected))
     
@@ -249,6 +265,20 @@ mod_view_edit_specimen_server <- function(id, focus){
             p(col_labels[["tube"]], ": ", strong(sample_info$tube),
               mod_edit_sample_button_ui(ns("tube"))
             ),
+            
+            p(col_labels[["sample_origin"]], ": ", strong(sample_info$sample_origin),
+              mod_edit_sample_button_ui(ns("sample_origin"))
+            ),
+            p(col_labels[["location_lesion"]], ": ", strong(sample_info$location_lesion),
+              mod_edit_sample_button_ui(ns("location_lesion"))
+            ),
+            p(col_labels[["anatomical_site"]], ": ", strong(sample_info$anatomical_site),
+              mod_edit_sample_button_ui(ns("anatomical_site"))
+            ),
+            p(col_labels[["sampling_technique"]], ": ", strong(sample_info$sampling_technique),
+              mod_edit_sample_button_ui(ns("sampling_technique"))
+            ),
+            
             p(col_labels[["at_bococ"]], ": ", strong(sample_info$at_bococ),
               mod_edit_sample_button_ui(ns("at_bococ"))
             ),
@@ -301,6 +331,12 @@ mod_view_edit_specimen_server <- function(id, focus){
     mod_edit_sample_button_server("civil_id", reactive(rv$sample_selected))
     mod_edit_sample_button_server("gender", reactive(rv$sample_selected))
     mod_edit_sample_button_server("tube", reactive(rv$sample_selected))
+    
+    mod_edit_sample_button_server("sample_origin", reactive(rv$sample_selected))
+    mod_edit_sample_button_server("location_lesion", reactive(rv$sample_selected))
+    mod_edit_sample_button_server("anatomical_site", reactive(rv$sample_selected))
+    mod_edit_sample_button_server("sampling_technique", reactive(rv$sample_selected))
+    
     mod_edit_sample_button_server("at_bococ", reactive(rv$sample_selected))
     mod_edit_sample_button_server("lab", reactive(rv$sample_selected))
     mod_edit_sample_button_server("nationality", reactive(rv$sample_selected))

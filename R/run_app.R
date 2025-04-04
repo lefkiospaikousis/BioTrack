@@ -19,15 +19,16 @@ run_app <- function(
   
   with_golem_options(
     app = shinyApp(
-      ui =shinymanager::secure_app(app_ui, enable_admin = TRUE,
-                                   tags_top = tags$div(
-                                     tags$h3(icon("vial-circle-check"), " BioTrack", style = "align:center"),
-                                     tags$img(
-                                       src =  "www/bococ_image.jpg"  #"https://www.r-project.org/logo/Rlogo.png"
-                                       , width = 100
-                                     )
-                                   )
-                                   ),
+      # ui =shinymanager::secure_app(app_ui, enable_admin = TRUE,
+      #                              tags_top = tags$div(
+      #                                tags$h3(icon("vial-circle-check"), " BioTrack", style = "align:center"),
+      #                                tags$img(
+      #                                  src =  "www/bococ_image.jpg"  #"https://www.r-project.org/logo/Rlogo.png"
+      #                                  , width = 100
+      #                                )
+      #                              )
+      #                              ),
+      ui = app_ui,
       server = app_server,
       onStart = onStart,
       options = options,
