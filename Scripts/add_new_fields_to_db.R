@@ -60,4 +60,9 @@ dbase_specimen %>%
     "ALTER TABLE specimen_info ADD COLUMN n_slides INTEGER"
   )
 
+dbase_specimen %>%
+  DBI::dbExecute(
+    "ALTER TABLE specimen_info ADD COLUMN histopathology_id TEXT"
+  )
+
 close_database()

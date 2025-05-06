@@ -41,6 +41,7 @@ col_labels <- c(
   sampling_technique = "Sampling technique",
   tumour_cellularity = "Tumour cellularity",
   surface_area       = "Surface area",
+  histopathology_id = "Histopathology Specimen ID",
   civil_id          = "Patient ID",
   study_id          = "Study ID",
   study             = 'Study',

@@ -22,10 +22,19 @@ mod_add_specimen_ui <- function(id){
                   tags$td(width = "40%", div(class = "input-label",style = "", "Specimen Type:")),
                   tags$td(width = "60%", selectInput(ns("type"), NULL, c("", specimen_types), width = input_width))
           ),
+          # FFPE specific fields (initially hidden)
+          shinyjs::hidden(
+            tags$tr(width = "100%", id = ns("ffpe_histopathology_id"),
+                    tags$td(width = "30%", div(class = "input-label", style = "", col_labels[["histopathology_id"]])),
+                    tags$td(width = "70%", textInput(ns("histopathology_id"), NULL, width = input_width, value = ""))
+            )
+          ),
+          
           tags$tr(width = "100%",
                   tags$td(width = "40%", div(class = "input-label", "Sample Quality:")),
                   tags$td(width = "60%", selectInput(ns("quality"), NULL, c("", col_values[["quality"]]), width = input_width))
           ),
+          
           # FFPE specific fields (initially hidden)
           shinyjs::hidden(
             tags$tr(width = "100%", id = ns("ffpe_tumour_cellularity"),
@@ -135,6 +144,7 @@ mod_add_specimen_server <- function(id, sample_info){
         
         shinyjs::show("ffpe_tumour_cellularity", anim = TRUE)
         shinyjs::show("ffpe_surface_area", anim = TRUE)
+        shinyjs::show("ffpe_histopathology_id")
         
         
         .type_choices = specimen_types[names(specimen_types) == sample_info()$type1]
@@ -144,6 +154,7 @@ mod_add_specimen_server <- function(id, sample_info){
         
         shinyjs::hide("ffpe_tumour_cellularity", anim = TRUE)
         shinyjs::hide("ffpe_surface_area", anim = TRUE)
+        shinyjs::hide("ffpe_histopathology_id")
         shinyjs::show("the_n_tubes", anim = TRUE)
         
         shinyjs::enable("type")
@@ -171,6 +182,7 @@ mod_add_specimen_server <- function(id, sample_info){
       "n_blocks",
       "tumour_cellularity",
       "surface_area",
+      "histopathology_id",
       
       "comment_place"
     )
@@ -231,8 +243,9 @@ mod_add_specimen_server <- function(id, sample_info){
     iv_ffpe_fields <- shinyvalidate::InputValidator$new()
     iv_ffpe_fields$condition(~ sample_info()$type1 %in% sample_types_FFPE)
     
-    iv_ffpe_fields$add_rule("tumour_cellularity", sv_required())
-    iv_ffpe_fields$add_rule("surface_area", sv_required())
+    #iv_ffpe_fields$add_rule("tumour_cellularity", sv_required())
+    #iv_ffpe_fields$add_rule("surface_area", sv_required())
+    iv_ffpe_fields$add_rule("histopathology_id", sv_required())
     
     # Validation for FFPE slides and Blocks
     iv_n_slides <- shinyvalidate::InputValidator$new()
