@@ -269,9 +269,11 @@ mod_view_edit_specimen_server <- function(id, focus){
             p(col_labels[["sample_origin"]], ": ", strong(sample_info$sample_origin),
               mod_edit_sample_button_ui(ns("sample_origin"))
             ),
-            p(col_labels[["location_lesion"]], ": ", strong(sample_info$location_lesion),
-              mod_edit_sample_button_ui(ns("location_lesion"))
-            ),
+            if(!is.na(sample_info$sample_origin) && sample_info$sample_origin == "Metastatic lesion"){
+              p(col_labels[["location_lesion"]], ": ", strong(sample_info$location_lesion),
+                mod_edit_sample_button_ui(ns("location_lesion"))
+              )
+            },
             p(col_labels[["anatomical_site"]], ": ", strong(sample_info$anatomical_site),
               mod_edit_sample_button_ui(ns("anatomical_site"))
             ),
