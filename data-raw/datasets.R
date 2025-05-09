@@ -67,7 +67,8 @@ col_labels <- c(
   comment_place     = "Comments",
   n_tubes           = "Number of tubes",
   n_blocks          = "Number of blocks",
-  n_slides          = "Number of slides"
+  n_slides          = "Number of slides",
+  room_temperature  = "Room temperature"
   
 )
 

@@ -65,4 +65,9 @@ dbase_specimen %>%
     "ALTER TABLE specimen_info ADD COLUMN histopathology_id TEXT"
   )
 
+dbase_specimen %>% 
+  DBI::dbExecute(
+    "ALTER TABLE specimen_info ADD COLUMN room_temperature TEXT"
+  )
+
 close_database()
