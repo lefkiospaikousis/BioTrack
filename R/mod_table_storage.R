@@ -97,7 +97,8 @@ mod_table_storage_server <- function(id, merged){
           lab_no, bococ, date_receipt, date_collection, date_processing,
           surname, firstname, civil_id, specimen_type, status,
           quality, duration,  
-          freezer, place, comment_place, n_tubes
+          tumour_cellularity, surface_area, room_temperature,
+          freezer, place, comment_place, n_tubes, n_blocks, n_slides
         )
       
       out <- orgl
@@ -151,6 +152,9 @@ mod_table_storage_server <- function(id, merged){
             duration = colDef(name = col_labels[["duration"]]),
             freezer = colDef(name = col_labels[["freezer"]]),
             place = colDef(name = col_labels[["place"]]),
+            tumour_cellularity = colDef(name = col_labels[["tumour_cellularity"]]),
+            surface_area = colDef(name = col_labels[["surface_area"]]),
+            room_temperature = colDef(name = col_labels[["room_temperature"]]),
             comment_place = colDef(name = col_labels[["comment_place"]]),
             n_tubes = colDef(name = col_labels[["n_tubes"]])
             

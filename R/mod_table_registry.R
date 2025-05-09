@@ -95,6 +95,7 @@ mod_table_registry_server <- function(id, merged){
         select(
           lab_no, bococ, civil_id, date_receipt, date_collection, type1, type1_ml, at_bococ, phase, 
           surname, firstname, gender, nationality, consent, dob,  tube, specimen_type,
+          sample_origin, anatomical_site, location_lesion, sampling_technique, histopathology_id,
           doctor, diagnosis, status, study, study_id, path_icf, comments
         ) 
       
@@ -150,6 +151,11 @@ mod_table_registry_server <- function(id, merged){
             dob = colDef(show = TRUE, name = col_labels[["dob"]], format = colFormat(date = TRUE, locales = "el-GR")),
             tube = colDef(name = col_labels[["tube"]]),
             specimen_type = colDef(name = col_labels[["specimen_type"]]),
+            sample_origin = colDef(name = col_labels[["sample_origin"]]),
+            anatomical_site = colDef(name = col_labels[["anatomical_site"]]),
+            location_lesion = colDef(name = col_labels[["location_lesion"]]),
+            sampling_technique = colDef(name = col_labels[["sampling_technique"]]),
+            histopathology_id = colDef(name = col_labels[["histopathology_id"]]),
             doctor = colDef(name = col_labels[["doctor"]]),
             diagnosis = colDef(name = col_labels[["diagnosis"]]),
             status = colDef(name = col_labels[["status"]]),
