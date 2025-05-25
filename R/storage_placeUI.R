@@ -12,7 +12,7 @@ storage_placeUI <- function(ns){
             tags$td(width = "30%", h4("Storage place"))),
     
     tags$tr(width = "100%",
-            tags$td(width = "30%", div(class = "input-label",style = "", "Freezer:")),
+            tags$td(width = "30%", div(class = "input-label",style = "", "Temperature:")),
             tags$td(width = "70%", prettyRadioButtons(ns("freezer"), NULL, col_values[["freezer"]], 
                                                       inline = TRUE,  fill = TRUE, selected = character(0), width = "100%"))),
     

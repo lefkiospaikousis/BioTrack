@@ -59,12 +59,6 @@ mod_add_specimen_ui <- function(id){
           ),
           
           storage_placeUI(ns),
-          shinyjs::hidden(
-            tags$tr(width = "100%", id = ns("the_room_temperature"),
-                    tags$td(width = "30%", div(class = "input-label", col_labels[['room_temperature']])),
-                    tags$td(width = "70%", textInput(ns("room_temperature"), NULL, width = input_width))
-            )
-          ),
           
           tags$tr(width = "100%",
                   tags$td(width = "30%", div(class = "input-label", "Comments:")),
@@ -105,7 +99,7 @@ mod_add_specimen_server <- function(id, sample_info){
     close_form <- reactiveVal(0)
     
     # observe({
-    #   browser()
+    #   
     #   updateDateInput(session, "date_processing", value = as.Date(sample_info()$date_receipt) )
     #   
     #   shinyjs::toggleState("date_processing", sample_info()$tube == "Streck")
@@ -133,21 +127,18 @@ mod_add_specimen_server <- function(id, sample_info){
           shinyjs::show("ffpe_blocks", anim = TRUE)
           shinyjs::hide("the_n_tubes", anim = TRUE)
           shinyjs::hide("ffpe_slides", anim = TRUE)
-          shinyjs::show("the_room_temperature", anim = TRUE)
         } 
         
         if(is_slide){
           shinyjs::show("ffpe_slides", anim = TRUE)
           shinyjs::hide("the_n_tubes", anim = TRUE)
           shinyjs::hide("ffpe_blocks", anim = TRUE)
-          shinyjs::show("the_room_temperature", anim = TRUE)
         }
         
         if(is_fresh){
           shinyjs::show("the_n_tubes", anim = TRUE)
           shinyjs::hide("ffpe_blocks", anim = TRUE)
           shinyjs::hide("ffpe_slides", anim = TRUE)
-          shinyjs::hide("the_room_temperature", anim = TRUE)
         }
         
         
@@ -194,7 +185,6 @@ mod_add_specimen_server <- function(id, sample_info){
       "tumour_cellularity",
       "surface_area",
       "histopathology_id",
-      "room_temperature",
       
       "comment_place"
     )
@@ -263,12 +253,10 @@ mod_add_specimen_server <- function(id, sample_info){
     iv_n_slides <- shinyvalidate::InputValidator$new()
     iv_n_slides$condition(~ sample_info()$type1 == "FFPE Slide")
     iv_n_slides$add_rule("n_slides", sv_gt(0))
-    iv_n_slides$add_rule("room_temperature", sv_required())
     
     iv_n_blocks <- shinyvalidate::InputValidator$new()
     iv_n_blocks$condition(~ sample_info()$type1 == "FFPE Block")
     iv_n_blocks$add_rule("n_blocks", sv_gt(0))
-    iv_n_blocks$add_rule("room_temperature", sv_required())
     
     iv_n_tubes <- shinyvalidate::InputValidator$new()
     iv_n_tubes$condition(~ !sample_info()$type1 %in% c("FFPE Block", "FFPE Slide"))
@@ -286,6 +274,10 @@ mod_add_specimen_server <- function(id, sample_info){
     observeEvent(input$freezer, {
       
       req(input$freezer)
+      
+      freezeReactiveValue(input, "rack")
+      freezeReactiveValue(input, "drawer")
+      freezeReactiveValue(input, "box")
       
       if(input$freezer == freezer_80_small){
         

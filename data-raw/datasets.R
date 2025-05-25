@@ -67,9 +67,7 @@ col_labels <- c(
   comment_place     = "Comments",
   n_tubes           = "Number of tubes",
   n_blocks          = "Number of blocks",
-  n_slides          = "Number of slides",
-  room_temperature  = "Room temperature"
-  
+  n_slides          = "Number of slides"
 )
 
 sum(duplicated(names(col_labels)))
@@ -114,7 +112,7 @@ col_values <- list(
   
   at_bococ      = c("Yes", "No"),
   quality       = c("Good", "Heamolysed", "Thawed"),
-  freezer       = c(freezer_04, freezer_20, freezers_80),
+  freezer       = c(freezer_04, freezer_20, freezers_80, 'RT'), # RT = Room Temperature 
   specimen_type = names(specimen_types),
   type1         = names(specimen_types),
   type2         = names(specimen_types),

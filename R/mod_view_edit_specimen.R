@@ -280,9 +280,6 @@ mod_view_edit_specimen_server <- function(id, focus){
             p(col_labels[["sampling_technique"]], ": ", strong(sample_info$sampling_technique),
               mod_edit_sample_button_ui(ns("sampling_technique"))
             ),
-            p(col_labels[["room_temperature"]], ": ", strong(sample_info$room_temperature),
-              mod_edit_sample_button_ui(ns("room_temperature"))
-            ),
             
             p(col_labels[["at_bococ"]], ": ", strong(sample_info$at_bococ),
               mod_edit_sample_button_ui(ns("at_bococ"))
@@ -341,7 +338,6 @@ mod_view_edit_specimen_server <- function(id, focus){
     mod_edit_sample_button_server("location_lesion", reactive(rv$sample_selected))
     mod_edit_sample_button_server("anatomical_site", reactive(rv$sample_selected))
     mod_edit_sample_button_server("sampling_technique", reactive(rv$sample_selected))
-    mod_edit_sample_button_server("room_temperature", reactive(rv$sample_selected))
     
     mod_edit_sample_button_server("at_bococ", reactive(rv$sample_selected))
     mod_edit_sample_button_server("lab", reactive(rv$sample_selected))
