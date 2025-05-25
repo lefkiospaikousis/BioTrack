@@ -198,6 +198,7 @@ mod_storage_information_server <- function(id, sample_info){
             n_slides          = specimen$n_slides,
             n_blocks          = specimen$n_blocks,
             surface_area      = specimen$surface_area,
+            histopathology_id = specimen$histopathology_id,
             tumour_cellularity = specimen$tumour_cellularity,
             comment_place     = specimen$comment_place
           )
