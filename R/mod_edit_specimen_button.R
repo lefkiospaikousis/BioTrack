@@ -78,6 +78,7 @@ mod_edit_specimen_button_server <- function(id, specimen){
       
       new_data <- res_mod_place$dta()
      
+      
       if(new_data$freezer == freezer_04) {
         
         rack   = ""
@@ -93,6 +94,14 @@ mod_edit_specimen_button_server <- function(id, specimen){
       } 
       
       if(new_data$freezer %in% freezers_80) {
+        
+        rack   = new_data$rack%||% NA_character_
+        box    = new_data$box%||% NA_character_
+        drawer = new_data$drawer%||% NA_character_
+        
+      }
+      
+      if(new_data$freezer == 'RT') {
         
         rack   = new_data$rack%||% NA_character_
         box    = new_data$box%||% NA_character_
