@@ -135,7 +135,7 @@ mod_view_edit_specimen_server <- function(id, focus){
             p("Specimen Type: ", 
               strong(specimen$specimen_type), mod_edit_specimen_button_ui(ns("specimen_type")) 
             ),
-            p(span("Freezer: ", 
+            p(span("Temperature: ", 
                    strong(specimen$freezer) , " - Storage Place: ", strong(specimen$place)),
               mod_edit_specimen_button_ui(ns("place"))
             ),

@@ -59,7 +59,7 @@ col_labels <- c(
   quality           = 'Sample Quality',
   specimen_type     = "Specimen type",
   lab_no            = "Lab No",
-  freezer           = "Freezer",
+  freezer           = "Temperature",
   rack              = 'Rack',
   drawer            = "Drawer",
   box               = "Box",
