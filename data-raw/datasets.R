@@ -35,6 +35,13 @@ col_labels <- c(
   date_collection   = "Date of Collection",
   date_shipment     = 'Date of shipment',
   date_receipt      = "Date & Time of receipt",
+  sample_origin     = "Sample origin",
+  location_lesion   = "Location of lesion",
+  anatomical_site   = "Anatomical site of sampling",
+  sampling_technique = "Sampling technique",
+  tumour_cellularity = "Tumour cellularity",
+  surface_area       = "Surface area",
+  histopathology_id = "Histopathology Specimen ID",
   civil_id          = "Patient ID",
   study_id          = "Study ID",
   study             = 'Study',
@@ -52,14 +59,15 @@ col_labels <- c(
   quality           = 'Sample Quality',
   specimen_type     = "Specimen type",
   lab_no            = "Lab No",
-  freezer           = "Freezer",
+  freezer           = "Temperature",
   rack              = 'Rack',
   drawer            = "Drawer",
   box               = "Box",
   place             = 'Storage place',
   comment_place     = "Comments",
-  n_tubes           = "Number of tubes"
-  
+  n_tubes           = "Number of tubes",
+  n_blocks          = "Number of blocks",
+  n_slides          = "Number of slides"
 )
 
 sum(duplicated(names(col_labels)))
@@ -70,7 +78,10 @@ specimen_types <- c("Peripheral blood" = "PB",
                     "Urine" = "UR", 
                     "Stools" = "ST", 
                     "Bronchial aspirations" = "BA",
-                    "Buffy coat" = "BC"
+                    "Buffy coat" = "BC",
+                    "FFPE Block" = "TB",
+                    "FFPE Slide" = "TS",
+                    "Fresh tumour sample" = "TF"
 )
 
 type_names <- setNames(names(specimen_types), specimen_types)
@@ -83,17 +94,25 @@ freezer_04       <- "+4\u00B0C"
 
 freezers_80 <- c(freezer_80_big, freezer_80_small)
 
+sample_types_FFPE = c("FFPE Block", "FFPE Slide", "Fresh tumour sample")
+phase_FFPE    = c("Diagnosis", "After treatment", "Re-biopsy at diagnosis", "Other")
+
 col_values <- list(
   gender        = c("Male", "Female", "Other"),
   status        = c("Metastatic", "Non metastatic"),
   consent       = c("Yes", "No"),
   tube          = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate", "N/A"),
-  phase         = c("Baseline", "Day of treatment", "Month 3", "Month 6", "Month 9", "Month 12", "End of treatment", "Other"),
+  phase         = c("Baseline", "Day of treatment", "Month 3", "Month 6", "Month 9", "Month 12", "End of treatment", "Other", phase_FFPE) |> unique(),
   lab           = c("NGH", "SGS Diagnostic Centre", "ECC Lab", "Dr. Pavlos Constantinou Lab", " Lysiotis Lab", "Biopsy diagnosis", "Oxinou Lab", "Other"),
-  sample_types  = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations"),
+  sample_types  = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations", sample_types_FFPE),
+  
+  # FFPE
+  sample_origin = c("Primary Tumour", "Metastatic lesion", "Lumph nodes"),
+  sampling_technique = c("Core needle biopsy", "Fine needle aspiration biopsy", "Resection specimen", "Other"),
+  
   at_bococ      = c("Yes", "No"),
   quality       = c("Good", "Heamolysed", "Thawed"),
-  freezer       = c(freezer_04, freezer_20, freezers_80),
+  freezer       = c(freezer_04, freezer_20, freezers_80, 'RT'), # RT = Room Temperature 
   specimen_type = names(specimen_types),
   type1         = names(specimen_types),
   type2         = names(specimen_types),
@@ -116,6 +135,8 @@ usethis::use_data(
   date_time_cols,
   col_labels, 
   col_values,
+  sample_types_FFPE,
+  phase_FFPE,
   specimen_types,
   type_names,
   freezers_80,

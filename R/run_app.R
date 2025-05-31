@@ -28,6 +28,7 @@ run_app <- function(
                                      )
                                    )
                                    ),
+      #ui = app_ui,
       server = app_server,
       onStart = onStart,
       options = options,

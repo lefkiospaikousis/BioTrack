@@ -1,9 +1,9 @@
 default:
   golem_name: BioTrack
-  golem_version: 0.2.0
+  golem_version: 0.3.0
   app_prod: no
   db_users: DB/dev/credentials.sqlite
-  path_db_specimen: DB/dev/specimen
+  path_db_specimen: DB/dev/specimen.sqlite
   path_db_creds: C:/Users/pcuser/OneDrive/IMPROVAST/BOC Oncology/BioTrack/DB/dev/credentials.sqlite
   users_passphrase: l@17797839
   log_version80: Log Version 3.0 April 2022
@@ -11,15 +11,15 @@ default:
 production:
   app_prod: yes
   db_users: DB/prod/credentials.sqlite
-  path_db_specimen: DB/prod/specimen
+  path_db_specimen: DB/prod/specimen.sqlite
   path_db_creds: C:/Users/pcuser/OneDrive/IMPROVAST/BOC Oncology/BioTrack/DB/prod/credentials.sqlite
 dev:
   golem_wd: C:/Users/pcuser/OneDrive/IMPROVAST/BOC Oncology/BioTrack
-  path_db_specimen: DB/dev/specimen
+  path_db_specimen: DB/dev/specimen.sqlite
   path_db_creds: C:/Users/pcuser/OneDrive/IMPROVAST/BOC Oncology/BioTrack/DB/dev/credentials.sqlite
 bococ:
   app_prod: yes
   db_users: DB/prod/credentials.sqlite
   golem_wd: C:/Users/pcuser/OneDrive/IMPROVAST/BOC Oncology/BioTrack
-  path_db_specimen: DB/prod/specimen
+  path_db_specimen: DB/prod/specimen.sqlite
   path_db_creds: C:/Users/pcuser/OneDrive/IMPROVAST/BOC Oncology/BioTrack/DB/prod/credentials.sqlite
