@@ -81,7 +81,8 @@ specimen_types <- c("Peripheral blood" = "PB",
                     "Buffy coat" = "BC",
                     "FFPE Block" = "TB",
                     "FFPE Slide" = "TS",
-                    "Fresh tumour sample" = "TF"
+                    "Fresh tumour sample" = "TF",
+                    "CAR-T" = 'CT'
 )
 
 type_names <- setNames(names(specimen_types), specimen_types)
@@ -104,7 +105,7 @@ col_values <- list(
   tube          = c("EDTA", "Streck", "Sodium Heparin", "Sodium Citrate", "N/A"),
   phase         = c("Baseline", "Day of treatment", "Month 3", "Month 6", "Month 9", "Month 12", "End of treatment", "Other", phase_FFPE) |> unique(),
   lab           = c("NGH", "SGS Diagnostic Centre", "ECC Lab", "Dr. Pavlos Constantinou Lab", " Lysiotis Lab", "Biopsy diagnosis", "Oxinou Lab", "Other"),
-  sample_types  = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations", sample_types_FFPE),
+  sample_types  = c("Peripheral blood", "Plasma", "Serum", "Urine", "Stools", "Bronchial aspirations", "CAR-T", sample_types_FFPE),
   
   # FFPE
   sample_origin = c("Primary Tumour", "Metastatic lesion", "Lumph nodes"),

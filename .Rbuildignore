@@ -14,3 +14,5 @@ submission_empty_dates.rds
 ^ICF$
 ^app\.R$
 ^rsconnect$
+^\.positai$
+^\.claude$
